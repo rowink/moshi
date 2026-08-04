@@ -26,6 +26,16 @@ const progressFormat = '\x1b[1m\x1b[36mBuilding Dashy\x1b[0m '
 // Webpack Config
 const configureWebpack = {
   mode,
+  resolve: {
+    fallback: {
+      // rss-parser requires Node core modules in its Node-only code paths;
+      // in the browser bundle these resolve to empty stubs
+      http: false,
+      https: false,
+      stream: false,
+      timers: require.resolve('timers-browserify'),
+    },
+  },
   module: {
     rules: [
       { test: /.svg$/, loader: 'vue-svg-loader' },
@@ -36,22 +46,22 @@ const configureWebpack = {
   ],
 };
 
-// Application pages
-const pages = {
-  dashy: {
-    entry: 'src/main.js',
-    filename: 'index.html',
-  },
-};
-
-// Export the main Vue app config
 module.exports = {
   publicPath,
   pwa,
   integrity,
   lintOnSave: false,
   configureWebpack,
-  pages,
+  css: {
+    loaderOptions: {
+      css: {
+        // webpack 5 resolves all url()s; keep public/ absolute paths untouched
+        url: {
+          filter: (url) => !url.startsWith('/'),
+        },
+      },
+    },
+  },
   chainWebpack: config => {
     config.module.rules.delete('svg');
     // Load YAML files as raw strings (replaces vue-cli-plugin-yaml, which
@@ -60,5 +70,11 @@ module.exports = {
     config.module.rule('yaml')
       .test(/\.ya?ml$/)
       .type('asset/source');
+    // cli-plugin-pwa emits manifest.json itself; exclude it from the
+    // public/ copy to avoid webpack 5 duplicate-asset errors
+    config.plugin('copy').tap(args => {
+      args[0].patterns[0].globOptions.ignore.push('**/manifest.json');
+      return args;
+    });
   },
 };
