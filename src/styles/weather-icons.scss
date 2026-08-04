@@ -4,7 +4,12 @@ Based on https://github.com/isneezy/open-weather-icons
 Licensed under MIT - Copyright (c) 2017 Ivan Vilanculo
 **/
 
-/* OpenWeatherIcons font-face is loaded via public/theme-fonts.css */
+@font-face {
+  font-family: 'OpenWeatherIcons';
+  src: url('/widget-resources/WeatherIcons.woff2');
+  font-style: normal;
+  font-weight: 400;
+}
 
 i.owi {
   display: inline-block;

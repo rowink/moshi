@@ -1,7 +1,7 @@
 <template>
   <modal :name="name" :resizable="true" width="80%" height="80%" @closed="modalClosed()"
     classes="dashy-modal">
-    <template #top-right><div @click="hide()">Close</div></template>
+    <div slot="top-right" @click="hide()">Close</div>
     <a @click="hide()" class="close-button" title="Close">x</a>
     <iframe v-if="url" :src="url" @keydown.esc="close" class="frame"
       allow="fullscreen; clipboard-write" />
@@ -15,7 +15,7 @@ import Keys from '@/utils/StoreMutations';
 export default {
   name: 'IframeModal',
   props: {
-    name: { type: String, required: true },
+    name: String,
   },
   data: () => ({
     url: '#',

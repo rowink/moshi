@@ -9,9 +9,9 @@
     >
       <img class="icon" :src="asset.image" :alt="`${asset} icon`" />
       <p class="name">{{ asset.name }}</p>
-      <p class="price">{{ formatPrice(asset.price, currency) }}</p>
+      <p class="price">{{ asset.price | formatPrice(currency) }}</p>
       <p :class="`percent ${asset.percentChange > 0 ? 'up' : 'down'}`">
-        {{ formatPercentage(asset.percentChange) }}
+        {{ asset.percentChange | formatPercentage }}
       </p>
     </div>
   </template>
@@ -19,9 +19,9 @@
 </template>
 
 <script>
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 import {
   findCurrencySymbol, timestampToDate, roundPrice, putCommasInBigNum,
 } from '@/utils/MiscHelpers';
@@ -68,7 +68,7 @@ export default {
       + `ids=${this.assets}&vs_currency=${this.currency}&order=${this.order}&per_page=${this.limit}`;
     },
   },
-  methods: {
+  filters: {
     /* Append currency symbol to price */
     formatPrice(price, currency) {
       if (currency === undefined) return '';
@@ -80,9 +80,11 @@ export default {
       const symbol = change > 0 ? '↑' : '↓';
       return `${symbol} ${change.toFixed(2)}%`;
     },
+  },
+  methods: {
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
-      request.get(this.endpoint)
+      axios.get(this.endpoint)
         .then((response) => {
           this.processData(response.data);
         })
@@ -119,12 +121,12 @@ export default {
     tooltip(info) {
       const maxSupply = info.maxSupply ? ` out of max supply of <b>${info.maxSupply}</b>` : '';
       const content = `Rank: <b>${info.rank}</b> with market cap of `
-        + `<b>${this.formatPrice(info.marketCap)}</b>`
+        + `<b>${this.$options.filters.formatPrice(info.marketCap)}</b>`
         + `<br>Circulating Supply: <b>${info.supply} ${info.symbol.toUpperCase()}</b>${maxSupply}`
         + `<br>All-time-high of <b>${info.allTimeHigh}</b> `
         + `at <b>${timestampToDate(info.allTimeHighDate)}</b>`;
       return {
-        content, html: true, 
+        content, html: true, trigger: 'hover focus', delay: 250,
       };
     },
   },

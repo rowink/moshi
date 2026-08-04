@@ -9,7 +9,7 @@
 export default {
   name: 'WebContent',
   props: {
-    url: { type: String, default: '' },
+    url: String,
     id: {
       type: String,
       default: 'web-app-view',

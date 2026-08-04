@@ -60,18 +60,18 @@
         {{ match.league }}, {{ match.season }}
       </p>
       <p>
-        <a :href="mapsUrl(match.venue)">{{ match.venue }}</a>
-        on {{ formatDate(match.date) }} ({{ formatTime(match.time) }})</p>
+        <a :href="match.venue | mapsUrl">{{ match.venue }}</a>
+        on {{ match.date | formatDate }} ({{ match.time | formatTime }})</p>
     </div>
   </div>
 </div>
 </template>
 
 <script>
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
 import { timestampToDate, getPlaceUrl } from '@/utils/MiscHelpers';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin],
@@ -93,7 +93,7 @@ export default {
       return this.options.leagueId;
     },
     apiKey() {
-      return this.parseAsEnvVar(this.options.apiKey) || '50130162';
+      return this.options.apiKey || '50130162';
     },
     limit() {
       return this.options.limit || 20;
@@ -121,7 +121,7 @@ export default {
       }
     },
   },
-  methods: {
+  filters: {
     formatDate(dateStr) {
       return timestampToDate(dateStr);
     },
@@ -132,6 +132,8 @@ export default {
     mapsUrl(placeName) {
       return getPlaceUrl(placeName);
     },
+  },
+  methods: {
     initiate() {
       if (!this.initiated) {
         this.currentTeamId = this.teamId;
@@ -142,7 +144,7 @@ export default {
       }
     },
     fetchData() {
-      request.get(this.endpoint)
+      axios.get(this.endpoint)
         .then((response) => {
           this.processData(response.data.results || response.data.events);
         })
@@ -213,7 +215,7 @@ export default {
     },
     tooltip(content) {
       return {
-        content, html: true, 
+        content, html: true, trigger: 'hover focus', delay: 250,
       };
     },
   },

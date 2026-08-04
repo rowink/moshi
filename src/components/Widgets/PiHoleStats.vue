@@ -3,7 +3,7 @@
   <!-- Current Status -->
   <div v-if="status" class="status">
     <span class="status-lbl">{{ $t('widgets.pi-hole.status-heading') }}:</span>
-    <span :class="`status-val ${getStatusColor(status)}`">{{ capitalize(status) }}</span>
+    <span :class="`status-val ${getStatusColor(status)}`">{{ status | capitalize }}</span>
   </div>
   <!-- Block Pie Chart -->
   <p :id="chartId" class="block-pie"></p>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-// import request from '@/utils/request';
+// import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
 import ChartingMixin from '@/mixins/ChartingMixin';
 import { capitalize } from '@/utils/MiscHelpers';
@@ -36,14 +36,13 @@ export default {
   computed: {
     /* Let user select which comic to display: random, latest or a specific number */
     hostname() {
-      const usersChoice = this.parseAsEnvVar(this.options.hostname);
+      const usersChoice = this.options.hostname;
       if (!usersChoice) this.error('You must specify the hostname for your Pi-Hole server');
-      return usersChoice;
+      return usersChoice || 'http://pi.hole';
     },
     apiKey() {
-      const usersChoice = this.parseAsEnvVar(this.options.apiKey);
-      if (!usersChoice) this.error('API Key is required, please see the docs');
-      return usersChoice;
+      if (!this.options.apiKey) this.error('API Key is required, please see the docs');
+      return this.options.apiKey;
     },
     endpoint() {
       return `${this.hostname}/admin/api.php?summary&auth=${this.apiKey}`;
@@ -52,8 +51,12 @@ export default {
     hideChart() { return this.options.hideChart; },
     hideInfo() { return this.options.hideInfo; },
   },
+  filters: {
+    capitalize(str) {
+      return capitalize(str);
+    },
+  },
   methods: {
-    capitalize,
     /* Make GET request to local pi-hole instance */
     fetchData() {
       this.makeRequest(this.endpoint)

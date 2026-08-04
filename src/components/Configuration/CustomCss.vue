@@ -28,8 +28,7 @@ import CustomThemeMaker from '@/components/Settings/CustomThemeMaker';
 import ThemeSelector from '@/components/Settings/ThemeSelector';
 import Button from '@/components/FormElements/Button';
 import StoreKeys from '@/utils/StoreMutations';
-import { theme as defaultTheme } from '@/utils/config/defaults';
-import { configScope } from '@/utils/config/ConfigHelpers';
+import { localStorageKeys, theme as defaultTheme } from '@/utils/defaults';
 
 export default {
   name: 'StyleEditor',
@@ -72,20 +71,19 @@ export default {
       style.textContent = cleanedCss;
       document.head.append(style);
     },
-    /* Saves custom CSS to localStorage, scoped to the active page */
+    /* Saves custom CSS local storage */
     saveToBrowser(css) {
-      const key = configScope(this.$store.state.currentConfigInfo.confId).APP_CONFIG;
-      const localAppConfig = JSON.parse(localStorage.getItem(key) || '{}');
+      const localAppConfig = JSON.parse(localStorage.getItem(localStorageKeys.APP_CONFIG) || '{}');
       localAppConfig.customCss = css;
-      localStorage.setItem(key, JSON.stringify(localAppConfig));
+      localStorage.setItem(localStorageKeys.APP_CONFIG, JSON.stringify(localAppConfig));
     },
     /* Reload the page (only called if removing styles) */
     reloadPage() {
-      setTimeout(() => { location.reload(); }, 1500);
+      setTimeout(() => { location.reload(); }, 1500); // eslint-disable-line no-restricted-globals
     },
     /* Show success toast and lot update */
     showSuccessMsg() {
-      this.$toast('Changes saved successfully');
+      this.$toasted.show('Changes saved successfully');
     },
   },
 };
@@ -99,7 +97,6 @@ div.css-editor-outer {
   padding-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  color: var(--foreground);
 
   .style-section {
     padding: 1rem;
@@ -159,7 +156,6 @@ p.quick-note {
 
 // Base Theme Selector
 .base-theme-wrapper {
-  margin: 0 auto;
   span.theme-label {
     display: none;
   }

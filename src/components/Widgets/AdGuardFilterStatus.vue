@@ -20,7 +20,7 @@
       </div>
       <!-- Date of last update, and link to list -->
       <div class="row-2">
-        <span class="updated">Updated {{ formatDate(filter.last_updated) }}</span>
+        <span class="updated">Updated {{ filter.last_updated | formatDate }}</span>
         <a class="filter-link" v-if="filter.url" :href="filter.url">View List</a>
       </div>
     </div>
@@ -38,7 +38,7 @@ export default {
     /* URL/ IP or hostname to the AdGuardHome instance, without trailing slash */
     hostname() {
       if (!this.options.hostname) this.error('You must specify the path to your AdGuard server');
-      return this.parseAsEnvVar(this.options.hostname);
+      return this.options.hostname;
     },
     showOnOffStatusOnly() {
       return this.options.showOnOffStatusOnly;
@@ -48,9 +48,7 @@ export default {
     },
     authHeaders() {
       if (this.options.username && this.options.password) {
-        const username = this.parseAsEnvVar(this.options.username);
-        const password = this.parseAsEnvVar(this.options.password);
-        const encoded = window.btoa(`${username}:${password}`);
+        const encoded = window.btoa(`${this.options.username}:${this.options.password}`);
         return { Authorization: `Basic ${encoded}` };
       }
       return {};
@@ -58,16 +56,17 @@ export default {
   },
   data() {
     return {
-      overrideProxyChoice: true,
       status: null,
       filters: null,
     };
   },
-  methods: {
+  filters: {
     formatDate(date) {
       if (!date) return 'Never';
       return getTimeAgo(date);
     },
+  },
+  methods: {
     /* Make GET request to AdGuard endpoint */
     fetchData() {
       this.makeRequest(this.endpoint, this.authHeaders).then(this.processData);

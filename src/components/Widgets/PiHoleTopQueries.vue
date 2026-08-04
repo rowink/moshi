@@ -30,9 +30,8 @@ export default {
       return usersChoice || 'http://pi.hole';
     },
     apiKey() {
-      const usersChoice = this.parseAsEnvVar(this.options.apiKey);
-      if (!usersChoice) this.error('API Key is required, please see the docs');
-      return usersChoice;
+      if (!this.options.apiKey) this.error('API Key is required, please see the docs');
+      return this.options.apiKey;
     },
     count() {
       const usersChoice = this.options.count;
@@ -104,4 +103,5 @@ export default {
     }
   }
 }
+
 </style>

@@ -1,47 +1,27 @@
 <template>
 <div class="rss-wrapper">
   <!-- Feed Meta Info -->
-  <component
-    :is="meta && meta.link ? 'a' : 'div'"
-    class="meta-container"
-    v-if="meta"
-    :href="meta.link || undefined"
-    :title="meta.description"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
+  <a class="meta-container" v-if="meta" :href="meta.link" :title="meta.description">
     <img class="feed-icon" :src="meta.image" v-if="meta.image" alt="Feed Image" />
     <div class="feed-text">
       <p class="feed-title">{{ meta.title }}</p>
       <p class="feed-author" v-if="meta.author">By {{ meta.author }}</p>
     </div>
-  </component>
+  </a>
   <!-- Feed Content -->
   <div class="post-wrapper" v-if="posts">
     <div class="post-row" v-for="(post, indx) in posts" :key="indx">
-      <component
-        :is="post.link ? 'a' : 'div'"
-        class="post-top"
-        :href="post.link || undefined"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a class="post-top" :href="post.link">
         <img class="post-img" :src="post.image" v-if="post.image" alt="Post Image">
         <div class="post-title-wrap">
           <p class="post-title">{{ post.title }}</p>
           <p class="post-date">
-            {{ formatDate(post.date) }} {{ formatAuthor(post.author) }}
+            {{ post.date | formatDate }} {{ post.author | formatAuthor }}
           </p>
         </div>
-      </component>
-      <div class="post-body" v-html="post.sanitizedDescription"></div>
-      <a
-        class="continue-reading-btn"
-        v-if="post.link"
-        :href="post.link"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      </a>
+      <div class="post-body" v-html="post.description"></div>
+      <a class="continue-reading-btn" :href="post.link">
         {{ $t('widgets.general.open-link') }}
       </a>
     </div>
@@ -51,10 +31,9 @@
 </template>
 
 <script>
+import * as Parser from 'rss-parser';
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
-import { parseRssFeed } from '@/utils/RssParser';
-import { sanitizeRssItem, sanitizeRssMeta } from '@/utils/Sanitizer';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin],
@@ -72,7 +51,7 @@ export default {
       return this.options.rssUrl || '';
     },
     apiKey() {
-      return this.parseAsEnvVar(this.options.apiKey);
+      return this.options.apiKey;
     },
     parseLocally() {
       return this.options.parseLocally;
@@ -89,7 +68,7 @@ export default {
       return 'pubDate';
     },
     orderDirection() {
-      const usersChoice = this.options.orderDirection;
+      const usersChoice = this.options.orderBy;
       if (usersChoice && (usersChoice === 'desc' || usersChoice === 'asc')) return usersChoice;
       return 'desc';
     },
@@ -106,53 +85,45 @@ export default {
       }
     },
   },
-  methods: {
+  filters: {
     formatDate(timestamp) {
-      if (!timestamp) return '';
-      const date = new Date(timestamp);
-      // Check if date is valid
-      if (Number.isNaN(date.getTime())) return '';
       const localFormat = navigator.language;
       const dateFormat = { weekday: 'short', day: 'numeric', month: 'short' };
-      return date.toLocaleDateString(localFormat, dateFormat);
+      return new Date(timestamp).toLocaleDateString(localFormat, dateFormat);
     },
     formatAuthor(author) {
       return author ? `by ${author}` : '';
     },
+  },
+  methods: {
     /* Make GET request to whatever endpoint we are using */
     fetchData() {
       this.makeRequest(this.endpoint).then(this.processData);
     },
     /* Assign data variables to the returned data */
-    processData(data) {
+    async processData(data) {
       if (this.parseLocally) {
-        let parsed;
-        try {
-          parsed = parseRssFeed(data);
-        } catch (err) {
-          this.error('Failed to parse RSS feed', err);
-          return;
-        }
+        const parser = new Parser();
         const {
           link, title, items, author, description, image,
-        } = parsed;
-        this.meta = sanitizeRssMeta({
+        } = await parser.parseString(data);
+        this.meta = {
           title,
           link,
           author,
           description,
           image,
-        });
+        };
         this.processItems(items);
       } else {
         const { feed, items } = data;
-        this.meta = sanitizeRssMeta({
+        this.meta = {
           title: feed.title,
           link: feed.link,
           author: feed.author,
           description: feed.description,
           image: feed.image,
-        });
+        };
         this.processItems(items);
       }
     },
@@ -160,17 +131,16 @@ export default {
       const posts = [];
       let { length } = items;
       if (this.limit) {
-        length = Math.min(length, this.limit);
+        length = this.limit;
       }
       for (let i = 0; length > i; i += 1) {
-        const sanitized = sanitizeRssItem(items[i]);
         posts.push({
-          title: sanitized.title,
-          sanitizedDescription: sanitized.description,
-          image: sanitized.thumbnail,
-          author: sanitized.author,
-          date: sanitized.pubDate,
-          link: sanitized.link,
+          title: items[i].title,
+          description: items[i].description,
+          image: items[i].thumbnail,
+          author: items[i].author,
+          date: items[i].pubDate,
+          link: items[i].link,
         });
       }
       this.posts = posts;
@@ -227,7 +197,7 @@ export default {
       }
       img.post-img {
         border-radius: var(--curve-factor);
-        max-width: 8rem;
+        width: 2rem;
         height: 2rem;
         margin-right: 0.5rem;
       }
@@ -237,28 +207,27 @@ export default {
       color: var(--widget-text-color);
       max-height: 400px;
       overflow: hidden;
-      margin-top: 0.5rem;
-      :deep(p) {
+      ::v-deep p {
         margin: 0.5rem 0;
       }
-      :deep(img) {
+      ::v-deep img {
         max-width: 80%;
         display: flex;
         margin: 0 auto;
         border-radius: var(--curve-factor);
       }
-      :deep(a) {
+      ::v-deep a {
         color: var(--widget-text-color);
       }
-      :deep(svg path) {
+      ::v-deep svg path {
         fill: var(--widget-text-color);
       }
-      :deep(blockquote) {
+      ::v-deep blockquote {
         margin-left: 0.5rem;
         padding-left: 0.5rem;
         border-left: 4px solid var(--widget-text-color);
       }
-      :deep(.avatar.avatar-user) { display: none; }
+      ::v-deep .avatar.avatar-user { display: none; }
     }
     a.continue-reading-btn {
       width: 100%;

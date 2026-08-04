@@ -8,8 +8,9 @@
 </template>
 
 <script>
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin],
@@ -40,17 +41,11 @@ export default {
   methods: {
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
-      fetch(this.endpoint)
-        .then(response => {
-          if (!response.ok) {
-            this.error('Network response was not ok');
-          }
-          return response.json();
+      axios.get(this.endpoint)
+        .then((response) => {
+          this.processData(response.data);
         })
-        .then(data => {
-          this.processData(data);
-        })
-        .catch(dataFetchError => {
+        .catch((dataFetchError) => {
           this.error('Unable to fetch data', dataFetchError);
         })
         .finally(() => {
@@ -67,7 +62,7 @@ export default {
     toolTip(alt) {
       const content = alt;
       return {
-        content, html: false, popperClass: 'xkcd-alt-tt',
+        content, html: false, trigger: 'hover focus', delay: 250, classes: 'xkcd-alt-tt',
       };
     },
   },
@@ -76,7 +71,7 @@ export default {
 
 <style scoped lang="scss">
 .xkcd-wrapper {
-.xkcd-title {
+ .xkcd-title {
     font-size: 1.2rem;
     margin: 0.25rem auto;
     color: var(--widget-text-color);

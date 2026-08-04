@@ -40,8 +40,7 @@ import Radio from '@/components/FormElements/Radio';
 import SaveCancelButtons from '@/components/InteractiveEditor/SaveCancelButtons';
 import AccessError from '@/components/Configuration/AccessError';
 import StoreKeys from '@/utils/StoreMutations';
-import { modalNames } from '@/utils/config/defaults';
-import ErrorHandler, { InfoHandler, InfoKeys } from '@/utils/logging/ErrorHandler';
+import { modalNames } from '@/utils/defaults';
 
 export default {
   name: 'MoveItemTo',
@@ -52,8 +51,8 @@ export default {
     SaveCancelButtons,
   },
   props: {
-    itemId: { type: String, required: true }, // Unique ID for item
-    initialSection: { type: String, default: '' }, // The current section
+    itemId: String, // Unique ID for item
+    initialSection: String, // The current section
   },
   data() {
     return {
@@ -96,29 +95,16 @@ export default {
   },
   methods: {
     save() {
-      try {
-        const item = this.$store.getters.getItemById(this.itemId);
-        if (!item) throw new Error(`Item '${this.itemId}' not found`);
-        // Copy item to new section
-        this.$store.commit(StoreKeys.COPY_ITEM, {
-          item, toSection: this.selectedSection, appendTo: this.appendTo,
-        });
-        // Remove item from previous section if moving
-        if (this.operation === 'move') {
-          this.$store.commit(StoreKeys.REMOVE_ITEM, {
-            itemId: this.itemId, sectionName: this.currentSection,
-          });
-        }
-        InfoHandler(
-          `${this.operation === 'move' ? 'Moved' : 'Copied'} '${item.title}' `
-            + `from '${this.currentSection}' to '${this.selectedSection}'`,
-          InfoKeys.EDITOR,
-        );
-        this.close();
-      } catch (e) {
-        ErrorHandler(`Failed to ${this.operation} item`, e);
-        this.$toast.error('Error. See Logs.');
+      const item = this.$store.getters.getItemById(this.itemId);
+      // Copy item to new section
+      const copyPayload = { item, toSection: this.selectedSection, appendTo: this.appendTo };
+      this.$store.commit(StoreKeys.COPY_ITEM, copyPayload);
+      // Remove item from previous section
+      if (this.operation === 'move') {
+        const payload = { itemId: this.itemId, sectionName: this.currentSection };
+        this.$store.commit(StoreKeys.REMOVE_ITEM, payload);
       }
+      this.close();
     },
     close() {
       this.$modal.hide(this.modalName);

@@ -2,14 +2,16 @@
  * Mixin for all homepages (default home, minimal home, workspace, etc)
  */
 
-import Defaults, { localStorageKeys, iconCdns } from '@/utils/config/defaults';
+import Defaults, { localStorageKeys, iconCdns } from '@/utils/defaults';
 import Keys from '@/utils/StoreMutations';
 import { searchTiles } from '@/utils/Search';
-import { getCurrentUser, isLoggedInAsGuest } from '@/utils/auth/Auth';
-import { isVisibleToUser } from '@/utils/IsVisibleToUser';
-import { resolveRouteIntent, PAGE_STATUS } from '@/utils/config/ConfigHelpers';
+import { checkItemVisibility } from '@/utils/CheckItemVisibility';
+import { GetTheme, ApplyLocalTheme, ApplyCustomVariables } from '@/utils/ThemeHelper';
 
 const HomeMixin = {
+  props: {
+    subPageInfo: Object,
+  },
   computed: {
     sections() {
       return this.$store.getters.sections;
@@ -27,60 +29,50 @@ const HomeMixin = {
       return this.$store.state.modalOpen;
     },
     pageId() {
-      return this.$store.state.currentConfigInfo?.confId || 'home';
-    },
-    /* True when the server returned a stripped bootstrap config (e.g. expired token) */
-    isBootstrap() {
-      return this.$store.state.rootConfig?._bootstrap?.authenticated === false;
+      return (this.subPageInfo && this.subPageInfo.pageId) ? this.subPageInfo.pageId : 'home';
     },
   },
   data: () => ({
     searchValue: '',
   }),
+  async mounted() {
+    await this.getConfigForRoute();
+  },
   watch: {
     async $route() {
-      this.loadUpConfig();
+      await this.getConfigForRoute();
+      this.setTheme();
     },
-  },
-  async created() {
-    this.loadUpConfig();
   },
   methods: {
-    /* Reload to restart the auth flow, when OIDC/Keycloak get bootstrap marker */
-    reAuth() {
-      window.location.reload();
+    async getConfigForRoute() {
+      this.$store.commit(Keys.SET_CURRENT_SUB_PAGE, this.subPageInfo);
+      if (this.subPageInfo && this.subPageInfo.confPath) { // Get config for sub-page
+        await this.$store.dispatch(Keys.INITIALIZE_MULTI_PAGE_CONFIG, this.subPageInfo.confPath);
+      } else { // Otherwise, use main config
+        this.$store.commit(Keys.USE_MAIN_CONFIG);
+      }
     },
-    /* When page loaded / sub-page changed, initiate config fetch.
-     * For ROOT / LEGACY_SECTION intent the store loads the root config
-     * for KNOWN the store loads the matching sub-config
-     * for UNKNOWN the store triggers the critical error modal */
-    async loadUpConfig() {
-      const subPage = this.determineConfigFile();
-      const current = this.$store.state.currentConfigInfo?.confId || null;
-      if ((subPage || null) === current) return; // Already on this config, no reload
-      await this.$store.dispatch(Keys.INITIALIZE_CONFIG, subPage);
+    /* TEMPORARY: If on sub-page, check if custom theme is set and return it */
+    getSubPageTheme() {
+      if (!this.pageId || this.pageId === 'home') {
+        return null;
+      } else {
+        const themeStoreKey = `${localStorageKeys.THEME}-${this.pageId}`;
+        return localStorage[themeStoreKey] || null;
+      }
     },
-    /* Resolve which sub-config the current route targets.
-     * Returns a page id from makePageName, or null for the root config */
-    determineConfigFile() {
-      const { status, pageId } = resolveRouteIntent(this.$route, this.$store);
-      if (status === PAGE_STATUS.ROOT || status === PAGE_STATUS.LEGACY_SECTION) return null;
-      return pageId; // KNOWN -> load sub-config; UNKNOWN -> store raises critical error
+    setTheme() {
+      const theme = this.getSubPageTheme() || GetTheme();
+      ApplyLocalTheme(theme);
+      ApplyCustomVariables(theme);
     },
     updateModalVisibility(modalState) {
-      this.$store.commit(Keys.SET_MODAL_OPEN, modalState);
+      this.$store.commit('SET_MODAL_OPEN', modalState);
     },
     /* Updates local data with search value, triggered from filter comp */
     searching(searchValue) {
       this.searchValue = searchValue || '';
-    },
-    /* Returns a unique ID based on the page and section name */
-    makeSectionId(section) {
-      const normalize = (str) => (
-        str ? str.trim().toLowerCase().replace(/[^\p{L}\p{N}]/gu, '-')
-          : `unnamed-${(`000${Math.floor(Math.random() * 1000)}`).slice(-3)}`
-      );
-      return `${this.pageId || 'unknown-page'}-${normalize(section.name)}`;
     },
     /* Returns true if there is one or more sections in the config */
     checkTheresData(sections) {
@@ -88,16 +80,12 @@ const HomeMixin = {
       return (sections && sections.length >= 1) || (localSections && localSections.length >= 1);
     },
     /* Returns only the tiles that match the users search query */
-    filterTiles(allTiles, sectionName, opts = {}) {
-      if (!allTiles) return [];
-      const currentUser = getCurrentUser();
-      const isGuest = isLoggedInAsGuest();
-      const showHidden = !!opts.showHidden;
-      const visibleTiles = allTiles.filter(
-        (tile) => isVisibleToUser(tile.displayData || {}, currentUser, isGuest)
-          && (showHidden || !tile.displayData?.hideFromHomepage),
-      );
-      return searchTiles(visibleTiles, this.searchValue, sectionName || '');
+    filterTiles(allTiles) {
+      if (!allTiles) {
+        return [];
+      }
+      const visibleTiles = allTiles.filter((tile) => checkItemVisibility(tile));
+      return searchTiles(visibleTiles, this.searchValue);
     },
     /* Checks if any sections or items use icons from a given CDN */
     checkIfIconLibraryNeeded(prefix) {
@@ -147,13 +135,13 @@ const HomeMixin = {
       }
     },
     /* Returns true if there is more than 1 sub-result visible during searching */
-    checkIfResults(sections) {
-      if (!sections) return false;
+    checkIfResults() {
+      if (!this.sections) return false;
       else {
         let itemsFound = true;
-        sections.forEach((section) => {
+        this.sections.forEach((section) => {
           if (section.widgets && section.widgets.length > 0) itemsFound = false;
-          if (section.filteredItems.length > 0) itemsFound = false;
+          if (this.filterTiles(section.items, this.searchValue).length > 0) itemsFound = false;
         });
         return itemsFound;
       }
@@ -164,6 +152,13 @@ const HomeMixin = {
         return `background: url('${this.appConfig.backgroundImg}') no-repeat center fixed;background-size:cover;`;
       }
       return '';
+    },
+    /* Extracts the site name from domain, used for the searching functionality */
+    getDomainFromUrl(url) {
+      if (!url) return '';
+      const urlPattern = /^(?:https?:\/\/)?(?:w{3}\.)?([a-z\d.-]+)\.(?:[a-z.]{2,10})(?:[/\w.-]*)*/;
+      const domainPattern = url.match(urlPattern);
+      return domainPattern ? domainPattern[1] : '';
     },
   },
 };

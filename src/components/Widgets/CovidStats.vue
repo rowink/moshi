@@ -3,20 +3,20 @@
   <div class="basic-stats" v-if="basicStats">
     <div class="active-cases stat-wrap">
       <span class="lbl">Active Cases</span>
-      <span class="val">{{ numberFormat(basicStats.active) }}</span>
+      <span class="val">{{ basicStats.active | numberFormat }}</span>
     </div>
     <div class="more-stats">
       <div class="stat-wrap">
         <span class="lbl">Total Confirmed</span>
-        <span class="val total">{{ numberFormat(basicStats.cases) }}</span>
+        <span class="val total">{{ basicStats.cases | numberFormat }}</span>
       </div>
       <div class="stat-wrap">
         <span class="lbl">Total Recovered</span>
-        <span class="val recovered">{{ numberFormat(basicStats.recovered) }}</span>
+        <span class="val recovered">{{ basicStats.recovered | numberFormat }}</span>
       </div>
       <div class="stat-wrap">
         <span class="lbl">Total Deaths</span>
-        <span class="val deaths">{{ numberFormat(basicStats.deaths) }}</span>
+        <span class="val deaths">{{ basicStats.deaths | numberFormat }}</span>
       </div>
     </div>
   </div>
@@ -32,15 +32,15 @@
       <div class="country-case-wrap">
         <div class="stat-wrap">
           <span class="lbl">Confirmed</span>
-          <span class="val total">{{ showInK(country.cases) }}</span>
+          <span class="val total">{{ country.cases | showInK }}</span>
         </div>
         <div class="stat-wrap">
           <span class="lbl">Recovered</span>
-          <span class="val recovered">{{ showInK(country.recovered) }}</span>
+          <span class="val recovered">{{ country.recovered | showInK }}</span>
         </div>
         <div class="stat-wrap">
           <span class="lbl">Deaths</span>
-          <span class="val deaths">{{ showInK(country.deaths) }}</span>
+          <span class="val deaths">{{ country.deaths | showInK }}</span>
         </div>
       </div>
     </div>
@@ -52,7 +52,7 @@
 import WidgetMixin from '@/mixins/WidgetMixin';
 import ChartingMixin from '@/mixins/ChartingMixin';
 import { putCommasInBigNum, showNumAsThousand, timestampToDate } from '@/utils/MiscHelpers';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin, ChartingMixin],
@@ -89,13 +89,15 @@ export default {
       countryData: null,
     };
   },
-  methods: {
+  filters: {
     numberFormat(caseNumber) {
       return putCommasInBigNum(caseNumber);
     },
     showInK(caseNumber) {
       return showNumAsThousand(caseNumber);
     },
+  },
+  methods: {
     fetchData() {
       this.makeRequest(this.basicStatsEndpoint).then(this.processBasicStats);
       if (this.showChart) {

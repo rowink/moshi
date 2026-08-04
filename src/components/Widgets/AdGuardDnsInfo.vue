@@ -10,7 +10,7 @@
   <div v-if="showData && dnsInfo.length > 0" class="dns-info">
     <div v-for="(item, index) in dnsInfo" :key="index" class="row">
       <span class="lbl">{{ item.lbl }}: </span>
-      <span class="val">{{ renderVal(item.val) }}</span>
+      <span class="val">{{ item.val | renderVal }}</span>
     </div>
   </div>
 </div>
@@ -26,7 +26,7 @@ export default {
     /* URL/ IP or hostname to the AdGuardHome instance, without trailing slash */
     hostname() {
       if (!this.options.hostname) this.error('You must specify the path to your AdGuard server');
-      return this.parseAsEnvVar(this.options.hostname);
+      return this.options.hostname;
     },
     showFullInfo() {
       return this.options.showFullInfo;
@@ -39,9 +39,7 @@ export default {
     },
     authHeaders() {
       if (this.options.username && this.options.password) {
-        const password = this.parseAsEnvVar(this.options.password);
-        const username = this.parseAsEnvVar(this.options.username);
-        const encoded = window.btoa(`${username}:${password}`);
+        const encoded = window.btoa(`${this.options.username}:${this.options.password}`);
         return { Authorization: `Basic ${encoded}` };
       }
       return {};
@@ -49,13 +47,12 @@ export default {
   },
   data() {
     return {
-      overrideProxyChoice: true,
       enabled: null,
       dnsInfo: [],
       showData: false,
     };
   },
-  methods: {
+  filters: {
     renderVal(val) {
       if (val === undefined) return 'N/A';
       if (Array.isArray(val) && val.length === 0) return 'N/A';
@@ -64,6 +61,8 @@ export default {
       if (Array.isArray(val)) return val.join('\n');
       return val;
     },
+  },
+  methods: {
     /* Make GET request to AdGuard endpoint */
     fetchData() {
       this.makeRequest(this.basicInoEndpoint, this.authHeaders).then(this.processStatusBasics);

@@ -1,6 +1,6 @@
 <template>
   <nav class="side-bar">
-    <div v-for="(section, index) in filteredSections" :key="index" class="side-bar-section">
+    <div v-for="(section, index) in sections" :key="index" class="side-bar-section">
       <!-- Section button -->
       <div @click="openSection(index)" class="side-bar-item-container">
         <SideBarItem
@@ -13,17 +13,17 @@
       <transition name="slide">
         <SideBarSection
           v-if="isOpen[index]"
-          :items="visibleItems(section.items)"
+          :items="filterTiles(section.items)"
           @launch-app="launchApp"
         />
       </transition>
     </div>
-    <!-- Show links for switching back to Home / Minimal views, preserving sub-page -->
+    <!-- Show links for switching back to Home / Minimal views -->
     <div class="switch-view-buttons">
-      <router-link :to="pathFor('home')">
+      <router-link to="/home/">
         <IconHome class="view-icon" v-tooltip="$t('alternate-views.default')" />
       </router-link>
-      <router-link :to="pathFor('minimal')">
+      <router-link to="/minimal/">
         <IconMinimalView class="view-icon" v-tooltip="$t('alternate-views.minimal')" />
       </router-link>
     </div>
@@ -36,39 +36,18 @@ import SideBarItem from '@/components/Workspace/SideBarItem.vue';
 import SideBarSection from '@/components/Workspace/SideBarSection.vue';
 import IconHome from '@/assets/interface-icons/application-home.svg';
 import IconMinimalView from '@/assets/interface-icons/application-minimal.svg';
-import { getCurrentUser, isLoggedInAsGuest } from '@/utils/auth/Auth';
-import { isVisibleToUser } from '@/utils/IsVisibleToUser';
-import { makeRoutePath, resolveRouteIntent } from '@/utils/config/ConfigHelpers';
+import { checkItemVisibility } from '@/utils/CheckItemVisibility';
 
 export default {
   name: 'SideBar',
   props: {
-    sections: { type: Array, default: () => [] },
-    initUrl: { type: String, default: '' },
+    sections: Array,
+    initUrl: String,
   },
-  emits: ['launch-widget', 'launch-app'],
   data() {
     return {
-      isOpen: [],
+      isOpen: new Array(this.sections.length).fill(false),
     };
-  },
-  computed: {
-    /* Return a list of sections that should be visible in workspace */
-    filteredSections() {
-      if (!this.sections) return [];
-      return this.sections.filter((section) => !section.displayData?.hideFromWorkspace);
-    },
-  },
-  watch: {
-    /* Update isOpen array when filtered sections change */
-    filteredSections(newSections) {
-      // Resize isOpen array if needed
-      const currentLength = this.isOpen.length;
-      const newLength = newSections.length;
-      if (newLength !== currentLength) {
-        this.isOpen = new Array(newLength).fill(false);
-      }
-    },
   },
   components: {
     SideBarItem,
@@ -80,7 +59,7 @@ export default {
     /* Toggles the section clicked, and closes all other sections */
     openSection(index) {
       this.isOpen = this.isOpen.map((val, ind) => (ind !== index ? false : !val));
-      if (this.filteredSections[index].widgets) this.$emit('launch-widget', this.filteredSections[index].widgets);
+      if (this.sections[index].widgets) this.$emit('launch-widget', this.sections[index].widgets);
     },
     /* When item clicked, emit a launch event */
     launchApp(options) {
@@ -91,7 +70,7 @@ export default {
       if (!this.initUrl) return;
       const process = (url) => (url ? url.replace(/[^\w\s]/gi, '').toLowerCase() : undefined);
       const compare = (item) => (process(item.url) === process(this.initUrl));
-      this.filteredSections.forEach((section, secIndx) => {
+      this.sections.forEach((section, secIndx) => {
         if (!section.items) return; // Cancel if no items
         if (section.items.findIndex(compare) !== -1) this.openSection(secIndx);
         section.items.forEach((item) => { // Do the same for sub-items, if set
@@ -99,25 +78,16 @@ export default {
         });
       });
     },
-    /* Return the items in a section that the current user/guest can see
-     * and that aren't explicitly hidden from the workspace view */
-    visibleItems(allTiles) {
-      if (!allTiles) return [];
-      const currentUser = getCurrentUser();
-      const isGuest = isLoggedInAsGuest();
-      return allTiles.filter((tile) => !tile.displayData?.hideFromWorkspace
-        && isVisibleToUser(tile.displayData || {}, currentUser, isGuest));
-    },
-    /* Build a URL for the given view, preserving the current sub-page and section */
-    pathFor(view) {
-      const { pageId, sectionSlug } = resolveRouteIntent(this.$route, this.$store);
-      return makeRoutePath(view, pageId, sectionSlug);
+    /* Return a list with visible items on a section to the user or guest */
+    filterTiles(allTiles) {
+      if (!allTiles) {
+        return [];
+      }
+      return allTiles.filter((tile) => checkItemVisibility(tile));
     },
   },
   mounted() {
-    // Initialize isOpen array based on filteredSections length
-    this.isOpen = new Array(this.filteredSections.length).fill(false);
-    if (this.filteredSections.length === 1) { // If only 1 section, go ahead and open it
+    if (this.sections.length === 1) { // If only 1 section, go ahead and open it
       this.openSection(0);
     } else { // Otherwise, see if user set a default section, and open that
       this.openDefaultSection();
@@ -155,7 +125,7 @@ nav.side-bar {
 .slide-enter-active {
   transition: all 0.1s ease-in-out;
 }
-.slide-enter-from {
+.slide-enter {
   transform: translate(0, -80%);
 }
 .slide-leave-to {

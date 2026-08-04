@@ -33,7 +33,7 @@
 <script>
 import WidgetMixin from '@/mixins/WidgetMixin';
 import { capitalize } from '@/utils/MiscHelpers';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin],
@@ -56,18 +56,8 @@ export default {
       return this.options.numDays || 6;
     },
     endpoint() {
-      const apiKey = this.parseAsEnvVar(this.options.apiKey);
-      const { city, cityId, lat, lon } = this.options;
-      const cnt = this.numDays * 8; // API returns 3-hourly entries; request enough to cover numDays
-      let locationParams;
-      if (lat && lon) {
-        locationParams = `lat=${lat}&lon=${lon}`;
-      } else if (cityId) {
-        locationParams = `id=${cityId}`;
-      } else {
-        locationParams = `q=${city}`;
-      }
-      const params = `?${locationParams}&cnt=${cnt}&units=${this.units}&appid=${apiKey}`;
+      const { apiKey, city } = this.options;
+      const params = `?q=${city}&cnt=${this.numDays}&units=${this.units}&appid=${apiKey}`;
       return `${widgetApiEndpoints.weatherForecast}${params}`;
     },
     tempDisplayUnits() {
@@ -99,21 +89,17 @@ export default {
     fetchData() {
       this.makeRequest(this.endpoint).then(this.processData);
     },
-    /* Process the results from the Axios request, deduplicating by date */
+    /* Process the results from the Axios request */
     processData(dataList) {
-      const seenDates = {};
       const uiWeatherData = [];
-      dataList.list.forEach((day) => {
-        const date = this.dateFromStamp(day.dt);
-        if (seenDates[date] || uiWeatherData.length >= this.numDays) return;
-        seenDates[date] = true;
+      dataList.list.forEach((day, index) => {
         uiWeatherData.push({
-          index: uiWeatherData.length,
-          date,
+          index,
+          date: this.dateFromStamp(day.dt),
           icon: day.weather[0].icon,
           main: day.weather[0].main,
           description: day.weather[0].description,
-          temp: this.processTemp(day.main.temp),
+          temp: this.processTemp(day.temp.day),
           info: this.makeWeatherData(day),
         });
       });
@@ -123,15 +109,15 @@ export default {
     makeWeatherData(data) {
       return [
         [
-          { label: 'Min Temp', value: this.processTemp(data.main.temp_min) },
-          { label: 'Max Temp', value: this.processTemp(data.main.temp_max) },
-          { label: 'Feels Like', value: this.processTemp(data.main.feels_like) },
+          { label: 'Min Temp', value: this.processTemp(data.temp.min) },
+          { label: 'Max Temp', value: this.processTemp(data.temp.max) },
+          { label: 'Feels Like', value: this.processTemp(data.feels_like.day) },
         ],
         [
-          { label: 'Pressure', value: `${data.main.pressure}hPa` },
-          { label: 'Humidity', value: `${data.main.humidity}%` },
-          { label: 'wind', value: `${data.wind.speed}${this.speedDisplayUnits}` },
-          { label: 'clouds', value: `${data.clouds.all}%` },
+          { label: 'Pressure', value: `${data.pressure}hPa` },
+          { label: 'Humidity', value: `${data.humidity}%` },
+          { label: 'wind', value: `${data.speed}${this.speedDisplayUnits}` },
+          { label: 'clouds', value: `${data.clouds}%` },
         ],
       ];
     },
@@ -151,15 +137,13 @@ export default {
     /* Display weather description and Click for more note on hover */
     tooltip(text) {
       const content = `${text ? capitalize(text) : ''}\nClick for more Info`;
-      return { content };
+      return { content, trigger: 'hover focus', delay: 250 };
     },
     /* Validate input props, and print warning if incorrect */
     checkProps() {
       const ops = this.options;
       if (!ops.apiKey) this.error('Missing API key for OpenWeatherMap');
-      if (!ops.city && !ops.cityId && !(ops.lat && ops.lon)) {
-        this.error('A city name, city ID or lat + lon is required to fetch weather');
-      }
+      if (!ops.city) this.error('A city name is required to fetch weather');
       if (ops.units && ops.units !== 'metric' && ops.units !== 'imperial') {
         this.error('Invalid units specified, must be either \'metric\' or \'imperial\'');
       }

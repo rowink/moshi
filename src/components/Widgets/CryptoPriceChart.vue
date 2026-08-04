@@ -4,10 +4,10 @@
 
 <script>
 import { Chart } from 'frappe-charts/dist/frappe-charts.min.esm';
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
 import ChartingMixin from '@/mixins/ChartingMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin, ChartingMixin],
@@ -82,7 +82,7 @@ export default {
     },
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
-      request.get(this.endpoint)
+      axios.get(this.endpoint)
         .then((response) => {
           try {
             this.processData(response.data);

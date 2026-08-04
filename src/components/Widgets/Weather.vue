@@ -24,7 +24,7 @@
 
 <script>
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin],
@@ -46,17 +46,8 @@ export default {
       return this.options.units || 'metric';
     },
     endpoint() {
-      const apiKey = this.parseAsEnvVar(this.options.apiKey);
-      const { city, cityId, lat, lon } = this.options;
-      let locationParams;
-      if (lat && lon) {
-        locationParams = `lat=${lat}&lon=${lon}`;
-      } else if (cityId) {
-        locationParams = `id=${cityId}`;
-      } else {
-        locationParams = `q=${city}`;
-      }
-      return `${widgetApiEndpoints.weather}?${locationParams}&appid=${apiKey}&units=${this.units}`;
+      const { apiKey, city } = this.options;
+      return `${widgetApiEndpoints.weather}?q=${city}&appid=${apiKey}&units=${this.units}`;
     },
     tempDisplayUnits() {
       switch (this.units) {
@@ -115,11 +106,7 @@ export default {
     checkProps() {
       const ops = this.options;
       if (!ops.apiKey) this.error('Missing API key for OpenWeatherMap');
-
-      if ((!ops.lat || !ops.lon) && !ops.city && !ops.cityId) {
-        this.error('A city name, city ID or lat + lon is required to fetch weather');
-      }
-
+      if (!ops.city) this.error('A city name is required to fetch weather');
       if (ops.units && ops.units !== 'metric' && ops.units !== 'imperial') {
         this.error('Invalid units specified, must be either \'metric\' or \'imperial\'');
       }

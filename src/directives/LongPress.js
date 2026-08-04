@@ -2,7 +2,7 @@
  * A Vue directive to call event when element is long-pressed
  * Used to open context menus on touch-enabled devices
  * Inspired by: FeliciousX/vue-directive-long-press
- * Dashy: Licensed under MIT - (C) Alicia Sykes 2024
+ * Dashy: Licensed under MIT - (C) Alicia Sykes 2022
  */
 
 const LONG_PRESS_DEFAULT_DELAY = 750;
@@ -11,7 +11,7 @@ const longPressEvent = new CustomEvent('long-press');
 let startTime = null;
 
 export default {
-  mounted(element, binding) {
+  bind(element, binding, vnode) {
     const el = element;
     el.dataset.longPressTimeout = null;
 
@@ -29,7 +29,7 @@ export default {
 
     /* Emit event to component */
     const triggerEvent = () => {
-      if (binding.instance) binding.instance.$emit('long-press');
+      if (vnode.componentInstance) vnode.componentInstance.$emit('long-press');
       else el.dispatchEvent(longPressEvent);
       el.dataset.elapsed = true;
     };
@@ -39,17 +39,11 @@ export default {
       document.removeEventListener('pointerup', onPointerUp);
     };
 
-    const onPointerMove = () => {
-      clearTimeout(parseInt(el.dataset.longPressTimeout, 10));
-      document.removeEventListener('pointermove', onPointerMove);
-    };
-
     const onPointerDown = (e) => {
       // If event was right-click, then immediately trigger
       if (e.button === 2) return;
       startTime = Date.now();
       document.addEventListener('pointerup', onPointerUp);
-      el.addEventListener('pointermove', onPointerMove);
       el.addEventListener('click', swallowClick);
       const timeoutDuration = LONG_PRESS_DEFAULT_DELAY;
       const timeout = setTimeout(triggerEvent, timeoutDuration);
@@ -60,7 +54,7 @@ export default {
     el.$longPressHandler = onPointerDown;
     el.addEventListener('pointerdown', onPointerDown);
   },
-  unmounted(el) {
+  unbind(el) {
     startTime = null;
     clearTimeout(parseInt(el.dataset.longPressTimeout, 10));
     el.removeEventListener('pointerdown', el.$longPressHandler);

@@ -8,7 +8,6 @@
       <ParentOpenIcon v-else-if="openingMethod === 'parent'" />
       <TopOpenIcon v-else-if="openingMethod === 'top'" />
       <ClipboardOpenIcon v-else-if="openingMethod === 'clipboard'" />
-      <NewWindowOpenIcon v-else-if="openingMethod === 'newwindow'" />
       <UnknownIcon v-else />
     </div>
     <div v-if="hotkey" :class="`hotkey-denominator ${makeClass(position, isSmall, isTransparent)}`">
@@ -28,17 +27,16 @@ import WorkspaceOpenIcon from '@/assets/interface-icons/open-workspace.svg';
 import ParentOpenIcon from '@/assets/interface-icons/open-parent.svg';
 import TopOpenIcon from '@/assets/interface-icons/open-top.svg';
 import ClipboardOpenIcon from '@/assets/interface-icons/open-clipboard.svg';
-import NewWindowOpenIcon from '@/assets/interface-icons/open-new-window.svg';
 import UnknownIcon from '@/assets/interface-icons/unknown-icon.svg';
 
 export default {
   name: 'ItemOpenMethodIcon',
   props: {
-    openingMethod: { type: String, default: '' }, // newtab | sametab | parent | top | modal | workspace | newwindow
+    openingMethod: String, // newtab | sametab | parent | top | modal | workspace
     isSmall: Boolean, // If true, will apply small class
-    position: { type: String, default: 'top right' }, // Position popperClass: top, bottom, left, right
+    position: String, // Position classes: top, bottom, left, right
     isTransparent: Boolean, // If true, will apply opacity
-    hotkey: { type: Number, default: 0 }, // Optional hotkey to also display
+    hotkey: Number, // Optional hotkey to also display
   },
   methods: {
     /* Returns custom class string, from optional props */
@@ -57,7 +55,6 @@ export default {
     ParentOpenIcon,
     TopOpenIcon,
     ClipboardOpenIcon,
-    NewWindowOpenIcon,
     UnknownIcon,
   },
 };
@@ -69,6 +66,9 @@ export default {
     position: absolute;
     width: 1rem;
     margin: 2px;
+    path {
+      fill: currentColor;
+    }
   }
   &.top svg { top: 0; }
   &.bottom svg { bottom: 0; }

@@ -8,26 +8,26 @@
     </span>
     <span v-if="domainMeta.isRegistered"
       :class="`is-registered expire-date ${ getExpireColor(domainRegistration.expireDate) }`">
-      {{ formatDate(domainRegistration.expireDate) }}
+      {{ domainRegistration.expireDate | formatDate }}
     </span>
     <span v-if="domainMeta.isRegistered"
       :class="`is-registered time-left ${getExpireColor(domainRegistration.expireDate) }`">
-      {{ formatTimeLeft(domainRegistration.expireDate) }}
+      {{ domainRegistration.expireDate | formatTimeLeft }}
     </span>
   </div>
   <!-- Domain Info -->
   <div v-if="showDomainInfo && domainRegistration" class="domain-more-data">
     <div class="row">
       <span class="lbl">Created</span>
-      <span class="val">{{ formatDate(domainRegistration.createdDate) }}</span>
+      <span class="val">{{ domainRegistration.createdDate | formatDate }}</span>
     </div>
     <div class="row">
       <span class="lbl">Updated</span>
-      <span class="val">{{ formatDate(domainRegistration.updatedDate) }}</span>
+      <span class="val">{{ domainRegistration.updatedDate | formatDate }}</span>
     </div>
     <div class="row">
       <span class="lbl">Expires</span>
-      <span class="val">{{ formatDate(domainRegistration.expireDate) }}</span>
+      <span class="val">{{ domainRegistration.expireDate | formatDate }}</span>
     </div>
     <div class="row" v-for="(ns, inx) in domainRegistration.nameServers" :key="inx">
       <span class="lbl">NS {{ inx + 1 }}</span>
@@ -56,18 +56,18 @@
 <script>
 import WidgetMixin from '@/mixins/WidgetMixin';
 import { timestampToDate, getTimeAgo } from '@/utils/MiscHelpers';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin],
   computed: {
     apiKey() {
       if (!this.options.apiKey) this.error('Missing API Key');
-      return this.parseAsEnvVar(this.options.apiKey);
+      return this.options.apiKey;
     },
     domain() {
       if (!this.options.domain) this.error('Missing Domain Name Key');
-      return this.parseAsEnvVar(this.options.domain);
+      return this.options.domain;
     },
     endpoint() {
       return `${widgetApiEndpoints.domainMonitor}/?domain=${this.domain}&r=whois&apikey=${this.apiKey}`;
@@ -80,7 +80,7 @@ export default {
       showDomainInfo: false,
     };
   },
-  methods: {
+  filters: {
     formatDate(date) {
       if (!date) return 'No Date Supplied';
       return timestampToDate(date);
@@ -88,6 +88,8 @@ export default {
     formatTimeLeft(date) {
       return getTimeAgo(new Date(date)).replace('in', '');
     },
+  },
+  methods: {
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
       this.makeRequest(this.endpoint).then(this.processData);
@@ -95,7 +97,7 @@ export default {
     /* Assign data variables to the returned data */
     processData(domainResults) {
       if (domainResults.limit_hit) this.error('API Limit Reached');
-      if (Number(domainResults.status) !== 0) this.error(domainResults.status_desc || 'API Error');
+      if (domainResults.status !== '0') this.error(domainResults.status_desc || 'API Error');
       // Get domain name and registration status
       const domainName = domainResults.domain_name;
       const isRegistered = domainResults.registered;

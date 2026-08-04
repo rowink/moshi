@@ -1,41 +1,31 @@
 
 <h1 align="center">Dashy</h1>
 <p align="center">
-  <i>The most customizable dashboard for self-hosters</i><br>
-  <b>Dashy is the homepage for your homelab</b>
+  <i>Dashy helps you organize your self-hosted services by making them accessible from a single place</i>
    <br/>
   <img width="120" src="https://i.ibb.co/yhbt6CY/dashy.png" />
   <br/>
   <b><a href="./docs/showcase.md">User Showcase</a></b> | <b><a href="https://demo.dashy.to">Live Demo</a></b> | <b><a href="./docs/quick-start.md">Getting Started</a></b> | <b><a href="https://dashy.to/docs">Documentation</a></b> | <b><a href="https://github.com/Lissy93/dashy">GitHub</a></b>
+  <br/><br/>
+  <a href="https://github.com/awesome-selfhosted/awesome-selfhosted#personal-dashboards">
+    <img src="https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg" alt="Awesome Self-Hosted">
+  </a>
+  <a href="./LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-0aa8d2?logo=opensourceinitiative&logoColor=fff" alt="License MIT">
+  </a>
+  <a href="./.github/CHANGELOG.md">
+    <img src="https://img.shields.io/github/package-json/v/lissy93/dashy?logo=azurepipelines&amp;color=0aa8d2" alt="Current Version">
+  </a>
+  <a href="https://hub.docker.com/r/lissy93/dashy">
+    <img src="https://img.shields.io/docker/pulls/lissy93/dashy?logo=docker&color=0aa8d2&logoColor=fff" alt="Docker Pulls">
+  </a>
+  <a href="http://as93.link/dashy-build-status">
+   <img src="https://badgen.net/github/status/lissy93/dashy?icon=github" alt="GitHub Status">
+  </a>
+  <a href="https://snyk.io/test/github/lissy93/dashy">
+    <img src="https://snyk.io/test/github/lissy93/dashy/badge.svg" alt="Known Vulnerabilities">
+  </a>
 </p>
-
-<h4><p align="center">Kindly sponsored by</p></h4>
-
-<table align="center">
-  <tr>
-    <td align="center" width="33%">
-      <a href="https://ssdnodes.com/dashy" target="_blank">
-        <img src="https://pixelflare.cc/alicia/sponsors/ssd-nodes-sponsorship.png" width="260" alt="SSD Nodes"><br>
-        <b>SSD Nodes</b>
-      </a><br>
-      <sub>Affordable VPS hosting for self-hosters</sub>
-    </td>
-    <td align="center" width="33%">
-      <a href="https://umbrel.com?ref=dashy" target="_blank">
-        <img src="https://cdn.as93.net/sponsors/umbrel-banner.jpg" width="260" alt="Umbrel"><br>
-        <b>Umbrel</b>
-      </a><br>
-      <sub>Personal home cloud and OS for self-hosting</sub>
-    </td>
-    <td align="center" width="33%">
-      <a href="https://www.testmuai.com/?utm_medium=sponsor&utm_source=dashy" target="_blank">
-        <img src="https://cdn.as93.net/sponsors/test-mu-ai.png" width="260" alt="TestMu AI"><br>
-        <b>TestMu AI</b>
-      </a><br>
-      <sub>Full-stack Agentic AI Quality Engineering platform</sub>
-    </td>
-  </tr>
-</table>
 
 <details>
   <summary><b>Table of Contents</b></summary>
@@ -43,7 +33,7 @@
   
 - **Getting Started**
   - [🌈 Features](#features-)
-  - [⚡ Demo](#demo-)
+  - [⚡Demo](#demo-)
   - [🚀 Getting Started](#getting-started-)
   - [🔧 Configuring](#configuring-)
 - **Feature Overview**
@@ -65,6 +55,7 @@
   - [💖 Supporting Dashy](#supporting-dashy-)
   - [🏆 Credits](#credits-)
   - [🧱 Developing](#developing-)
+  - [🗞️ Release Schedule](#release-schedule-)
   - [📘 Documentation](#documentation-)
   - [🛣️ Roadmap](#roadmap-)
   - [🙌 Alternatives](#alternatives-)
@@ -75,7 +66,7 @@
 
 ## Features 🌈
 - 📃 Support for multiple pages
-- 🚦 Real-time status monitoring for each of your apps/links/hosts
+- 🚦 Real-time status monitoring for each of your apps/links
 - 📊 Use widgets to display info and dynamic content from self-hosted services
 - 🔎 Instant search by name, domain, or tags + customizable hotkeys & keyboard shortcuts
 - 🎨 Many built-in color themes, with UI color editor and support for custom CSS
@@ -100,11 +91,11 @@
 
 ## Demo ⚡
 
-**Live Instances**: [Demo](https://demo.dashy.to) (Live Demo) ┆ [Dev Preview](https://dev.dashy.to) (Dev Preview)
+**Live Instances**: [Demo 1](https://demo.dashy.to) (Live Demo) ┆ [Demo 2](https://live.dashy.to) (Dashy Links) ┆ [Demo 3](https://dev.dashy.to) (Dev Preview)
 
 **Screenshots**: Checkout the [Showcase](./docs/showcase.md), to see example dashboards from the community
 
-**Try it yourself**: [`docker run -p 8080:8080 lissy93/dashy`](./docs/quick-start.md)
+**Spin up your own demo**: [![One-Click Deploy with PWD](https://img.shields.io/badge/Play--with--Docker-Deploy-2496ed?style=flat-square&logo=docker)](https://labs.play-with-docker.com/?stack=https://raw.githubusercontent.com/Lissy93/dashy/master/docker-compose.yml) or [`docker run -p 8080:80 lissy93/dashy`](./docs/quick-start.md)
 
 
 <p align="center">
@@ -124,56 +115,48 @@
 
 You will need [Docker](https://docs.docker.com/get-docker/) installed on your system
 
-```bash
-docker run -p 4000:8080 lissy93/dashy
+```
+docker run -p 8080:80 lissy93/dashy
 ```
 
 Or
 
-```bash
+```docker
 docker run -d \
-  -p 4000:8080 \
-  -v /path/to/your/user-data:/app/user-data \
+  -p 4000:80 \
+  -v /root/my-local-conf.yml:/app/public/conf.yml \
   --name my-dashboard \
   --restart=always \
   lissy93/dashy:latest
 ```
+[![Dashy on Docker Hub](https://dockeri.co/image/lissy93/dashy)](https://hub.docker.com/r/lissy93/dashy)
 
-To use with compose, see our sample [`docker-compose.yml`](https://github.com/lissy93/dashy/blob/master/docker-compose.yml).
+See also: [examples with Docker Compose](./docs/deployment.md#using-docker-compose). Dashy is also available via GHCR, and tags for other architectures (`arm32v7`, `arm64v8`, etc.) and set versions are supported
 
-The mounted `/app/user-data` directory **must** contain at least a `conf.yml`.
-It can also hold sub-config files, item icons, fonts, custom CSS, or anything else you want served from the web root.
-
-Dashy is distributed both on [DockerHub](https://hub.docker.com/r/lissy93/dashy) (`lissy93/dashy`) and [GHCR](https://github.com/lissy93/dashy/pkgs/container/dashy) (`ghcr.io/lissy93/dashy`).
-
-You can either use `:latest` or pin to specific versions (like `4.0.0`).
-All images are multi-arch (works on amd64 and arm64).
-
-> Once you've got Dashy running, see [the docs](https://dashy.to/docs/) for configuration references and usage guides.
+> Once you've got Dashy running, see [App Management Docs](./docs/management.md) for info on using health checks, updating, backups, web-server configs, logs, performance, security, and more.
 
 ### Deploying from Source 🔨
 
-You'll need Node (20+) installed, as well as git and `yarn` enabled.
+You will need [git](https://git-scm.com/downloads), the latest or LTS version of [Node.js](https://nodejs.org/) and _(optionally)_ [Yarn](https://yarnpkg.com/) installed on your system.
 
 - Clone the Repo: `git clone https://github.com/Lissy93/dashy.git` and `cd dashy`
-- Configuration: Fill in your settings in `./user-data/conf.yml`
+- Configuration: Fill in your settings in `./public/conf.yml`
 - Install dependencies: `yarn`
 - Build: `yarn build`
 - Run: `yarn start`
 
-> See docs: [Full list of Dashy's commands](./docs/management.md#running-commands)
+> See docs: [Full list of Dashy's commands](./docs/management.md#basic-commands)
 
 ### Deploy to the Cloud ☁️
 
 Dashy supports **1-Click deployments** on several popular cloud platforms. To spin up a new instance, just click a link below:
 - [<img src="https://i.ibb.co/ZxtzrP3/netlify.png" width="18"/> Deploy to Netlify](https://app.netlify.com/start/deploy?repository=https://github.com/lissy93/dashy)
+- [<img src="https://i.ibb.co/d2P1WZ7/heroku.png" width="18"/> Deploy to Heroku](https://heroku.com/deploy?template=https://github.com/Lissy93/dashy)
 - [<img src="https://i.ibb.co/Ld2FZzb/vercel.png" width="18"/> Deploy to Vercel](https://vercel.com/new/project?template=https://github.com/lissy93/dashy)
-- [<img src="https://i.ibb.co/xCHtzgh/render.png" width="18"/> Deploy to Render](https://render.com/deploy?repo=https://github.com/lissy93/dashy)
-- [<img src="https://railway.app/brand/logo-light.png" width="18"/> Deploy to Railway](https://railway.app/template/MtdjAQ?referralCode=app)
+- [<img src="https://i.ibb.co/xCHtzgh/render.png" width="18"/> Deploy to Render](https://render.com/deploy?repo=https://github.com/lissy93/dashy/tree/deploy_render)
 - [<img src="https://i.ibb.co/J7MGymY/googlecloud.png" width="18"/> Deploy to GCP](https://deploy.cloud.run/?git_repo=https://github.com/lissy93/dashy.git)
 - [<img src="https://i.ibb.co/HVWVYF7/docker.png" width="18"/> Deploy to PWD](https://labs.play-with-docker.com/?stack=https://raw.githubusercontent.com/Lissy93/dashy/master/docker-compose.yml)
 - [<img src="https://i.ibb.co/7NxnM2P/easypanel.png" width="18"/> Deploy to Easypanel](https://easypanel.io/docs/templates/dashy)
-- [<img src="https://cloudcache.tencent-cloud.com/qcloud/ui/static/other_external_resource/af4a7321-0f56-47ae-a39e-3fd1d162d8e6.jpeg" width="18"/> Deploy to EdgeOne](https://edgeone.ai/pages/new?repository-url=https://github.com/lissy93/dashy)
 
 > For more 1-click cloud deployments, see [Cloud Deployment](./docs/deployment.md#deploy-to-cloud-service)
 
@@ -185,7 +168,7 @@ Dashy supports **1-Click deployments** on several popular cloud platforms. To sp
 
 > For full configuration documentation, see: [**Configuring**](./docs/configuring.md)
 
-Dashy is configured through a YAML file, located at `./user-data/conf.yml`. In addition, you can find a complete list of available options in the [Configuring Docs](./docs/configuring.md). The config can also be edited and saved directly through the UI.
+Dashy is configured through a YAML file, located at `./public/conf.yml`. In addition, you can find a complete list of available options in the [Configuring Docs](./docs/configuring.md). The config can also be edited and saved directly through the UI.
 
 **[⬆️ Back to Top](#dashy)**
 
@@ -221,7 +204,7 @@ Both sections and items can have an icon associated with them, defined under the
 
 The following icon types are supported:
 - **Favicon** - Automatically fetch an apps icon from its Favicon or logo image
-- **Icon Packs** - Use any icon from [font-awesome], [simple-icons], [selfh.st/icons], or [material icons]
+- **Icon Packs** - Use any icon from [font-awesome], [simple-icons] or [material icons]
 - **Emoji** - Any valid emoji can be used as an icon
 - **Generative** - Unique, auto-generated images for easily identifying services
 - **URL** - Pass the URL of any valid image in to have it fetched and rendered
@@ -232,8 +215,7 @@ The following icon types are supported:
 [font-awesome]: https://fontawesome.com/icons
 [simple-icons]: https://simpleicons.org/
 [material icons]: https://github.com/Templarian/MaterialDesign
-[selfh.st/icons]: https://selfh.st/icons
-[dashboard-icons]: https://github.com/homarr-labs/dashboard-icons
+[dashboard-icons]: https://github.com/WalkxCode/dashboard-icons
 
 
 <p align="center">
@@ -249,11 +231,9 @@ The following icon types are supported:
 
 > For full monitoring documentation, see: [**Status Indicators**](./docs/status-indicators.md)
 
-Dashy has two optional features to check if each app/service or host is up and responding, then display a small status indicator icon. Hovering over it will show additional stats like response time and status code.
+Dashy has an optional feature to check if each app/ service is up and responding, then display a small status indicator icon. Hovering over it will show additional stats like response time and status code.
 
-App/Service status is checked by calling an URL and analyzing its HTTP response code. Host status is checked by sending a real ping ICMP request to the host. Both checks can be done at the same time on the same item. In this case, two status indicators will show up and behave independantly according to the global and item settings for each feature.
-
-Status indicators can be globally enabled by setting `appConfig.statusCheck: true` for app/service and  `appConfig.pingCheck: true` for hosts or enabled/disabled on a per-item basis. Statuses are checked on page load, but you can allow continuous polling by specifying a time interval between checks, in seconds under `appConfig.statusCheckInterval` and `appConfig.pingCheckInterval`. You can also use a different endpoint for app/service status checking, with `statusCheckUrl`, and if needed, pass in custom headers under `statusCheckHeaders`.
+Status indicators can be globally enabled by setting `appConfig.statusCheck: true` or enabled/ disabled on a per-item basis. Status is checked on page load, but you can allow continuous polling by specifying a time interval between checks, in seconds under `appConfig.statusCheckInterval`. You can also use a different endpoint for status checking, with `statusCheckUrl`, and if needed, pass in custom headers under `statusCheckHeaders`.
 
 <p align="center">
   <img alt="Status Checks demo" src="https://raw.githubusercontent.com/Lissy93/dashy/master/docs/assets/status-check-demo.gif" width="600" />
@@ -267,7 +247,7 @@ Status indicators can be globally enabled by setting `appConfig.statusCheck: tru
 
 > For full widget documentation, see: [**Widgets**](./docs/widgets.md)
 
-You can display dynamic content from services in the form of widgets. There are several pre-built widgets available for showing useful info, and integrations with commonly self-hosted services, but you can also easily create your own for almost any app.
+You can display dynamic content from services in the form of widgets. There are several pre-built widgets availible for showing useful info, and integrations with commonly self-hosted services, but you can also easily create your own for almost any app.
 
 
 <p align="center">
@@ -329,7 +309,7 @@ You can change the view from the UI, using the switch icon in the top-right corn
 
 > For full documentation on views and opening methods, see: [**Alternate Views**](./docs/alternate-views.md)
 
-There are several different ways you can launch apps. You can specify the default opening method for any given item under the `target` attribute or set a site-wide default under `appConfig.defaultOpeningMethod`. Right-click on an item for all options. The following options are supported:
+There are several different ways you can launch apps. You can specify the default opening method for any given item under the `target` attribute or set a site-wide default under `appConfig.defaultOpeningMethod`. Right-click on an item to item for all options. The following options are supported:
 - `sametab` - The app will be launched in the current tab
 - `newtab` - The app will be launched in a new tab (or use Ctrl + Click)
 - `modal` - Launch app in a resizable/ movable popup modal on the current page (or use Alt + Click)
@@ -425,36 +405,30 @@ Dashy supports multiple languages and locales. When available, your language sho
 
 #### Supported Languages
 - 🇬🇧 **English**: `en` - _Default_
-- 🇬🇧 **English (British)**: `en-GB`
-- 🇦🇪 **Arabic**: `ar` - Contributed by **[@kayedspace](https://github.com/kayedspace)**
+- 🇦🇪 **Arabic**: `ar` - _Auto-generated_
 - 🇧🇩 **Bengali**: `bn` - Contributed by **[@soaibsafi](https://github.com/soaibsafi)**
 - 🇧🇬 **Bulgarian**: `bg` - Contributed by **[@asenov](https://github.com/asenov)**
-- 🇨🇳 **Chinese**: `zh-CN` - Contributed by **[@FormatToday](https://github.com/FormatToday)**
+- 🇨🇳 **Chinese**: `cn` - Contributed by **[@FormatToday](https://github.com/FormatToday)**
 - 🇨🇿 **Czech**: `cs` - Contributed by **[@Tuzi555](https://github.com/Tuzi555)**
 - 🇩🇰 **Danish**: `da` - Contributed by **[@lordpansar](https://github.com/lordpansar)**
 - 🇳🇱 **Dutch**: `nl` - Contributed by **[@evroon](https://github.com/evroon)**
 - 🇫🇷 **French**: `fr` - Contributed by **[@EVOTk](https://github.com/EVOTk)**
 - 🇩🇪 **German**: `de` - Contributed by **[@Niklashere](https://github.com/Niklashere)**
 - 🇬🇷 **Greek**: `el` - Contributed by **[@aviolaris](https://github.com/aviolaris)**
-- 🇮🇳 **Hindi**: `hi` - _Auto-generated_ (needs human review!)
-- 🇭🇺 **Hungarian**: `hu` - Contributed by **[@apgyorfi](https://github.com/apgyorfi)**
+- 🇮🇳 **Hindi**: `hi` - _Auto-generated_
 - 🇮🇹 **Italian**: `it` - Contributed by **[@alexdelprete](https://github.com/alexdelprete)**
-- 🇯🇵 **Japanese**: `ja` - _Auto-generated_ (needs human review!)
+- 🇯🇵 **Japanese**: `ja` - _Auto-generated_
 - 🇰🇷 **Korean**: `ko` - Contributed by **[@boggy-cs](https://github.com/boggy-cs)**
-- 🇰🇬 **Kyrgyz**: `ky` - Contributed by **[@noblepower1337](https://github.com/noblepower1337)**
 - 🇳🇴 **Norwegian Bokmål**: `nb` - Contributed by **[@rubjo](https://github.com/rubjo)**
 - 🇵🇱 **Polish**: `pl` - Contributed by **[@skaarj1989](https://github.com/skaarj1989)**
 - 🇵🇹 **Portuguese**: `pt` - Contributed by **[@LeoColman](https://github.com/LeoColman)**
-- 🇷🇴 **Romanian**: `ro` - Contributed by **[@z3r0l1nk](https://github.com/z3r0l1nk)**
-- 🛰️ **Galician**: `gl` - Contributed by **[@pvillaverde](https://github.com/pvillaverde)**
-- 🇷🇺 **Russian**: `ru` - Contributed by **[@sasetz](https://github.com/sasetz)**
+- 🇷🇺 **Russian**: `ru` - _Auto-generated_
 - 🇸🇰 **Slovak**: `sk` - Contributed by **[@Smexhy](https://github.com/Smexhy)**
 - 🇸🇮 **Slovenian**: `sl` - Contributed by **[@UrekD](https://github.com/UrekD)**
 - 🇪🇸 **Spanish**: `es` - Contributed by **[@lu4t](https://github.com/lu4t)**
 - 🇸🇪 **Swedish**: `sv` - Contributed by **[@BOZG](https://github.com/BOZG)**
 - 🇹🇼 **Traditional Chinese**: `zh-TW` - Contributed by **[@stanly0726](https://github.com/stanly0726)**
 - 🇹🇷 **Turkish**: `tr` - Contributed by **[@imsakg](https://github.com/imsakg)**
-- 🇺🇦 **Ukrainian**: `uk` - Contributed by **[@allozavrr](https://github.com/allozavrr)**
 - 🏴‍☠️ **Pirate**: `pirate` - Contributed by **[@Lissy93](https://github.com/lissy93)**
 
 #### Add your Language
@@ -494,15 +468,20 @@ pages:
 
 ## System Requirements 📊
 
-If running on bare metal, Dashy requires [Node](https://nodejs.org/en/) V 20.0.0 or later, LTS (22.x) is recommended.
+If running on bare metal, Dashy requires [Node](https://nodejs.org/en/) V 16.0.0 or later, LTS (16.13.2) is recommended.
 
-If running in Docker container, the recommended base image is Alpine (3.21)
+If running in Docker container, the recommended base image is Alpine (3.15)
 
 The hardware requirements vary depending on where and how you are running Dashy. Generally speaking, on a bare-metal system or Docker container, 1GB of memory should be more than enough, and depending on whether you are using your own assets, then 1GB of disk space should be sufficient. 
 
 If you are using one of the 1-click cloud deployment methods, serving the app through a CDN or using a static hosting provider, then there are no specific requirements, as the built app is just a series of static JS files, and so is very light-weight.
 
-Dashy also runs well on low-powered ARM-based single board computers, such as a Raspberry Pi (tested on Pi 3)
+Dashy also wells run on low-powered ARM-based single board computers, such as a Raspberry Pi (tested on Pi 3)
+
+**Browser Support**
+![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![IE](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png) | ![Opera](https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png)
+--- | --- | --- | --- | --- |
+Latest ✔ | Latest ✔ | 10+ ✔ | Latest ✔ | 6.1+ ❌ |
 
 **[⬆️ Back to Top](#dashy)**
 
@@ -548,11 +527,114 @@ Thank you so much to everyone who has helped with Dashy so far; every contributi
 #### Sponsors
 
 Huge thanks to the sponsors helping to support Dashy's development!
-
-![sponsors badge](https://readme-contribs.as93.net/sponsors/lissy93)
+<!-- readme: sponsors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/peng1can">
+            <img src="https://avatars.githubusercontent.com/u/225854?v=4" width="80;" alt="peng1can"/>
+            <br />
+            <sub><b>Peng1can</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/emlazzarin">
+            <img src="https://avatars.githubusercontent.com/u/1141361?u=714e3487a3f2e0df721b01a0133945f075d3ff68&v=4" width="80;" alt="emlazzarin"/>
+            <br />
+            <sub><b>Eddy Lazzarin</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/AnandChowdhary">
+            <img src="https://avatars.githubusercontent.com/u/2841780?u=ca8e292b15abcc6cddaeae0abded0115c51b4789&v=4" width="80;" alt="AnandChowdhary"/>
+            <br />
+            <sub><b>Anand Chowdhary</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/davidpaulyoung">
+            <img src="https://avatars.githubusercontent.com/u/3418369?v=4" width="80;" alt="davidpaulyoung"/>
+            <br />
+            <sub><b>David Young</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/k-rol">
+            <img src="https://avatars.githubusercontent.com/u/4050412?u=1162510eec7b7aeb31d4c7c65d51d4f773d823b0&v=4" width="80;" alt="k-rol"/>
+            <br />
+            <sub><b>Carol Ouellet</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/bile0026">
+            <img src="https://avatars.githubusercontent.com/u/5022496?u=aec96ad173c0ea9baaba93807efa8a848af6595c&v=4" width="80;" alt="bile0026"/>
+            <br />
+            <sub><b>Zach Biles</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/UlisesGascon">
+            <img src="https://avatars.githubusercontent.com/u/5110813?u=3c41facd8aa26154b9451de237c34b0f78d672a5&v=4" width="80;" alt="UlisesGascon"/>
+            <br />
+            <sub><b>Ulises Gascón</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/bmcgonag">
+            <img src="https://avatars.githubusercontent.com/u/7346620?u=2a0f9284f3e12ac1cc15288c254d1ec68a5081e8&v=4" width="80;" alt="bmcgonag"/>
+            <br />
+            <sub><b>Brian McGonagill</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/vlad-timofeev">
+            <img src="https://avatars.githubusercontent.com/u/11474041?u=eee43705b54d2ec9f51fc4fcce5ad18dd17c87e4&v=4" width="80;" alt="vlad-timofeev"/>
+            <br />
+            <sub><b>Vlad Timofeev</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/iJasonWade">
+            <img src="https://avatars.githubusercontent.com/u/12824479?u=8fa860e47bed4f84c8ff70cb2691d77edbb43d8f&v=4" width="80;" alt="iJasonWade"/>
+            <br />
+            <sub><b>Jason Ash</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/DRXAquosus">
+            <img src="https://avatars.githubusercontent.com/u/45409262?v=4" width="80;" alt="DRXAquosus"/>
+            <br />
+            <sub><b>DRXAquosus</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/MikaPST">
+            <img src="https://avatars.githubusercontent.com/u/56961056?v=4" width="80;" alt="MikaPST"/>
+            <br />
+            <sub><b>Michaël</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/ratty222">
+            <img src="https://avatars.githubusercontent.com/u/92832598?u=137b65530cbd5f5af9c24cde51baa6cc77cc934b&v=4" width="80;" alt="ratty222"/>
+            <br />
+            <sub><b>Ratty222</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/jtfinley72">
+            <img src="https://avatars.githubusercontent.com/u/96497997?v=4" width="80;" alt="jtfinley72"/>
+            <br />
+            <sub><b>Jtfinley72</b></sub>
+        </a>
+    </td></tr>
+</table>
+<!-- readme: sponsors -end -->
 
 #### Contributors
-[![contributors badge](https://readme-contribs.as93.net/contributors/lissy93/dashy?perRow=12&limit=96)](./docs/credits.md)
+[![Auto-generated contributors](https://raw.githubusercontent.com/Lissy93/dashy/master/docs/assets/CONTRIBUTORS.svg)](./docs/credits.md)
 
 #### Stats
 [![Stats](https://repobeats.axiom.co/api/embed/48546e3c768d38c450ba136e32c0992bcf58ad73.svg "Repobeats analytics image")](https://github.com/Lissy93/dashy/blob/master/docs/credits.md)
@@ -565,7 +647,7 @@ Huge thanks to the sponsors helping to support Dashy's development!
 
 > For full development documentation, see: [**Developing**](./docs/developing.md)
 
-[![Open Project in VS Code](https://img.shields.io/badge/Open_in-VS_Code-863cfc?style=flat-square&logo=visualstudiocode)](https://vscode.dev/github/Lissy93/Dashy)
+[![Open Project in VS Code](https://img.shields.io/badge/Open_in-VS_Code-863cfc?style=flat-square&logo=visualstudiocode)](https://open.vscode.dev/Lissy93/Dashy)
 [![Open in GitPod](https://img.shields.io/badge/Open_in-GitPod-ffae33?style=flat-square&logo=gitpod)](https://gitpod.io/#github.com/lissy93/dashy.git)
 [![Open in GitHub Code Spaces](https://img.shields.io/badge/Open_in-Code%20Spaces-131313?style=flat-square&logo=github)](https://github.dev/Lissy93/dashy)
 
@@ -607,7 +689,7 @@ If you're new to web development, I've put together a short [list of resources](
 - 💾 [Backup & Restore](/docs/backup-restore.md) - Guide to backing up config with Dashy's cloud sync feature
 - 🧸 [Icons](/docs/icons.md) - Outline of all available icon types for sections and items, with examples
 - 🌐 [Multi-Language Support](/docs/multi-language-support.md) - Switching languages, and adding a new locales
-- 🚦 [Status Indicators](/docs/status-indicators.md) - Using Dashy to monitor uptime and status of your apps, services and hosts
+- 🚦 [Status Indicators](/docs/status-indicators.md) - Using Dashy to monitor uptime and status of your apps
 - 🔍 [Searching  & Shortcuts](/docs/searching.md) - Searching, launching methods + keyboard shortcuts
 - 🎨 [Theming](/docs/theming.md) - Complete guide to applying, writing and modifying themes + styles
 - 📊 [Widgets](/docs/widgets.md) - List of all dynamic content widgets, with usage guides and examples
@@ -621,10 +703,11 @@ If you're new to web development, I've put together a short [list of resources](
 - 🗞️ [Release Workflow](/docs/release-workflow.md) - Info about releases, CI and automated tasks
 
 #### Misc
-- 🔐 [Privacy](/docs/privacy.md) - List of all network requests and data storage
-- 🛡️ [Security](/docs/security.md) - Security features, threat model, and hardening resources
+- 🔐 [Privacy & Security](/docs/privacy.md) - List of requests, potential issues, and security resources
 - 📄 [License](/LICENSE) - Copy of the MIT License
+- ⚖️ [Legal](/.github/LEGAL.md) - Licenses of direct dependencies
 - 📏 [Code of Conduct](/.github/CODE_OF_CONDUCT.md) - Contributor Covenant Code of Conduct
+- 🌳 [Changelog](/.github/CHANGELOG.md) - Details of recent changes, and historical versions
 
 **[⬆️ Back to Top](#dashy)**
 
@@ -634,7 +717,7 @@ If you're new to web development, I've put together a short [list of resources](
 
 For upcoming features that will be released in the near future, see the [**Current Roadmap**](https://github.com/Lissy93/dashy/discussions/405)
 
-For past updates, see the [**Releases Page**](https://github.com/Lissy93/dashy/releases)
+For past updates, see the [**Changelog**](/.github/CHANGELOG.md)
 
 **[⬆️ Back to Top](#dashy)**
 
@@ -659,7 +742,7 @@ A few self-hosted web apps serve a similar purpose to Dashy. If you're looking f
 Dashy is Licensed under [MIT X11](https://en.wikipedia.org/wiki/MIT_License)
 
 ```
-Copyright © Alicia Sykes <https://aliciasykes.com>
+Copyright © 2021-2022 Alicia Sykes <https://aliciasykes.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
@@ -694,24 +777,16 @@ For more info, see TLDR Legal's [Explanation of MIT](https://tldrlegal.com/licen
 
 ---
 
-<!-- License + Copyright -->
-<p  align="center">
-  <i>© <a href="https://aliciasykes.com">Alicia Sykes</a> 2019 - 2026</i><br>
-  <i>Licensed under <a href="https://gist.github.com/Lissy93/143d2ee01ccc5c052a17">MIT</a></i><br>
-  <a href="https://github.com/lissy93"><img src="https://i.ibb.co/4KtpYxb/octocat-clean-mini.png" /></a><br>
-  <sup>Thanks for visiting :)</sup>
-</p>
 
-<!-- Dinosaurs are Awesome -->
-<!-- 
-                        . - ~ ~ ~ - .
-      ..     _      .-~               ~-.
-     //|     \ `..~                      `.
-    || |      }  }              /       \  \
-(\   \\ \~^..'                 |         }  \
- \`.-~  o      /       }       |        /    \
- (__          |       /        |       /      `.
-  `- - ~ ~ -._|      /_ - ~ ~ ^|      /- _      `.
-              |     /          |     /     ~-.     ~- _
-              |_____|          |_____|         ~ - . _ _~_-_
--->
+<p align="center">
+  <br>
+  <a href="https://dashboard.trackgit.com/token/ks0bx7bb14lsvbwoc3ik">
+    <img src="https://us-central1-trackgit-analytics.cloudfunctions.net/token/ping/ks0bx7bb14lsvbwoc3ik?style=flat-square" />
+  </a>
+  <br><br>
+  <a href="https://github.com/Lissy93/dashy">
+    <img src="https://github.githubassets.com/images/icons/emoji/octocat.png" />
+  </a>
+  <br><br>
+  <i>Thank you for Visiting</i>
+</p>

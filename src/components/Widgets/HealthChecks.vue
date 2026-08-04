@@ -2,14 +2,14 @@
 <div class="health-checks-wrapper" v-if="crons">
   <template
     v-for="cron in crons"
-    :key="cron.id"
   >
-    <div class="status">
-      <p :class="cron.status || 'unknown'">{{ formatStatus(cron.status) }}</p>
+    <div class="status" v-bind:key="cron.id + 'status'">
+      <p :class="cron.status">{{ cron.status | formatStatus }}</p>
     </div>
     <div
       class="info"
       v-tooltip="pingTimeTooltip(cron)"
+      v-bind:key="cron.id + 'info'"
     >
       <p class="cron-name">{{ cron.name }}</p>
       <p class="cron-desc">{{ cron.desc }}</p>
@@ -20,6 +20,7 @@
 
 <script>
 import WidgetMixin from '@/mixins/WidgetMixin';
+import { widgetApiEndpoints } from '@/utils/defaults';
 import { capitalize, timestampToDateTime } from '@/utils/MiscHelpers';
 
 export default {
@@ -30,61 +31,52 @@ export default {
       crons: null,
     };
   },
-  computed: {
-    baseUrl() {
-      return this.options.host || 'https://healthchecks.io';
-    },
-    /* API endpoint, either for self-hosted or managed instance */
-    endpoint() {
-      return `${this.baseUrl}/api/v1/checks/`;
-    },
-    /* User's API key(s), normalised to an array, or null if unset */
-    apiKeys() {
-      const { apiKey } = this.options;
-      if (!apiKey) return null;
-      const keys = Array.isArray(apiKey) ? apiKey : [apiKey];
-      return keys.map((key) => this.parseAsEnvVar(key));
-    },
-  },
-  methods: {
-    /* Make status summary (emoji + name) */
+  filters: {
     formatStatus(status) {
-      const symbols = {
-        up: '✔', down: '✘', new: '❖', paused: '⏸', grace: '⚠', started: '▶',
-      };
-      return `${symbols[status] || '❔'} ${capitalize(status || 'unknown')}`;
+      let symbol = '';
+      if (status === 'up') symbol = '✔';
+      if (status === 'down') symbol = '✘';
+      if (status === 'new') symbol = '❖';
+      if (status === 'paused') symbol = '⏸';
+      if (status === 'running') symbol = '▶';
+      return `${symbol} ${capitalize(status)}`;
     },
     formatDate(timestamp) {
       return timestampToDateTime(timestamp);
     },
-    fetchData() {
-      if (!this.apiKeys) {
-        this.error('An API key is required, please see the docs for more info');
-        this.finishLoading();
-        return;
-      }
-      this.overrideProxyChoice = true;
-      const requests = this.apiKeys.map(
-        (key) => this.makeRequest(this.endpoint, { 'X-Api-Key': key }),
-      );
-      Promise.allSettled(requests).then((outcomes) => {
-        const results = [];
-        outcomes.forEach((outcome) => {
-          if (outcome.status === 'fulfilled') this.processData(outcome.value, results);
-        });
-        results.sort((a, b) => (a.name > b.name ? 1 : -1));
-        this.crons = results;
-      });
+  },
+  computed: {
+    /* API endpoint, either for self-hosted or managed instance */
+    endpoint() {
+      if (this.options.host) return `${this.options.host}/api/v1/checks`;
+      return `${widgetApiEndpoints.healthChecks}`;
     },
-    /* Map the API response into the cron list, guarding against bad responses */
-    processData(data, results) {
-      if (!data || !Array.isArray(data.checks)) {
-        this.error(
-          'Unexpected response, please check your host URL and API key are correct.'
-          + ' useProxy may be required if your Healchecks API is blocking Dashy with CORS'
-        );
-        return;
+    apiKey() {
+      if (!this.options.apiKey) {
+        this.error('An API key is required, please see the docs for more info');
       }
+      if (typeof this.options.apiKey === 'string') {
+        return [this.options.apiKey];
+      }
+      return this.options.apiKey;
+    },
+  },
+  methods: {
+    /* Make GET request to CoinGecko API endpoint */
+    fetchData() {
+      this.overrideProxyChoice = true;
+      const results = [];
+      this.apiKey.forEach((key) => {
+        const authHeaders = { 'X-Api-Key': key };
+        this.makeRequest(this.endpoint, authHeaders).then(
+          (response) => { this.processData(response, results); },
+        );
+      });
+      results.sort((a, b) => ((a.name > b.name) ? 1 : -1));
+      this.crons = results;
+    },
+    /* Assign data variables to the returned data */
+    processData(data, results) {
       data.checks.forEach((cron) => {
         results.push({
           id: cron.slug,
@@ -97,9 +89,11 @@ export default {
           url: this.makeUrl(cron.unique_key),
         });
       });
+      return results;
     },
     makeUrl(cronId) {
-      return `${this.baseUrl}/checks/${cronId}/details`;
+      const base = this.options.host || 'https://healthchecks.io';
+      return `${base}/checks/${cronId}/details`;
     },
     pingTimeTooltip(cron) {
       const { lastPing, nextPing, pingCount } = cron;
@@ -107,7 +101,7 @@ export default {
         + `<b>Last Ping:</b> ${timestampToDateTime(lastPing)}<br>`
         + `<b>Next Ping:</b>${timestampToDateTime(nextPing)}`;
       return {
-        content, html: true, popperClass: 'ping-times-tt',
+        content, html: true, trigger: 'hover focus', delay: 250, classes: 'ping-times-tt',
       };
     },
   },
@@ -131,9 +125,7 @@ export default {
       &.up { color: var(--success); }
       &.down { color: var(--danger); }
       &.new { color: var(--widget-text-color); }
-      &.grace { color: var(--warning); }
-      &.unknown { color: var(--warning); }
-      &.started { color: var(--info); }
+      &.running { color: var(--warning); }
       &.paused { color: var(--info); }
     }
   }

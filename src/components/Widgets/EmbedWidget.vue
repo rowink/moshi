@@ -34,7 +34,7 @@ export default {
   mounted() {
     this.initiate();
   },
-  beforeUnmount() {
+  beforeDestroy() {
     window.removeEventListener('load', this.injectHtml);
   },
   methods: {
@@ -42,7 +42,7 @@ export default {
     injectHtml() {
       if (this.html) {
         const element = document.getElementById(this.elementId);
-        if (element) element.innerHTML = this.html;
+        element.innerHTML = this.html;
       }
       if (this.css) {
         const styleElem = document.createElement('style');
@@ -78,7 +78,7 @@ export default {
 <style scoped lang="scss">
 .html-widget {
   width: 100%;
-  min-height: 120px;
+  min-height: 240px;
 }
 
 </style>

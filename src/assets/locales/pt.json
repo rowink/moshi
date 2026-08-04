@@ -10,12 +10,8 @@
     "clear-search-tooltip": "Limpar busca",
     "enter-to-search-web": "Tecle enter para buscar na rede"
   },
-  "splash-screen": {
-    "loading": "Carregando"
-  },
   "login": {
     "title": "Dashy",
-    "guest-label": "Entrar como convidado",
     "username-label": "Nome do usuário",
     "password-label": "Senha",
     "login-button": "Conectar",
@@ -35,17 +31,7 @@
     "already-logged-in-text": "Você está logado como",
     "proceed-to-dashboard": "Ir para o Painel",
     "log-out-button": "Sair",
-    "proceed-guest-button": "Seguir como Convidado",
-    "guest-intro-1": "Essa instância possui o acesso como convidado ativado",
-    "guest-intro-2": "Convidados podem apenas visualizar os painéis, logo não podem escrever quaisquer mudanças no disco.",
-    "error": "Erro",
-    "error-no-user-configured": "Autenticação não está habilitada, ou nenhum usuário foi configurado.",
-    "error-go-home-button": "Ir para a página inicial",
-    "logged-in-guest": "Logado como convidado. Redirecionando...",
-    "error-guest-access": "O acesso como convidado não foi permitido"
-  },
-  "app-info": {
-    "title": "Informação do App"
+    "proceed-guest-button": "Seguir como Convidado"
   },
   "config": {
     "main-tab": "Menu Principal",
@@ -58,6 +44,7 @@
     "edit-css-button": "Modificar CSS customizado",
     "cloud-sync-button": "Habilitar Cloud Sync",
     "edit-cloud-sync-button": "Modificar Cloud Sync",
+    "rebuild-app-button": "Recriar aplicação",
     "change-language-button": "Trocar idioma do app",
     "reset-settings-button": "Reset de configurações locais",
     "app-info-button": "Informação de App",
@@ -66,6 +53,8 @@
     "reset-config-msg-l2": "Você deve primeiro fazer um backup de todas as alterações locais, se quiser usá-las no futuro.",
     "reset-config-msg-l3": "Tem certeza que deseja continuar?",
     "data-cleared-msg": "Dados apagados",
+    "actions-label": "Ações",
+    "copy-config-label": "Copiar configuração",
     "data-copied-msg": "A configuração foi copiada para a área de trabalho",
     "reset-config-label": "Reset de configuração",
     "css-save-btn": "Salvar mudanças",
@@ -122,12 +111,38 @@
     "reset-toast": "Cores customizadas do {theme} removidas"
   },
   "config-editor": {
+    "save-location-label": "Salvar localiação",
+    "location-local-label": "Aplicar localmente",
+    "location-disk-label": "Salvar alterações no arquivo de configuração",
+    "save-button": "Salvar alterações",
     "preview-button": "Previsualizar",
     "valid-label": "Configuração é válida",
+    "status-success-msg": "Tarefa concluída",
+    "status-fail-msg": "Falha na tarefa",
     "success-msg-disk": "Arquivo de configuração gravado no disco com sucesso",
     "success-msg-local": "Mudanças locais salvas com sucesso",
+    "success-note-l1": "O app deve atualizar automaticamente.",
+    "success-note-l2": "Isso pode levar até um minuto.",
+    "success-note-l3": "Você precisará atualizar a página para aplicar as mudanças.",
+    "error-msg-save-mode": "Modo de salvar: Localmente ou Arquivo",
     "error-msg-cannot-save": "Ocorreu um erro ao salvar o arquivo",
+    "error-msg-bad-json": "Erro no JSON, possivelmente mal formatado",
+    "warning-msg-validation": "Erro de validação",
     "not-admin-note": "Você não pode salvar essa mudança no disco. Você não está conectado como admin"
+  },
+  "app-rebuild": {
+    "title": "Recriar aplicativo",
+    "rebuild-note-l1": "É necessário recriar o aplicativo para que alterações no arquivo conf.yml tenham efeito.",
+    "rebuild-note-l2": "Isso deveria acontecer automaticamente, mas se não aconteceu você pode fazer manualmente aqui.",
+    "rebuild-note-l3": "Isso não é necessário para alterações locais",
+    "rebuild-button": "Começando construção",
+    "rebuilding-status-1": "Construindo...",
+    "rebuilding-status-2": "Isso pode levar alguns minutos",
+    "error-permission": "Você não tem permissão para acionar esta ação",
+    "success-msg": "Construção concluída com sucesso!",
+    "fail-msg": "Operação de construção falhou",
+    "reload-note": "Uma atualização da página é necessária para aplicar as alterações.",
+    "reload-button": "Atualizar página"
   },
   "cloud-sync": {
     "title": "Backup e restauração em nuvem",
@@ -135,6 +150,7 @@
     "intro-l2": "Todos os dados são totalmente criptografados de ponta a ponta com AES, usando sua senha como chave.",
     "intro-l3": "Para obter mais informações, consulte o",
     "backup-title-setup": "Faça um backup",
+    "backup-title-update": "Atualizar backup",
     "password-label-setup": "Escolha uma senha",
     "password-label-update": "Coloque sua senha",
     "backup-button-setup": "Backup",
@@ -150,6 +166,17 @@
     "backup-error-password": "Senha incorreta. Por favor, digite sua senha atual.",
     "backup-success-msg": "Completado com sucesso",
     "restore-success-msg": "Configuração restaurada com sucesso"
+  },
+  "menu": {
+    "open-section-title": "Abrir em",
+    "sametab": "Aba atual",
+    "newtab": "Nova aba",
+    "modal": "Pop-up",
+    "workspace": "Visualização Workspace",
+    "options-section-title": "Opções",
+    "edit-item": "Editar",
+    "move-item": "Copiar ou Mover",
+    "remove-item": "Remover"
   },
   "context-menus": {
     "item": {
@@ -168,6 +195,7 @@
     "section": {
       "open-section": "Abrir seção",
       "edit-section": "Editar",
+      "move-section": "Mover para",
       "remove-section": "Remover"
     }
   },
@@ -215,14 +243,17 @@
       "warning-msg-l3": "para evitar consequências indesejadas"
     },
     "export": {
+      "export-title": "Expotar configuração",
       "copy-clipboard-btn": "Copiar para área de transferência",
       "copy-clipboard-tooltip": "Copiar toda as configurações do app para a área de transferência, no formato YAML",
       "download-file-btn": "Baixar como arquivo",
-      "download-file-tooltip": "Baixa todas as configurações do aplicativo para o seu dispositivo, no formato YAML."
+      "download-file-tooltip": "Baixa todas as configurações do aplicativo para o seu dispositivo, no formato YAML.",
+      "view-title": "Ver configuração"
     }
   },
   "widgets": {
     "general": {
+      "loading": "Carregando...",
       "show-more": "Mostrar mais",
       "show-less": "Mostrar menos",
       "open-link": "Continuar leitura"
@@ -261,19 +292,13 @@
       "good-service-rest": "Bom serviço em todas as outras linhas."
     },
     "synology-download": {
+      "download": "Baixar",
+      "upload": "Carregar",
       "downloaded": "Baixado",
       "uploaded": "Carregado",
-      "remaining": "Restante"
-    },
-    "gluetun-status": {
-      "vpn-ip": "IP da VPN",
-      "country": "País",
-      "region": "Região",
-      "city": "Cidade",
-      "post-code": "Código postal",
-      "location": "Localização",
-      "timezone": "Fuso horário",
-      "organization": "Organização"
+      "remaining": "Restante",
+      "up": "Up",
+      "down": "Down"
     }
   }
 }

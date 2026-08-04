@@ -11,14 +11,14 @@
       class="exchange-rate-row"
     >
       <p class="country" @click="updateInputCurrency(exchange.currency)">
-        <img :src="flagUrl(exchange.currency)" alt="Flag" class="flag" />
+        <img :src="exchange.currency | flagUrl" alt="Flag" class="flag" />
         {{ exchange.currency }}
       </p>
       <p class="value">
         <span class="input-currency">
-          {{ applySymbol(1, newInputCurrency || inputCurrency) }} =
+          {{ 1 | applySymbol(newInputCurrency || inputCurrency) }} =
         </span>
-        {{ applySymbol(exchange.value, exchange.currency) }}
+        {{ exchange.value | applySymbol(exchange.currency) }}
       </p>
     </div>
     <p class="last-updated">Updated on {{ lastUpdated }}</p>
@@ -27,9 +27,9 @@
 </template>
 
 <script>
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 import { findCurrencySymbol, getCurrencyFlag, timestampToDate } from '@/utils/MiscHelpers';
 
 export default {
@@ -45,7 +45,7 @@ export default {
   computed: {
     /* The users API key for exchangerate-api.com */
     apiKey() {
-      return this.parseAsEnvVar(this.options.apiKey);
+      return this.options.apiKey;
     },
     /* The currency to convert results into */
     inputCurrency() {
@@ -60,7 +60,7 @@ export default {
       return `${widgetApiEndpoints.exchangeRates}${this.apiKey}/latest/${currency}`;
     },
   },
-  methods: {
+  filters: {
     /* Appends currency symbol onto price */
     applySymbol(price, inputCurrency) {
       return `${findCurrencySymbol(inputCurrency)}${price}`;
@@ -68,9 +68,11 @@ export default {
     flagUrl(currency) {
       return getCurrencyFlag(currency);
     },
+  },
+  methods: {
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
-      request.get(this.endpoint)
+      axios.get(this.endpoint)
         .then(response => {
           this.processData(response.data);
         }).catch(error => {

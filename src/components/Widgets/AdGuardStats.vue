@@ -20,16 +20,14 @@ export default {
     /* URL/ IP or hostname to the AdGuardHome instance, without trailing slash */
     hostname() {
       if (!this.options.hostname) this.error('You must specify the path to your AdGuard server');
-      return this.parseAsEnvVar(this.options.hostname);
+      return this.options.hostname;
     },
     endpoint() {
       return `${this.hostname}/control/stats`;
     },
     authHeaders() {
       if (this.options.username && this.options.password) {
-        const username = this.parseAsEnvVar(this.options.username);
-        const password = this.parseAsEnvVar(this.options.password);
-        const encoded = window.btoa(`${username}:${password}`);
+        const encoded = window.btoa(`${this.options.username}:${this.options.password}`);
         return { Authorization: `Basic ${encoded}` };
       }
       return {};
@@ -37,7 +35,6 @@ export default {
   },
   data() {
     return {
-      overrideProxyChoice: true,
       queryCount: null,
       blockCount: null,
     };

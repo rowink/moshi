@@ -16,12 +16,11 @@ import SubItem from '@/components/LinkItems/SubItem.vue';
 
 export default {
   props: {
-    itemId: { type: String, required: true },
-    subItems: { type: Array, required: true },
-    title: { type: String, default: '' },
-    subItemGridSize: { type: Number, default: 0 },
+    itemId: String,
+    subItems: Array,
+    title: String,
+    subItemGridSize: Number,
   },
-  emits: ['triggerModal'],
   components: {
     SubItem,
   },
@@ -49,7 +48,7 @@ export default {
 <style scoped lang="scss">
 .sub-items-group {
   display: grid;
-  margin: 0.25rem;
+  margin: 0.5rem;
   padding: 0.1rem;
   flex-grow: 1;
   flex-basis: 6rem;

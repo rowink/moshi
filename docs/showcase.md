@@ -3,14 +3,6 @@
 | 💗 Got a sweet dashboard? Submit it to the showcase! 👉 [See How](#submitting-your-dashboard) |
 |-|
 
-## MNDashboard 
-
-> By [@mahrnet](https://github.com/mahrnet) <sup>Re: [#1491](https://github.com/Lissy93/dashy/issues/1491)</sup>
-
-![screenshot-MNDashboard](https://i.ibb.co/mCJRZgp/d2-At-QO4c-PT4u.png)
-
----
-
 ## Home Lab 2.0
 
 ![screenshot-homelab](https://raw.githubusercontent.com/Lissy93/dashy/master/docs/showcase/1-home-lab-material.png)
@@ -209,14 +201,6 @@
 > By [u/stefantigro](https://www.reddit.com/user/stefantigro/) <sup>via [reddit](https://www.reddit.com/r/selfhosted/comments/t5oril/been_selfhosting_close_to_half_a_year_now_all/)</sup>
 
 ![screenshot-stefantigro-dashy](https://i.ibb.co/1Kb43Yy/dashy-stefantigro.png)
-
----
-
-## HomeLab 3.0
-
-> <sup>Re: [#1999](https://github.com/Lissy93/dashy/issues/1999)</sup>
-
-![screenshot-homelab-3](https://pixelflare.cc/alicia/dashy/12-skoogee-homelab-3)
 
 ---
 

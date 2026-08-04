@@ -16,13 +16,13 @@
           </small> <span v-tooltip="subjectTooltip(notification)">{{ notification.subject }} </span>
           <!-- notifications item: action links -->
           <span v-if="notification.actions.length">
-            <span v-for="(action, actionIdx) in notification.actions" :key="actionIdx">
+            <span v-for="(action, idx) in notification.actions" :key="idx">
               <a :href="action.link" class="action" target="_blank">{{ action.label }}</a>
             </span>
           </span>
           <span v-if="canDeleteNotification('delete')">
             <a @click="deleteNotification(notification.notification_id)"
-              class="action secondary">{{ tt('delete-notification') }}</a>
+               class="action secondary">{{ tt('delete-notification') }}</a>
           </span>
         </p>
       </div>
@@ -50,7 +50,6 @@ export default {
   components: {},
   data() {
     return {
-      overrideProxyChoice: true,
       notifications: [],
     };
   },
@@ -126,13 +125,13 @@ export default {
     subjectTooltip(notification) {
       const content = notification.message;
       return {
-        content, popperClass: 'nc-tooltip',
+        content, trigger: 'hover focus', delay: 250, classes: 'nc-tooltip',
       };
     },
     dateTooltip(notification) {
       const content = new Date(Date.parse(notification.datetime)).toLocaleString();
       return {
-        content, popperClass: 'nc-tooltip',
+        content, trigger: 'hover focus', delay: 250, classes: 'nc-tooltip',
       };
     },
   },

@@ -6,7 +6,7 @@
         <div class="config-buttons">
           <h2>{{ $t('config.heading') }}</h2>
           <!-- Export config button -->
-          <Button class="config-button" :disallow="!enableConfig" :click="openExportConfigTab">
+          <Button class="config-button" :disallow="!enableConfig" :click="openExportConfigModal">
             {{ $t('config.download-config-button') }}
             <DownloadIcon class="button-icon"/>
           </Button>
@@ -30,114 +30,84 @@
             {{backupId ? $t('config.edit-cloud-sync-button') : $t('config.cloud-sync-button') }}
             <CloudIcon class="button-icon"/>
           </Button>
+          <!-- Rebuild app button -->
+          <Button class="config-button" :disallow="!enableConfig" :click="openRebuildAppModal">
+            {{ $t('config.rebuild-app-button') }}
+            <RebuildIcon class="button-icon"/>
+          </Button>
           <!-- Reset local changes button -->
           <Button class="config-button" :click="resetLocalSettings">
             {{ $t('config.reset-settings-button') }}
             <DeleteIcon class="button-icon"/>
           </Button>
-          <!-- Debug info button -->
-          <Button class="config-button" :click="openDebugTab">
-            {{ $t('config.debug-info-button') }}
-            <DebugIcon class="button-icon" />
-          </Button>
           <!-- About modal button -->
-          <Button class="config-button" :click="openAboutTab">
+          <Button class="config-button" :click="openAboutModal">
             {{ $t('config.app-info-button') }}
             <IconAbout class="button-icon" />
           </Button>
           <!-- Display app version and language -->
-          <div class="instance-info">
-            <p class="language-and-theme">
-                {{ getLanguage() }}
-                {{ currentTheme ? `• 🎨 ${currentTheme}` : '' }}
-            </p>
-            <!-- Display location of config file -->
-            <p class="config-location">
-                Using config from
-                <a :href="configPath">{{ configPath }}</a>
-            </p>
-            <AppVersion :doUpdateCheck="false" />
-          </div>
+          <p class="language">{{ getLanguage() }}</p>
+          <p v-if="$store.state.currentConfigInfo" class="config-location">
+            Using Config From<br>
+            {{ $store.state.currentConfigInfo.confPath }}
+          </p>
+          <AppVersion />
         </div>
         <!-- Display note if Config disabled, or if on mobile -->
         <p v-if="!enableConfig" class="config-disabled-note">{{ $t('config.disabled-note') }}</p>
         <p class="small-screen-note" style="display: none;">{{ $t('config.small-screen-note') }}</p>
+        <div class="config-note">
+          <span>{{ $t('config.backup-note') }}</span>
+        </div>
       </div>
+      <!-- Rebuild App Modal -->
+      <RebuildApp />
     </TabItem>
-    <TabItem id="edit" :name="$t('config.edit-config-tab')" v-if="enableConfig">
+    <TabItem :name="$t('config.edit-config-tab')" v-if="enableConfig">
       <JsonEditor />
     </TabItem>
-    <TabItem id="export" :name="$t('config.view-config-tab')" v-if="enableConfig">
-      <ExportConfigMenu @navigate-tab="navigateToTabById" />
-    </TabItem>
-    <TabItem id="css" :name="$t('config.custom-css-tab')" v-if="enableConfig">
-      <CustomCssEditor />
-    </TabItem>
-    <TabItem id="debug" :name="$t('config.debug-info-button')" hidden>
-      <DebugInfo />
-    </TabItem>
-    <TabItem id="about" :name="$t('config.app-info-button')" hidden>
-      <AppInfo @navigate-tab="navigateToTabById" />
-    </TabItem>
-    <TabItem id="cloud" :name="$t('cloud-sync.title')" v-if="enableConfig" hidden>
+    <TabItem :name="$t('cloud-sync.title')" v-if="enableConfig">
       <CloudBackupRestore />
     </TabItem>
+    <TabItem :name="$t('config.custom-css-tab')" v-if="enableConfig">
+      <CustomCssEditor />
+    </TabItem>
   </Tabs>
-  <ConfirmDialog
-    v-model:open="showResetConfirm"
-    danger
-    :title="$t('config.reset-settings-button')"
-    :message="resetConfirmMessage()"
-    @confirm="confirmResetLocalSettings"
-  />
 </template>
 
 <script>
 
-import { defineAsyncComponent, h } from 'vue';
-import { localStorageKeys, modalNames } from '@/utils/config/defaults';
-import { getUsersLanguage, clearScopedLocalConfig } from '@/utils/config/ConfigHelpers';
-import ErrorHandler from '@/utils/logging/ErrorHandler';
+import { localStorageKeys, modalNames } from '@/utils/defaults';
+import { getUsersLanguage } from '@/utils/ConfigHelpers';
+import ErrorHandler from '@/utils/ErrorHandler';
 import StoreKeys from '@/utils/StoreMutations';
+import JsonEditor from '@/components/Configuration/JsonEditor';
 import CustomCssEditor from '@/components/Configuration/CustomCss';
 import CloudBackupRestore from '@/components/Configuration/CloudBackupRestore';
-import AppInfo from '@/components/Configuration/AppInfo';
-import DebugInfo from '@/components/Configuration/DebugInfo';
+import RebuildApp from '@/components/Configuration/RebuildApp';
 import AppVersion from '@/components/Configuration/AppVersion';
-import ExportConfigMenu from '@/components/InteractiveEditor/ExportConfigMenu';
 import Button from '@/components/FormElements/Button';
-import ConfirmDialog from '@/components/FormElements/ConfirmDialog';
-import Tabs from '@/components/FormElements/Tabs';
-import TabItem from '@/components/FormElements/TabItem';
+
 import DownloadIcon from '@/assets/interface-icons/config-download-file.svg';
 import DeleteIcon from '@/assets/interface-icons/config-delete-local.svg';
 import EditIcon from '@/assets/interface-icons/config-edit-json.svg';
 import CustomCssIcon from '@/assets/interface-icons/config-custom-css.svg';
 import CloudIcon from '@/assets/interface-icons/cloud-backup-restore.svg';
+import RebuildIcon from '@/assets/interface-icons/application-rebuild.svg';
 import LanguageIcon from '@/assets/interface-icons/config-language.svg';
 import IconAbout from '@/assets/interface-icons/application-about.svg';
-import DebugIcon from '@/assets/interface-icons/config-debug-menu.svg';
-
-const EditorLoading = {
-  render: () => h('p', { class: 'editor-loading-placeholder' }, 'Loading editor…'),
-};
-const JsonEditor = defineAsyncComponent({
-  loader: () => import('@/components/Configuration/JsonEditor.vue'),
-  loadingComponent: EditorLoading,
-});
 
 export default {
   name: 'ConfigContainer',
   data() {
     return {
       backupId: localStorage[localStorageKeys.BACKUP_ID] || '',
-      appVersion: import.meta.env.VITE_APP_VERSION,
+      appVersion: process.env.VUE_APP_VERSION,
       latestVersion: '',
-      showResetConfirm: false,
     };
   },
   props: {
-    config: { type: Object, required: true },
+    config: Object,
   },
   computed: {
     sections: function getSections() {
@@ -146,35 +116,22 @@ export default {
     enableConfig() {
       return this.$store.getters.permissions.allowViewConfig;
     },
-    configPath() {
-      return this.$store.state.currentConfigInfo?.confPath
-      || import.meta.env.VITE_APP_CONFIG_PATH
-      || '/conf.yml';
-    },
-    currentTheme() {
-        return this.$store.getters.appConfig?.theme || '';
-    }
   },
   components: {
-    Tabs,
-    TabItem,
     Button,
-    ConfirmDialog,
     JsonEditor,
     CustomCssEditor,
     CloudBackupRestore,
-    AppInfo,
-    DebugInfo,
+    RebuildApp,
     AppVersion,
-    ExportConfigMenu,
     DownloadIcon,
     DeleteIcon,
     EditIcon,
     CloudIcon,
     CustomCssIcon,
     LanguageIcon,
+    RebuildIcon,
     IconAbout,
-    DebugIcon,
   },
   methods: {
     /* Progamatically navigates to a given tab by index */
@@ -182,65 +139,55 @@ export default {
       const itemToSelect = this.$refs.tabView.navItems[tabInxex];
       this.$refs.tabView.activeTabItem(itemToSelect);
     },
-    /* Navigates to a tab by its id */
-    navigateToTabById(id) {
-      if (!id) return;
-      const items = this.$refs.tabView?.navItems || [];
-      const index = items.findIndex((t) => t.id === id);
-      if (index >= 0) this.navigateToTab(index);
+    openRebuildAppModal() {
+      if (this.enableConfig) {
+        this.$modal.show(modalNames.REBUILD_APP);
+      } else {
+        this.unauthorized();
+      }
     },
-    openAboutTab() {
-      this.navigateToTabById('about');
-    },
-    openDebugTab() {
-      this.navigateToTabById('debug');
+    openAboutModal() {
+      this.$modal.show(modalNames.ABOUT_APP);
     },
     openLanguageSwitchModal() {
       this.$modal.show(modalNames.LANG_SWITCHER);
     },
-    openExportConfigTab() {
+    openExportConfigModal() {
       if (this.enableConfig) {
-        this.navigateToTabById('export');
+        this.$modal.show(modalNames.EXPORT_CONFIG_MENU);
       } else {
         this.unauthorized();
       }
     },
     openEditConfigTab() {
-      this.navigateToTabById('edit');
+      this.navigateToTab(1);
     },
     openCloudSyncTab() {
-      this.navigateToTabById('cloud');
+      this.navigateToTab(2);
     },
     openEditCssTab() {
-      this.navigateToTabById('css');
+      this.navigateToTab(3);
     },
-    /* Clears config-scoped localStorage entries for root + all sub-pages, then reloads config.
-     * Preserves unrelated keys (auth tokens, backup hashes, mostUsed etc) */
+    /* Checks that the user is sure, then resets site-wide local storage, and reloads page */
     resetLocalSettings() {
-      this.showResetConfirm = true;
-    },
-    confirmResetLocalSettings() {
-      clearScopedLocalConfig(this.$store.getters.pages);
-      this.$toast(this.$t('config.data-cleared-msg'));
-      this.$store.dispatch(StoreKeys.INITIALIZE_CONFIG, this.$store.state.currentConfigInfo.confId);
-    },
-    resetConfirmMessage() {
-      return `${this.$t('config.reset-config-msg-l1')} `
-        + `${this.$t('config.reset-config-msg-l2')}\n\n${this.$t('config.reset-config-msg-l3')}`;
+      const msg = `${this.$t('config.reset-config-msg-l1')} `
+      + `${this.$t('config.reset-config-msg-l2')}\n\n${this.$t('config.reset-config-msg-l3')}`;
+      const isTheUserSure = confirm(msg); // eslint-disable-line no-alert, no-restricted-globals
+      if (isTheUserSure) {
+        localStorage.clear();
+        this.$toasted.show(this.$t('config.data-cleared-msg'));
+        this.$store.dispatch(StoreKeys.INITIALIZE_CONFIG);
+      }
     },
     getLanguage() {
       const lang = getUsersLanguage();
       return lang ? `${lang.flag} ${lang.name}` : '';
     },
-    /* If launching menu from editor, navigate to correct starting tab.
-     * Accepts either a numeric index (legacy) or a stable tab id string. */
+    /* If launching menu from editor, navigate to correct starting tab */
     navigateToStartingTab() {
-      const navTo = this.$store.state.navigateConfToTab;
-      if (typeof navTo === 'string' && navTo) {
-        this.navigateToTabById(navTo);
-      } else if (typeof navTo === 'number' && navTo >= 0) {
-        this.navigateToTab(navTo);
-      }
+      const navToTab = this.$store.state.navigateConfToTab;
+      const isValidTabIndex = (indx) => typeof indx === 'number' && indx >= 0 && indx <= 5;
+      if (navToTab && isValidTabIndex(navToTab)) this.navigateToTab(navToTab);
       this.$store.commit(StoreKeys.CONF_MENU_INDEX, undefined);
     },
     unauthorized() {
@@ -275,6 +222,9 @@ a.config-button, button.config-button {
   min-width: 15rem;
   width: 100%;
   svg.button-icon {
+    path {
+      fill: var(--config-settings-color);
+    }
     width: 1rem;
     height: 1rem;
     padding: 0.2rem;
@@ -282,6 +232,9 @@ a.config-button, button.config-button {
   &:hover:not(.disallowed) {
     background: var(--config-settings-color);
     color: var(--config-settings-background);
+    svg path {
+      fill: var(--config-settings-background);
+    }
   }
 }
 
@@ -292,25 +245,11 @@ a.hyperlink-wrapper {
   width: 100%;
 }
 
-.instance-info {
-    margin-top: 0.5rem;
-    display: flex;
-    gap: 0.25rem;
-    flex-direction: column;
-    align-items: center;
-    p.app-version, p.language-and-theme, p.config-location {
-      margin: 0;
-      font-size: 1rem;
-      color: var(--config-settings-color);
-      cursor: default;
-      opacity: var(--dimming-factor);
-      a {
-        color: var(--config-settings-color);
-      }
-    }
-    p.language-and-theme {
-        text-transform: capitalize;
-    }
+p.app-version, p.language, p.config-location {
+  margin: 0.5rem auto;
+  font-size: 1rem;
+  color: var(--transparent-white-50);
+  cursor: default;
 }
 
 div.code-container {
@@ -352,11 +291,12 @@ div.code-container {
 }
 
 .tab-item {
-  flex: 1 1 auto;
-  min-height: 0;
   overflow-y: auto;
   @extend .scroll-bar;
   background: var(--config-settings-background);
+  &.main-tab {
+    min-height: 500px;
+  }
 }
 
 .main-options-container {
@@ -429,19 +369,46 @@ p.small-screen-note {
   display: none !important;
 }
 
+.tabs__content {
+  height: -webkit-fill-available;
+  height: -moz-available;
+  height: stretch;
+  height: 100%; // Firefox
+}
+
 .tab-item {
   background: var(--config-settings-background) !important;
 }
 
-.editor-loading-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 55vh;
-  margin: 0;
-  font-size: 1rem;
-  color: var(--config-settings-color);
-  opacity: var(--dimming-factor);
+.tab__pagination {
+  background: var(--config-settings-background) !important;
+  color: var(--config-settings-color) !important;
+  .tab__nav__items .tab__nav__item {
+    span {
+      color: var(--config-settings-color) !important;
+    }
+    &:hover {
+      background: var(--config-settings-color) !important;
+      span {
+        color: var(--config-settings-background) !important;
+      }
+    }
+    &.active {
+      span {
+        font-weight: bold !important;
+        color: var(--config-settings-color) !important;
+      }
+      &:hover span {
+        color: var(--config-settings-background) !important;
+      }
+    }
+  }
+  .tab__nav__items .tab__nav__item.active {
+    border-bottom: 2px solid var(--config-settings-color) !important;
+  }
+  hr.tab__slider {
+    background: var(--config-settings-color) !important;
+  }
 }
 
 </style>

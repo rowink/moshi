@@ -8,45 +8,37 @@
   command = "yarn build"
   publish = "dist"
   functions = "services/serverless-functions"
+  environment = { NODE_VERSION = "16.13.2" }
 
-# Environmental variables for build command
-[build.environment]
-  NODE_VERSION = "24"
+# Site info, used for the 1-Click deploy page
+[template.environment]
+  STATUSKIT_PAGE_TITLE = "Dashy"
+  STATUSKIT_COMPANY_LOGO = "https://raw.githubusercontent.com/Lissy93/dashy/master/docs/assets/logo.png"
+  STATUSKIT_SUPPORT_CONTACT_LINK = "https://github.com/lissy93/dashy"
+  STATUSKIT_RESOURCES_LINK = "https://dashy.to/docs"
 
-# Rewrite Node endpoints to serverless functions
+# Redirect the Node endpoints to serverless functions
 [[redirects]]
   from = "/status-check"
   to = "/.netlify/functions/cloud-status-check"
-  status = 200
+  status = 301
+  force = true
+[[redirects]]
+  from = "/config-manager/*"
+  to = "/.netlify/functions/not-supported"
+  status = 301
   force = true
 [[redirects]]
   from = "/cors-proxy"
   to = "/.netlify/functions/netlify-cors"
-  status = 200
+  status = 301
   force = true
-
-# Dashy's other node endpoints aren't supported on Netlify
-[[redirects]]
-  from = "/config-manager/*"
-  to = "/.netlify/functions/not-supported"
-  status = 200
-  force = true
-[[redirects]]
-  from = "/system-info"
-  to = "/.netlify/functions/not-supported"
-  status = 200
-  force = true
-[[redirects]]
-  from = "/get-user"
-  to = "/.netlify/functions/not-supported"
-  status = 200
-  force = true
-
+  
 # For router history mode, ensure pages land on index
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200
+  status = 200  
 
 # Set any security headers here
 [[headers]]
@@ -54,3 +46,4 @@
   [headers.values]
   # Uncomment to enable Netlify user control. Requires premium plan.
   # Basic-Auth = "someuser:somepassword anotheruser:anotherpassword"
+

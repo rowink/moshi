@@ -3,26 +3,26 @@
   <div class="interface-row" v-for="network in networks" :key="network.name">
     <div class="network-info">
       <p class="network-name">{{ network.name }}</p>
-      <p class="network-speed">{{ formatSpeed(network.speed) }}</p>
+      <p class="network-speed">{{ network.speed | formatSpeed }}</p>
       <p :class="`network-online ${network.online}`">
       {{ network.online }}
       </p>
     </div>
     <div class="current" v-if="network.online === 'up'">
       <span class="upload">
-        ↑ <span class="val">{{ formatDataSize(network.currentUpload) }}</span>
+        ↑ <span class="val">{{ network.currentUpload | formatDataSize }}</span>
       </span>
       <span class="separator">|</span>
       <span class="download">
-        ↓ <span class="val">{{ formatDataSize(network.currentDownload) }}</span>
+        ↓ <span class="val">{{ network.currentDownload | formatDataSize }}</span>
       </span>
     </div>
     <div class="total">
       <b class="lbl">Total</b> Up
-      <span class="val">{{ formatDataSize(network.totalUpload) }}</span>
+      <span class="val">{{ network.totalUpload | formatDataSize }}</span>
       <span class="separator">|</span>
       Down
-      <span class="val">{{ formatDataSize(network.totalDownload) }}</span>
+      <span class="val">{{ network.totalDownload | formatDataSize }}</span>
     </div>
   </div>
 </div>
@@ -46,7 +46,7 @@ export default {
       return this.makeGlancesUrl('network');
     },
   },
-  methods: {
+  filters: {
     formatDataSize(data) {
       return convertBytes(data);
     },
@@ -59,6 +59,8 @@ export default {
       if (direction === 'down') return '↓';
       return '';
     },
+  },
+  methods: {
     processData(networkData) {
       this.previous = this.disks;
       const networks = [];
@@ -66,11 +68,11 @@ export default {
         networks.push({
           name: network.interface_name,
           speed: network.speed,
-          online: network.speed ? 'up' : 'down', // v3 to v4 is_up no longer seems to be a default response field
-          currentDownload: network.bytes_recv,
-          currentUpload: network.bytes_sent,
-          totalDownload: network.bytes_recv_gauge,
-          totalUpload: network.bytes_sent_gauge,
+          online: network.is_up ? 'up' : 'down',
+          currentDownload: network.rx,
+          currentUpload: network.tx,
+          totalDownload: network.cumulative_rx,
+          totalUpload: network.cumulative_tx,
           changeDownload: this.previous && network.rx > this.previous[index].rx,
           changeUpload: this.previous && network.tx > this.previous[index].tx,
         });

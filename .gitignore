@@ -2,9 +2,6 @@
 node_modules
 /dist
 
-# Dashy config backups
-user-data/config-backups/
-
 # local env files
 .env.local
 .env.*.local
@@ -16,6 +13,7 @@ yarn-error.log*
 
 # Editor directories and files
 .idea
+.vscode
 *.suo
 *.ntvs*
 *.njsproj

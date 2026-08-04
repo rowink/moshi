@@ -2,10 +2,10 @@
   <div class="indicator"
     v-tooltip="{
       content: statusText || otherStatusText,
-      popperClass: ['status-tooltip', `tip-${color()}`],
+      classes: ['status-tooltip', `tip-${color()}`],
       delay: { show: 0, hide: 150 }
     }">
-    <div :class="['dot', `dot-${color()}`, { 'a11y-mode': a11yMode }]">
+    <div :class="`dot dot-${color()}`">
       <span><span></span></span>
     </div>
   </div>
@@ -16,25 +16,14 @@
 export default {
   name: 'StatusIndicator',
   props: {
-    statusText: { type: String, default: '' },
+    statusText: String,
     statusSuccess: Boolean,
-    statusTimeout: { type: Number, default: 2000 },
-    statusAccessibility: { type: Boolean, default: false },
-  },
-  computed: {
-    /* If true, will use shapes instead of dots for indicator status */
-    a11yMode() {
-      return !!this.statusAccessibility;
-    },
-    otherStatusText() {
-      return (!this.statusText && (new Date() - this.startTime) > this.statusTimeout) ? 'Request timed out' : 'Checking...';
-    },
   },
   methods: {
     /* Returns a color, based on success status */
     color() {
       switch (this.statusSuccess) {
-        case undefined: return (!this.statusText && (new Date() - this.startTime) > this.statusTimeout) ? 'grey' : 'yellow';
+        case undefined: return ((new Date() - this.startTime) > 2000) ? 'grey' : 'yellow';
         case true: return 'green'; // Success!
         default: return 'red'; // Not success, therefore failure
       }
@@ -43,7 +32,13 @@ export default {
   data() {
     return {
       startTime: new Date(), // Used for timeout
+      otherStatusText: 'Checking...', // Used before server has responded
     };
+  },
+  mounted() {
+    setTimeout(() => {
+      if (!this.statusText) this.otherStatusText = 'Request timed out';
+    }, 2000);
   },
 };
 </script>
@@ -111,20 +106,6 @@ export default {
     span, span:after {
       background-color: var(--medium-grey);
       opacity: 0.4;
-    }
-  }
-
-  &.a11y-mode {
-    > span { display: none; }
-    // dot-green stays a circle
-    &.dot-red { border-radius: 0; } // square
-    &.dot-yellow { // triangle
-      border-radius: 0;
-      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    }
-    &.dot-grey { // diamond
-      border-radius: 0;
-      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
     }
   }
 }

@@ -65,7 +65,7 @@
       </div>
     </div>
     <!-- Save to state button -->
-    <SaveCancelButtons :saveClick="saveItem" :cancelClick="closeModal" />
+    <SaveCancelButtons :saveClick="saveItem" :cancelClick="modalClosed" />
     </div>
     <AccessError v-else />
   </modal>
@@ -80,9 +80,8 @@ import Input from '@/components/FormElements/Input';
 import Radio from '@/components/FormElements/Radio';
 import Select from '@/components/FormElements/Select';
 import StoreKeys from '@/utils/StoreMutations';
-import DashySchema from '@/utils/config/ConfigSchema.json';
-import { modalNames } from '@/utils/config/defaults';
-import ErrorHandler, { InfoHandler, InfoKeys } from '@/utils/logging/ErrorHandler';
+import DashySchema from '@/utils/ConfigSchema';
+import { modalNames } from '@/utils/defaults';
 
 export default {
   name: 'EditItem',
@@ -100,11 +99,10 @@ export default {
     };
   },
   props: {
-    itemId: { type: String, default: '' },
+    itemId: String,
     isNew: Boolean,
-    parentSectionTitle: { type: String, default: '' }, // If adding new item, which section to add it under
+    parentSectionTitle: String, // If adding new item, which section to add it under
   },
-  emits: ['closeEditMenu'],
   computed: {
     allowViewConfig() {
       return this.$store.getters.permissions.allowViewConfig;
@@ -208,25 +206,24 @@ export default {
       const structured = {};
       this.formData.forEach((row) => { structured[row.name] = row.value; });
       if (!structured.title) { // Missing title, show error and don't proceed
-        this.$toast.error(this.$t('interactive-editor.edit-item.missing-title-err'));
-        return;
-      }
-      try {
+        this.$toasted.show(
+          this.$t('interactive-editor.edit-item.missing-title-err'),
+          { className: 'toast-error' },
+        );
+      } else {
         // Some attributes need a little extra formatting
         const newItem = this.formatBeforeSave(structured);
         if (this.isNew) { // Insert new item into data store
           newItem.id = `temp_${newItem.title}`;
-          this.$store.commit(StoreKeys.INSERT_ITEM, { newItem, targetSection: this.parentSectionTitle });
+          const payload = { newItem, targetSection: this.parentSectionTitle };
+          this.$store.commit(StoreKeys.INSERT_ITEM, payload);
         } else { // Update existing item from form data, in the store
           this.$store.commit(StoreKeys.UPDATE_ITEM, { newItem, itemId: this.itemId });
         }
         // If we're not already in edit mode, enable it now
         this.$store.commit(StoreKeys.SET_EDIT_MODE, true);
-        InfoHandler(`Item ${this.isNew ? 'added' : 'updated'}: ${newItem.title}`, InfoKeys.EDITOR);
-        this.closeModal();
-      } catch (e) {
-        ErrorHandler('Failed to save item', e);
-        this.$toast.error('Error saving item. See Logs.');
+        // Close edit menu
+        this.$emit('closeEditMenu');
       }
     },
     /* Some fields require a bit of extra processing before they're saved */
@@ -236,7 +233,7 @@ export default {
       if (newItem.hotkey) newItem.hotkey = parseInt(newItem.hotkey, 10);
       const strToTags = (tags) => {
         const tagArr = (typeof tags === 'string') ? tags.split(',') : tags;
-        return tagArr.map((tag) => tag.trim().toLowerCase()).filter(Boolean);
+        return tagArr.map((tag) => tag.trim().toLowerCase().replace(/[^a-z0-9]+/, ''));
       };
       const strToBool = (str) => {
         if (str === undefined) return undefined;
@@ -247,18 +244,10 @@ export default {
       if (newItem.statusCheckAllowInsecure) {
         newItem.statusCheckAllowInsecure = strToBool(newItem.statusCheckAllowInsecure);
       }
-      if (newItem.pingCheckEnabled) newItem.pingCheckEnabled = strToBool(newItem.pingCheckEnabled);
-      if (newItem.pingCheckHost) newItem.pingCheckHost = newItem.pingCheckHost.trim();
-      if (newItem.pingCheckCount) newItem.pingCheckCount = parseInt(newItem.pingCheckCount, 0);
-      if (newItem.pingCheckInterval) newItem.pingCheckInterval = parseInt(newItem.pingCheckInterval, 0);
-      if (newItem.pingCheckTimeout) newItem.pingCheckTimeout = parseInt(newItem.pingCheckTimeout, 0);
+      // if (newItem.hotkey) newItem.hotkey = parseInt(newItem.hotkey, 10);
       return newItem;
     },
-    /* Cleanup  work for modal, triggered by save, cancel or click-outside */
-    closeModal() {
-      this.$modal.hide(this.modalName);
-    },
-    /* Runs after the modal has finished closing. */
+    /* Clean up work, triggered when modal closed */
     modalClosed() {
       this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
       this.$emit('closeEditMenu');

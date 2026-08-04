@@ -1,0 +1,159 @@
+---
+# Page meta info, like heading, footer text and nav links
+pageInfo:
+  logo: /favicon-doc.ico
+  title: DocKit
+  description: 开发者的文档收集小站
+  navLinks:
+  - title: Blog
+    path: https://exi.ink
+  footerText: (ノ=Д=)ノ┻━┻ 
+  
+# Main content - An array of sections, each containing an array of items
+sections:
+- name: 前端
+  icon: fab fa-chrome
+  items:
+  - title: MDN Web doc
+    description: MDN Web 文档站点提供有关开放 Web 技术的信息，包括适用于网站和渐进式 Web 应用程序的 HTML、CSS 和 API。
+    icon: https://developer.mozilla.org/favicon-48x48.bc390275e955dacb2e65.png
+    url: https://developer.mozilla.org/zh-CN
+    target: newtab
+  - title: React
+    description: The library for web and native user interfaces
+    icon: https://react.dev/favicon.ico
+    url: https://react.dev/reference/react
+    target: newtab
+  - title: Vue
+    description: Vue.js - The Progressive JavaScript Framework
+    icon: https://vuejs.org/logo.svg
+    url: https://vuejs.org/guide/introduction.html
+    target: newtab
+  - title: Next.js
+    description: Welcome to the Next.js Documentation.
+    icon: https://nextjs.org/favicon.ico
+    url: https://nextjs.org/docs
+    target: newtab
+
+    
+- name: 后端
+  icon: fas fa-server
+  items:
+  - title: Spring Boot
+    description: Level up your Java code and explore what Spring can do for you.
+    icon: https://spring.io/favicon.svg?v=96334d577af708644f6f0495dd1c7bc8
+    url: https://spring.io/projects/spring-boot
+    target: newtab
+  - title: flask
+    description: Welcome to Flask’s documentation. Flask is a lightweight WSGI web application framework. It is designed to make getting started quick and easy, with the ability to scale up to complex applications.
+    icon: https://flask.palletsprojects.com/en/stable/_static/shortcut-icon.png
+    url: https://flask.palletsprojects.com/en/stable/
+    target: newtab
+  
+- name: 综合
+  icon: fas fa-infinity
+  items:
+  - title: Quick Reference
+    description: 为开发人员分享快速参考备忘清单【速查表】。这是英文版 Reference 的中文版本，目的是为了方便自己的技术栈查阅，如果您提供一个清单，我将抽空搬运，立即撸起来 :)。如果您发现此处的备忘单不合适，您可以通过提交 PR 来修复它或提供更好的备忘清单，只针对【中文】用户。
+    icon: https://quickref.cn/icons/favicon.svg
+    url: https://quickref.cn/
+    target: newtab 
+  - title: DevDocs
+    description: Fast, offline, and free documentation browser for developers. Search 100+ docs in one web app：HTML, CSS, JavaScript, PHP, Ruby, Python, Go, C, C++…
+    icon: https://devdocs.io/favicon.ico
+    url: https://devdocs.io
+    target: newtab 
+  - title: Web Skill
+    description: A visual overview of useful skills to learn as a web developer
+    icon: https://andreasbm.github.io/web-skills/www/icon32x32.png
+    url: https://andreasbm.github.io/web-skills/
+    target: newtab 
+  - title: Devhints
+    description: A ridiculous collection of web development cheatsheets
+    icon: https://devhints.io/assets/favicon.png
+    url: https://devhints.io/
+    target: newtab 
+
+- name: 组件
+  icon: fas fa-shapes
+  items:
+  - title: jsDelivr
+    description: Optimized for JS and ESM delivery from npm and GitHub. Works with all web formats. Serving more than 150 billion requests per month.
+    icon: https://www.jsdelivr.com/icons/favicon-16x16.png
+    url: https://www.jsdelivr.com/
+    target: newtab
+  - title: cdnjs
+    description: cdnjs is a free and open-source CDN service trusted by over 12.5% of all websites, serving over 200 billion requests each month, powered by Cloudflare
+    icon: https://cdnjs.com/favicon.png
+    url: https://cdnjs.com/
+    target: newtab
+  - title: npm
+    description: Relied upon by more than 17 million developers worldwide, npm is committed to making JavaScript development elegant, productive, and safe. The free npm Registry has become the center of JavaScript code sharing, and with more than two million packages, the largest software registry in the world
+    icon: https://static-production.npmjs.com/338e4905a2684ca96e08c7780fc68412.png
+    url: https://www.npmjs.com/
+    target: newtab
+  - title: Bundlephobia
+    description: Bundlephobia helps you find the performance impact of npm packages. Find the size of any javascript package and its effect on your frontend bundle.
+    icon: https://bundlephobia.com/favicon-32x32.png?l=4
+    url: https://bundlephobia.com
+    target: newtab
+
+
+- name: 数据库
+  icon: fas fa-database
+  items:
+  - title: MySQL
+    description: MySQL 8.0 Reference Manual
+    icon: https://labs.mysql.com/common/themes/sakila/favicon.ico
+    statusCheckAcceptCodes: 403
+    url: https://dev.mysql.com/doc/refman/8.0/en/
+    target: newtab
+  - title: PostgreSQL
+    description: PostgreSQL Reference Manual
+    icon: https://www.postgresql.org/favicon.ico
+    url: https://www.postgresql.org/docs/
+    target: newtab
+  - title: MongoDB
+    description: MongoDB is a document database designed for ease of application development and scaling.
+    icon: https://www.mongodb.com/docs/assets/favicon.ico
+    url: https://www.mongodb.com/docs/manual/
+    target: newtab
+
+
+- name: 构建
+  icon: fas fa-cogs
+  items:
+  - title: Git
+    description: Git doc
+    icon: https://git-scm.com/favicon.ico
+    url: https://git-scm.com/docs
+    target: newtab
+  - title: Docker
+    description: This section includes the reference documentation for the Docker platform’s various APIs, CLIs, and file formats.
+    icon: https://docs.docker.com/assets/favicons/docs@2x.ico
+    url: https://docs.docker.com/reference/
+    target: newtab
+  - title: Linux Command
+    description: Linux命令搜索引擎:最专业的Linux命令大全，内容包含Linux命令手册、详解、学习，值得收藏的Linux命令速查手册。 - 最专业的Linux命令大全，内容包含Linux命令手册、详解、学习，值得收藏的Linux命令速查手册。
+    icon: https://wangchujiang.com/linux-command/img/favicon.ico
+    url: https://wangchujiang.com/linux-command/
+    target: newtab
+
+- name: 元素
+  icon: fas fa-cube
+  items: 
+  - title: Flex Cheatsheet
+    description: Demos for W3C CSS Flexbox Specification http://www.w3.org/TR/css-flexbox-1/
+    icon: https://yoksel.github.io/favicon.ico
+    url: https://yoksel.github.io/flex-cheatsheet/
+    target: newtab
+  - title: Grid Cheatsheet
+    description: Demos for W3C CSS Grid Specification https://www.w3.org/TR/css-grid-1
+    icon: https://yoksel.github.io/favicon.ico
+    url: https://yoksel.github.io/grid-cheatsheet/
+    target: newtab
+  - title: Easing Functions Cheat Sheet
+    description: Make animations more realistic by picking the right easing function.
+    icon: https://easings.net/favicon.ico
+    url: https://easings.net
+    target: newtab

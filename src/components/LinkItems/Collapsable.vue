@@ -1,10 +1,10 @@
 <template>
   <div
     v-bind:class="[
-    { 'is-open': isExpanded, 'full-height': cutToHeight && !isMasonry },
+    { 'is-open': isExpanded, 'full-height': cutToHeight },
     `collapsable ${rowColSpanClass}`, sectionClassName
     ]"
-    :style="dynamicStyle"
+    :style="`${color ? 'background: '+color : ''}; ${sanitizeCustomStyles(customStyles)};`"
   >
     <input
       :id="sectionKey"
@@ -13,23 +13,16 @@
       v-model="checkboxState"
       tabIndex="-1"
     >
-    <div class="section-header"
-      @mouseup.right="openRightClickMenu" @contextmenu="preventNativeContextMenu"
-      @long-press="openRightClickMenu" v-longPress="500">
-      <label :for="sectionKey" class="collapse-toggle"
-        v-tooltip="toggleTooltip()" :aria-label="$t('context-menus.section.expand-collapse')">
-        <span class="arrow" aria-hidden="true"></span>
-      </label>
-      <Icon v-if="icon" :icon="icon" size="small" :url="title" class="section-icon"
-        @click="toggle" />
-      <h3 @click="toggle">{{ title }}</h3>
-      <OpenIcon v-if="title" @click.prevent.stop="navigateToSection"
-        v-tooltip="openTooltip()" class="header-action" />
+    <label :for="sectionKey" class="lbl-toggle" tabindex="-1"
+      @mouseup.right="openContextMenu" @contextmenu.prevent
+      @long-press="openContextMenu" v-longPress="500">
+      <Icon v-if="icon" :icon="icon" size="small" :url="title" class="section-icon" />
+      <h3>{{ title }}</h3>
       <EditModeIcon v-if="isEditMode" @click="openEditModal"
-        v-tooltip="editTooltip()" class="header-action" />
-      <EllipseIcon @click.prevent.stop="openContextMenu" @contextmenu="preventNativeContextMenu"
-        v-tooltip="optionsTooltip()" class="header-action" />
-    </div>
+        v-tooltip="editTooltip()" class="edit-mode-item" />
+      <OpenIcon @click.prevent.stop="openContextMenu" @contextmenu.prevent
+        class="edit-mode-item" />
+    </label>
     <div class="collapsible-content">
       <div class="content-inner">
         <slot></slot>
@@ -40,32 +33,27 @@
 
 <script>
 import longPress from '@/directives/LongPress';
-import MasonryItem from '@/mixins/MasonryItem';
-import { localStorageKeys } from '@/utils/config/defaults';
+import { localStorageKeys } from '@/utils/defaults';
 import Icon from '@/components/LinkItems/ItemIcon.vue';
 import EditModeIcon from '@/assets/interface-icons/interactive-editor-edit-mode.svg';
-import EllipseIcon from '@/assets/interface-icons/ellipse.svg';
-import OpenIcon from '@/assets/interface-icons/open-new-tab.svg';
+import OpenIcon from '@/assets/interface-icons/config-open-settings.svg';
 
 export default {
   name: 'CollapsableContainer',
-  mixins: [MasonryItem],
   props: {
-    uniqueKey: { type: String, required: true }, // Generated unique ID
-    title: { type: String, default: '' }, // The section title
-    icon: { type: String, default: '' }, // An optional section icon
+    uniqueKey: String, // Generated unique ID
+    title: String, // The section title
+    icon: String, // An optional section icon
     collapsed: Boolean, // Optional override collapse state
-    cols: { type: Number, default: undefined }, // Set section horizontal col span / width
-    rows: { type: Number, default: undefined }, // Set section vertical row span / height
-    color: { type: String, default: '' }, // Optional color override
-    customStyles: { type: String, default: '' }, // Optional custom stylings
+    cols: Number, // Set section horizontal col span / width
+    rows: Number, // Set section vertical row span / height
+    color: String, // Optional color override
+    customStyles: String, // Optional custom stylings
     cutToHeight: Boolean, // To set section height with content height
   },
-  emits: ['openEditSection', 'openContextMenu', 'navigateToSection'],
   components: {
     Icon,
     EditModeIcon,
-    EllipseIcon,
     OpenIcon,
   },
   directives: {
@@ -75,22 +63,16 @@ export default {
     isEditMode() {
       return this.$store.state.editMode;
     },
-    disableContextMenu() {
-      return this.$store.getters.appConfig.disableContextMenu;
-    },
     sectionKey() {
+      if (this.isEditMode) return undefined;
       return `collapsible-${this.uniqueKey}`;
     },
-    rowColSpanClass() {
-      return `${this.checkSpanNum(this.cols, 'col')} ${this.checkSpanNum(this.rows, 'row')}`;
+    collapseClass() {
+      return !this.isExpanded ? ' is-collapsed' : 'is-open';
     },
-    dynamicStyle() {
-      const parts = [];
-      if (this.color) parts.push(`background: ${this.color}`);
-      const custom = this.sanitizeCustomStyles(this.customStyles);
-      if (custom) parts.push(custom);
-      if (this.masonryStyle) parts.push(this.masonryStyle);
-      return parts.join('; ');
+    rowColSpanClass() {
+      const { rows, cols, checkSpanNum } = this;
+      return `${checkSpanNum(cols, 'col')} ${checkSpanNum(rows, 'row')}`;
     },
     sectionClassName() {
       if (!this.title) return 'unnamed-section';
@@ -122,28 +104,17 @@ export default {
   watch: {
     checkboxState(newState) {
       this.isExpanded = newState;
-      this.updateLocalStorage(); // Save every change immediately
     },
-    uniqueKey(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.refreshCollapseState(); // Refresh state when key changes
-      }
+    uniqueKey() {
+      this.checkboxState = this.isExpanded;
     },
   },
   methods: {
-    refreshCollapseState() {
-      this.checkboxState = this.isExpanded;
-    },
-    updateLocalStorage() {
-      const collapseState = this.locallyStoredCollapseStates();
-      collapseState[this.uniqueKey] = this.checkboxState;
-      localStorage.setItem(localStorageKeys.COLLAPSE_STATE, JSON.stringify(collapseState));
-    },
     /* Either expand or collapse section, based on it's current state */
     toggle() {
       this.checkboxState = !this.checkboxState;
     },
-    /* Clamp a user-supplied row/column-span to a sane range, returning a CSS class name */
+    /* Check that row & column span is valid, and not over the max */
     checkSpanNum(span, classPrefix) {
       const maxSpan = 6;
       let numSpan = /^\d*$/.test(span) ? parseInt(span, 10) : 1;
@@ -156,15 +127,13 @@ export default {
     },
     /* Returns local storage collapse state data, and if not yet set then initialized is */
     locallyStoredCollapseStates() {
+      // If not yet set, then call initialize
       if (!localStorage[localStorageKeys.COLLAPSE_STATE]) {
         localStorage.setItem(localStorageKeys.COLLAPSE_STATE, JSON.stringify({}));
         return {};
       }
-      try {
-        return JSON.parse(localStorage[localStorageKeys.COLLAPSE_STATE]);
-      } catch {
-        return {};
-      }
+      // Otherwise, return value of local storage
+      return JSON.parse(localStorage[localStorageKeys.COLLAPSE_STATE]);
     },
     openEditModal() {
       this.$emit('openEditSection');
@@ -172,30 +141,9 @@ export default {
     openContextMenu(e) {
       this.$emit('openContextMenu', e);
     },
-    /* Right-click / long-press is skipped when disabled by user */
-    openRightClickMenu(e) {
-      if (this.disableContextMenu) return;
-      this.openContextMenu(e);
-    },
-    /* Prevent the native right-click menu, unless user disabled custom context menus */
-    preventNativeContextMenu(e) {
-      if (!this.disableContextMenu) e.preventDefault();
-    },
-    navigateToSection() {
-      this.$emit('navigateToSection');
-    },
     editTooltip() {
       const content = this.$t('interactive-editor.edit-section.edit-tooltip');
-      return { content, delay: { show: 100, hide: 0 } };
-    },
-    toggleTooltip() {
-      return { content: this.$t('context-menus.section.expand-collapse'), delay: { show: 200, hide: 0 } };
-    },
-    optionsTooltip() {
-      return { content: this.$t('context-menus.section.section-options'), delay: { show: 200, hide: 0 } };
-    },
-    openTooltip() {
-      return { content: this.$t('context-menus.section.open-section'), delay: { show: 200, hide: 0 } };
+      return { content, trigger: 'hover focus', delay: { show: 100, hide: 0 } };
     },
   },
 };
@@ -228,6 +176,10 @@ export default {
   }
   @include laptop-up {
     &.col-2 { grid-column-start: span 2; }
+    &.col-3, &.col-4, &.col-5,  &.col-6 { grid-column-start: span 3; }
+  }
+  @include monitor-up {
+    &.col-2 { grid-column-start: span 2; }
     &.col-3 { grid-column-start: span 3; }
     &.col-4 { grid-column-start: span 4; }
     &.col-5 { grid-column-start: span 5; }
@@ -238,42 +190,43 @@ export default {
     display: none;
   }
 
-  .section-header {
-    display: flex;
-    align-items: center;
+  label.lbl-toggle {
+    outline: none;
+    display: block;
     padding: 0.25rem;
-    color: var(--item-group-heading-text-color);
-    border-radius: var(--curve-factor);
-    h3 { flex: 1; margin: 0; padding: 0; cursor: pointer; }
-    .section-icon { margin-right: 0.5rem; cursor: pointer; }
-  }
-
-  .collapse-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.6rem;
-    height: 1.6rem;
     cursor: pointer;
     border-radius: var(--curve-factor);
-    transition: background 0.2s ease-out, opacity 0.2s ease-out;
-    .arrow {
-      width: 0;
-      height: 0;
+    transition: all 0.25s ease-out;
+    text-align: left;
+    color: var(--item-group-heading-text-color);
+    h3 {
+      margin: 0;
+      padding: 0;
+      display: inline;
+    }
+    .section-icon {
+      display: inline;
+      margin-right: 0.5rem;
+    }
+    &:hover {
+      color: var(--item-group-heading-text-color-hover);
+    }
+    &::before {
+      content: ' ';
+      display: inline-block;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
-      border-left: 6px solid currentColor;
-      opacity: 0.5;
-      transition: transform 0.3s ease-in-out;
-    }
-    &:hover, &:focus-visible {
-      outline: none;
-      background: var(--primary-transparent-60);
-      .arrow { opacity: 1; }
+      border-left: 5px solid currentColor;
+      vertical-align: middle;
+      margin-right: .7rem;
+      transform: translateY(-2px);
+      opacity: 0.3;
+      transition: all 0.4s ease-in-out;
     }
   }
-  input.toggle:checked + .section-header .collapse-toggle .arrow {
-    transform: rotate(90deg);
+
+  input.toggle:checked + .lbl-toggle::before {
+    transform: rotate(90deg) translateX(-3px);
   }
 
   .collapsible-content {
@@ -284,11 +237,11 @@ export default {
     border-radius: 0 0 var(--curve-factor) var(--curve-factor);
   }
 
-  input.toggle:checked + .section-header + .collapsible-content {
+  input.toggle:checked + .lbl-toggle + .collapsible-content {
     max-height: var(--section-max-height);
   }
 
-  input.toggle:checked + .section-header {
+  input.toggle:checked + .lbl-toggle {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
   }
@@ -297,22 +250,24 @@ export default {
     padding: 0.5rem;
   }
 
-  /* Section edit buttons, pushed to the right by the flex-1 h3.
-   * Shares hover styling with .collapse-toggle. */
-  .header-action {
-    box-sizing: content-box;
+  /* Section edit button, shown when in edit mode */
+  .edit-mode-item {
     width: 1rem;
     height: 1rem;
-    padding: 0.3rem;
-    margin-left: 0.25rem;
-    cursor: pointer;
+    float: right;
+    right: 0.5rem;
+    top: 0.5rem;
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
     opacity: 0.3;
-    border-radius: var(--curve-factor);
-    transition: background 0.2s ease-out, opacity 0.2s ease-out;
-    &:hover, &:focus-visible {
-      outline: none;
-      background: var(--primary-transparent-60);
+    transition: all 0.4s ease-in-out;
+  }
+
+  /* On section hover, set interface icons to full visible */
+  &:hover {
+    .edit-mode-item, label.lbl-toggle::before {
       opacity: 1;
+      transition: all 0.2s ease-out;
     }
   }
 

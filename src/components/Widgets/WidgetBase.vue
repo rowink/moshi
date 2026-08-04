@@ -1,16 +1,12 @@
 <template>
   <div :class="`widget-base ${ loading ? 'is-loading' : '' }`">
-    <!-- Update Action Button -->
+    <!-- Update and Full-Page Action Buttons  -->
     <Button :click="update" class="action-btn update-btn" v-if="!hideControls && !loading">
       <UpdateIcon />
     </Button>
-    <!-- Edit Action Button (visible in edit mode) -->
-    <Button :click="emitEdit" class="action-btn edit-btn" v-if="isEditMode && !loading">
-      <EditIcon />
-    </Button>
-    <!-- Remove Action Button (visible in edit mode) -->
-    <Button :click="emitRemove" class="action-btn remove-btn" v-if="isEditMode && !loading">
-      <BinIcon />
+    <Button :click="fullScreenWidget"
+      class="action-btn open-btn" v-if="!hideControls && !error && !loading">
+      <OpenIcon />
     </Button>
     <!-- Loading Spinner -->
     <div v-if="loading" class="loading">
@@ -38,75 +34,59 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
 // Import form elements, icons and utils
-import ErrorHandler from '@/utils/logging/ErrorHandler';
+import ErrorHandler from '@/utils/ErrorHandler';
 import Button from '@/components/FormElements/Button';
 import UpdateIcon from '@/assets/interface-icons/widget-update.svg';
-import EditIcon from '@/assets/interface-icons/config-edit-json.svg';
-import BinIcon from '@/assets/interface-icons/interactive-editor-remove.svg';
+import OpenIcon from '@/assets/interface-icons/open-new-tab.svg';
 import LoadingAnimation from '@/assets/interface-icons/loader.svg';
-
-const widgetModules = import.meta.glob('./*.vue');
 
 const COMPAT = {
   'adguard-dns-info': 'AdGuardDnsInfo',
   'adguard-filter-status': 'AdGuardFilterStatus',
   'adguard-stats': 'AdGuardStats',
   'adguard-top-domains': 'AdGuardTopDomains',
-  addy: 'AnonAddy',
   anonaddy: 'AnonAddy',
   apod: 'Apod',
   'blacklist-check': 'BlacklistCheck',
-  chucknorris: 'ChuckNorris',
   clock: 'Clock',
-  'code-stats': 'CodeStats',
-  'covid-stats': 'CovidStats',
   'crypto-price-chart': 'CryptoPriceChart',
   'crypto-watch-list': 'CryptoWatchList',
   'custom-search': 'CustomSearch',
-  'custom-list': 'CustomList',
-  customapi: 'CustomApi',
-  'custom-api': 'CustomApi',
   'cve-vulnerabilities': 'CveVulnerabilities',
   'domain-monitor': 'DomainMonitor',
+  'code-stats': 'CodeStats',
+  'covid-stats': 'CovidStats',
   'drone-ci': 'DroneCi',
   embed: 'EmbedWidget',
   'eth-gas-prices': 'EthGasPrices',
   'exchange-rates': 'ExchangeRates',
-  filebrowser: 'Filebrowser',
   'flight-data': 'Flights',
   'github-profile-stats': 'GitHubProfile',
   'github-trending-repos': 'GitHubTrending',
   'gl-alerts': 'GlAlerts',
   'gl-current-cores': 'GlCpuCores',
   'gl-current-cpu': 'GlCpuGauge',
-  'gl-cpu-speedometer': 'GlCpuSpeedometer',
   'gl-cpu-history': 'GlCpuHistory',
   'gl-disk-io': 'GlDiskIo',
   'gl-disk-space': 'GlDiskSpace',
   'gl-ip-address': 'GlIpAddress',
   'gl-load-history': 'GlLoadHistory',
   'gl-current-mem': 'GlMemGauge',
-  'gl-mem-speedometer': 'GlMemSpeedometer',
   'gl-mem-history': 'GlMemHistory',
   'gl-network-interfaces': 'GlNetworkInterfaces',
   'gl-network-traffic': 'GlNetworkTraffic',
   'gl-system-load': 'GlSystemLoad',
-  'gl-uptime': 'GlancesUptime',
   'gl-cpu-temp': 'GlCpuTemp',
-  'gl-gpu': 'GlGpu',
-  'gluetun-status': 'GluetunStatus',
   'health-checks': 'HealthChecks',
   'hackernews-trending': 'HackernewsTrending',
+  'gluetun-status': 'GluetunStatus',
   iframe: 'IframeWidget',
   image: 'ImageWidget',
   joke: 'Jokes',
-  linkding: 'Linkding',
-  'live-tennis': 'LiveTennis',
-  'minecraft-status': 'MinecraftStatus',
   'mullvad-status': 'MullvadStatus',
   mvg: 'Mvg',
+  linkding: 'Linkding',
   'mvg-connection': 'MvgConnection',
   'nd-cpu-history': 'NdCpuHistory',
   'nd-load-history': 'NdLoadHistory',
@@ -118,17 +98,12 @@ const COMPAT = {
   'nextcloud-system': 'NextcloudSystem',
   'nextcloud-user': 'NextcloudUser',
   'nextcloud-user-status': 'NextcloudUserStatus',
-  'ntfy-stream': 'NtfyStream',
   'pi-hole-stats': 'PiHoleStats',
-  'pi-hole-stats-v6': 'PiHoleStatsV6',
   'pi-hole-top-queries': 'PiHoleTopQueries',
-  'pi-hole-top-queries-v6': 'PiHoleTopQueriesV6',
   'pi-hole-traffic': 'PiHoleTraffic',
-  'pi-hole-traffic-v6': 'PiHoleTrafficV6',
   'proxmox-lists': 'Proxmox',
   'public-holidays': 'PublicHolidays',
   'public-ip': 'PublicIp',
-  'rescue-time': 'RescueTime',
   'rss-feed': 'RssFeed',
   sabnzbd: 'Sabnzbd',
   'sports-scores': 'SportsScores',
@@ -137,14 +112,10 @@ const COMPAT = {
   'synology-download': 'SynologyDownload',
   'system-info': 'SystemInfo',
   'tfl-status': 'TflStatus',
-  trmm: 'TacticalRMM',
-  'uptime-kuma': 'UptimeKuma',
-  'uptime-kuma-status-page': 'UptimeKumaStatusPage',
   'wallet-balance': 'WalletBalance',
   weather: 'Weather',
   'weather-forecast': 'WeatherForecast',
   'xkcd-comic': 'XkcdComic',
-  'gl-compact-metrics': 'GlCompactMetrics',
 };
 
 export default {
@@ -153,15 +124,13 @@ export default {
     // Register form elements
     Button,
     UpdateIcon,
-    EditIcon,
-    BinIcon,
+    OpenIcon,
     LoadingAnimation,
   },
   props: {
-    widget: { type: Object, required: true },
-    index: { type: Number, required: true },
+    widget: Object,
+    index: Number,
   },
-  emits: ['editWidget', 'removeWidget'],
   data: () => ({
     loading: false,
     error: false,
@@ -170,9 +139,6 @@ export default {
   computed: {
     appConfig() {
       return this.$store.getters.appConfig;
-    },
-    isEditMode() {
-      return this.$store.state.editMode;
     },
     /* Returns the widget type, shows error if not specified */
     widgetType() {
@@ -208,13 +174,8 @@ export default {
         ErrorHandler('Widget type was not found');
         return null;
       }
-      const path = `./${type}.vue`;
-      const loader = widgetModules[path];
-      if (!loader) {
-        ErrorHandler(`Widget component not found: ${type}`);
-        return defineAsyncComponent(() => import('./Blank.vue'));
-      }
-      return defineAsyncComponent(() => loader().catch(() => import('./Blank.vue')));
+      // eslint-disable-next-line prefer-template
+      return () => import('@/components/Widgets/' + type + '.vue').catch(() => import('@/components/Widgets/Blank.vue'));
     },
   },
   methods: {
@@ -228,54 +189,52 @@ export default {
       this.error = true;
       this.errorMsg = msg;
     },
+    /* Opens current widget in full-page */
+    fullScreenWidget() {
+      this.$emit('navigateToSection');
+    },
     /* Toggles loading state */
     setLoaderState(loading) {
       this.loading = loading;
     },
-    emitEdit() { this.$emit('editWidget'); },
-    emitRemove() { this.$emit('removeWidget'); },
   },
 };
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/media-queries.scss";
-
+@import '@/styles/media-queries.scss';
 .widget-base {
   position: relative;
   padding: 0.75rem 0.5rem 0.5rem 0.5rem;
   background: var(--widget-base-background);
   box-shadow: var(--widget-base-shadow, none);
-
   // Refresh and full-page action buttons
-  button.action-btn {
+  button.action-btn  {
     height: 1rem;
     min-width: auto;
-    width: 1.25rem;
+    width: 1.75rem;
     margin: 0;
-    padding: 0.25rem;
+    padding: 0.1rem 0;
     position: absolute;
     top: 0;
     border: none;
     opacity: var(--dimming-factor);
     color: var(--widget-text-color);
-    svg { width: 0.75rem; height: 0.75rem; }
-
     &:hover {
       opacity: 1;
       color: var(--widget-background-color);
     }
-
-    &.update-btn { right: -0.25rem; }
-    &.edit-btn { right: 1rem; }
-    &.remove-btn { right: 2.25rem; }
+    &.update-btn {
+      right: -0.25rem;
+    }
+    &.open-btn {
+      right: 1.75rem;
+    }
   }
-
   // Optional widget label
   .widget-label {
     color: var(--widget-text-color);
   }
-
   // Actual widget container
   .widget-wrap {
     &.has-error {
@@ -283,11 +242,9 @@ export default {
       opacity: 0.5;
       border-radius: var(--curve-factor);
       background: #ffff0040;
-
       &:hover { background: none; }
     }
   }
-
   // Error message output
   .widget-error {
     p.error-msg {
@@ -296,14 +253,12 @@ export default {
       font-size: 1rem;
       margin: 0 auto 0.5rem auto;
     }
-
     p.error-output {
       font-family: var(--font-monospace);
       color: var(--widget-text-color);
       font-size: 0.85rem;
       margin: 0.5rem auto;
     }
-
     p.retry-link {
       cursor: pointer;
       text-decoration: underline;
@@ -312,17 +267,14 @@ export default {
       margin: 0;
     }
   }
-
   // Loading spinner
   .loading {
     margin: 0.2rem auto;
     text-align: center;
-
     svg.loader {
       width: 100px;
     }
   }
-
   // Hide widget contents while loading
   &.is-loading {
     .widget-wrap {
@@ -330,4 +282,5 @@ export default {
     }
   }
 }
+
 </style>

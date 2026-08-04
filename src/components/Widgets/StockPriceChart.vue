@@ -4,10 +4,10 @@
 
 <script>
 import { Chart } from 'frappe-charts/dist/frappe-charts.min.esm';
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
 import ChartingMixin from '@/mixins/ChartingMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin, ChartingMixin],
@@ -29,7 +29,7 @@ export default {
     },
     /* The users API key for AlphaVantage */
     apiKey() {
-      return this.parseAsEnvVar(this.options.apiKey);
+      return this.options.apiKey;
     },
     /* The formatted GET request API endpoint to fetch stock data from */
     endpoint() {
@@ -87,7 +87,7 @@ export default {
     },
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
-      request.get(this.endpoint)
+      axios.get(this.endpoint)
         .then((response) => {
           if (response.data.note) {
             this.error('API Error', response.data.Note);

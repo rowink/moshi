@@ -18,9 +18,8 @@ import SideBar from '@/components/Workspace/SideBar';
 import WebContent from '@/components/Workspace/WebContent';
 import WidgetView from '@/components/Workspace/WidgetView';
 import MultiTaskingWebComtent from '@/components/Workspace/MultiTaskingWebComtent';
-import Defaults from '@/utils/config/defaults';
-import ErrorHandler from '@/utils/logging/ErrorHandler';
-import { sanitizeUrl } from '@/utils/Sanitizer';
+import Defaults from '@/utils/defaults';
+import { GetTheme, ApplyLocalTheme, ApplyCustomVariables } from '@/utils/ThemeHelper';
 
 export default {
   name: 'Workspace',
@@ -28,6 +27,9 @@ export default {
   data: () => ({
     url: '',
     widgets: null,
+    GetTheme,
+    ApplyLocalTheme,
+    ApplyCustomVariables,
   }),
   computed: {
     sections() {
@@ -50,18 +52,6 @@ export default {
     launchApp(options) {
       if (options.target === 'newtab') {
         window.open(options.url, '_blank');
-      } else if (options.target === 'newwindow') {
-        const { width, height } = window.screen;
-        window.open(options.url, '_blank', `width=${width},height=${height},noopener,noreferrer`);
-      } else if (options.target === 'clipboard') {
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(options.url);
-          this.$toast.success(this.$t('context-menus.item.copied-toast'));
-        } else {
-          ErrorHandler('Clipboard access requires HTTPS. See: https://bit.ly/3N5WuAA');
-          this.$toast.error('Unable to copy, see log');
-        }
-        return;
       } else {
         this.url = options.url;
       }
@@ -81,7 +71,7 @@ export default {
     getInitialUrl() {
       const route = this.$route;
       if (route.query && route.query.url) {
-        return sanitizeUrl(decodeURI(route.query.url)) || undefined;
+        return decodeURI(route.query.url);
       } else if (this.appConfig.workspaceLandingUrl) {
         return this.appConfig.workspaceLandingUrl;
       }
@@ -89,8 +79,8 @@ export default {
     },
   },
   mounted() {
+    this.setTheme();
     this.initiateFontAwesome();
-    this.initiateMaterialDesignIcons();
     this.url = this.getInitialUrl();
   },
 };
@@ -99,6 +89,6 @@ export default {
 
 <style scoped lang="scss">
 .work-space {
-  min-height: fit-content;
+  min-height: calc(100vh - var(--footer-height));
 }
 </style>

@@ -7,7 +7,7 @@
     <div class="buttons">
       <button
         v-for="(engine, key) in engines" :key="key"
-        v-on:click="search(engine, openingMethod)">
+        v-on:click="search(engine)">
         {{ engine.title }}
       </button>
     </div>
@@ -15,9 +15,7 @@
 </template>
 
 <script>
-import router from '@/router';
 import WidgetMixin from '@/mixins/WidgetMixin';
-import ErrorHandler from '@/utils/logging/ErrorHandler';
 
 export default {
   mixins: [WidgetMixin],
@@ -37,28 +35,11 @@ export default {
     defaultEngine() {
       return this.engines[0];
     },
-    openingMethod() {
-      return this.options.openingMethod || '';
-    },
   },
   methods: {
-    search(engine, openingMethod) {
+    search(engine) {
       if (engine !== undefined && this.query !== '') {
-        const url = engine.url + this.query;
-        switch (openingMethod) {
-          case 'newtab':
-            window.open(url, '_blank');
-            break;
-          case 'sametab':
-            window.open(url, '_self');
-            break;
-          case 'workspace':
-            router.push({ name: 'workspace', query: { url } });
-            break;
-          default:
-            ErrorHandler(`Unknown opening method: ${openingMethod}`);
-            window.open(url, '_blank');
-        }
+        window.open(engine.url + this.query, '_blank');
       }
     },
   },

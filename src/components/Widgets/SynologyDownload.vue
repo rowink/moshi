@@ -2,8 +2,8 @@
 <div class="synology-download-wrapper" v-if="tasks">
   <div v-for="(task, key) in tasks" :key="key" class="task-row">
     <PercentageChart :title="task.DisplayTitle"
-      :showAsPercent="false"
-      :showLegend="false"
+      :showAsPercent=false
+      :showLegend=false
       :values="[
       { label: $t('widgets.synology-download.downloaded'),
         size: task.Progress, color: '#20e253' },
@@ -12,12 +12,12 @@
       ]" />
     <p class="info">
       <strong>{{ $t('widgets.synology-download.downloaded') }}</strong>:
-       {{ formatSize(task.Downloaded) }}
-      / {{ formatSize(task.TotalSize) }} ({{ task.Progress }}%)
-      ({{ formatSize(task.DownSpeed) }}/s)<br/>
+       {{ task.Downloaded | formatSize }}
+      / {{ task.TotalSize | formatSize }} ({{ task.Progress }}%)
+      ({{ task.DownSpeed | formatSize }}/s)<br/>
       <strong>{{ $t('widgets.synology-download.uploaded') }}</strong>:
-       {{ formatSize(task.Uploaded) }}
-      ({{ formatSize(task.UpSpeed) }}/s)
+       {{ task.Uploaded | formatSize }}
+      ({{ task.UpSpeed | formatSize }}/s)
       (ratio : {{ Math.floor( task.Uploaded / task.Downloaded * 100 ) / 100 }})
     </p>
   </div>
@@ -25,10 +25,11 @@
 </template>
 
 <script>
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
 import PercentageChart from '@/components/Charts/PercentageChart';
 import { getValueFromCss, convertBytes } from '@/utils/MiscHelpers';
+import { serviceEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin],
@@ -37,7 +38,6 @@ export default {
   },
   data() {
     return {
-      overrideProxyChoice: true,
       tasks: null,
       sid: null,
     };
@@ -45,15 +45,15 @@ export default {
   computed: {
     hostname() {
       if (!this.options.hostname) this.error('A hostname is required');
-      return this.parseAsEnvVar(this.options.hostname);
+      return this.options.hostname;
     },
     username() {
       if (!this.options.username) this.error('A username is required');
-      return this.parseAsEnvVar(this.options.username);
+      return this.options.username;
     },
     password() {
       if (!this.options.password) this.error('A password is required');
-      return this.parseAsEnvVar(this.options.password);
+      return this.options.password;
     },
     endpointLogin() {
       return `${this.hostname}/webapi/auth.cgi?api=SYNO.API.Auth&version=3&method=login&account=${this.username}&passwd=${this.password}&session=DownloadStation&format=sid`;
@@ -64,13 +64,19 @@ export default {
     endpointLogout() {
       return `${this.hostname}/webapi/auth.cgi?api=SYNO.API.Auth&version=3&method=logout&session=DownloadStation&_sid=${this.sid}`;
     },
+    proxyReqEndpoint() {
+      const baseUrl = process.env.VUE_APP_DOMAIN || window.location.origin;
+      return `${baseUrl}${serviceEndpoints.corsProxy}`;
+    },
   },
-  methods: {
+  filters: {
     formatSize(byteValue) {
       return convertBytes(byteValue);
     },
+  },
+  methods: {
     login() {
-      request({
+      axios.request({
         method: 'GET',
         url: this.proxyReqEndpoint,
         headers: { 'Target-URL': this.endpointLogin },
@@ -78,7 +84,7 @@ export default {
         .then(this.processLogin);
     },
     getTasks() {
-      request({
+      axios.request({
         method: 'GET',
         url: this.proxyReqEndpoint,
         headers: { 'Target-URL': this.endpointTasks },
@@ -86,7 +92,7 @@ export default {
         .then(this.processTask);
     },
     logout() {
-      request({
+      axios.request({
         method: 'GET',
         url: this.proxyReqEndpoint,
         headers: { 'Target-URL': this.endpointLogout },

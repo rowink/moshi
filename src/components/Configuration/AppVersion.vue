@@ -1,7 +1,7 @@
 <template>
   <div class="app-version" v-if="isVersionValid()">
     <!-- Current Version -->
-    <p class="current-version">
+    <p>
       {{ $t('updates.app-version-note') }} {{ appVersion }}
     </p>
     <div v-if="checksEnabled">
@@ -30,9 +30,9 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { Progress } from 'rsup-progress';
-import request from '@/utils/request';
-import ErrorHandler from '@/utils/logging/ErrorHandler';
+import ErrorHandler from '@/utils/ErrorHandler';
 
 export default {
   name: 'AppInfoModal',
@@ -41,12 +41,9 @@ export default {
       return this.$store.getters.appConfig;
     },
   },
-  props: {
-    doUpdateCheck: { type: Boolean, required: false, default: true },
-  },
   data() {
     return {
-      appVersion: import.meta.env.VITE_APP_VERSION, // Current version, from package.json
+      appVersion: process.env.VUE_APP_VERSION, // Current version, from package.json
       progress: new Progress({ color: 'var(--progress-bar)' }),
       latestVersion: '', // Will store latest version, when request returns
       checksEnabled: true, // Should we check for updates
@@ -57,7 +54,7 @@ export default {
     };
   },
   mounted() {
-    if (!this.doUpdateCheck || !this.appVersion || (this.appConfig && this.appConfig.disableUpdateChecks)) {
+    if (!this.appVersion || (this.appConfig && this.appConfig.disableUpdateChecks)) {
       // Either current version isn't found, or user disabled checks
       this.checksEnabled = false;
     } else {
@@ -69,34 +66,28 @@ export default {
     checkVersion() {
       const packageUrl = 'https://raw.githubusercontent.com/Lissy93/dashy/master/package.json';
       this.progress.start();
-      request.get(packageUrl).then((response) => {
-        const latest = response && response.data && response.data.version;
-        if (typeof latest !== 'string' || !/^\d+(\.\d+)*$/.test(latest)) {
-          this.error = true;
-          return;
+      axios.get(packageUrl).then((response) => {
+        if (response && response.data && response.data.version) {
+          this.latestVersion = response.data.version;
+          this.isUpToDate = this.checkIfUpToDate(this.appVersion, this.latestVersion);
+          this.finished = true;
+          this.progress.end();
         }
-        this.latestVersion = latest;
-        this.isUpToDate = this.checkIfUpToDate(this.appVersion, latest);
-        this.finished = true;
       }).catch(() => {
         this.error = true;
-      }).finally(() => {
         this.progress.end();
       });
     },
     /* Compares the current version, with the package.json version */
     checkIfUpToDate(currentVersion, latestVersion) {
-      const [curMaj = 0, curMin = 0, curPatch = 0] = currentVersion.split('.').map(Number);
-      const [latMaj = 0, latMin = 0, latPatch = 0] = latestVersion.split('.').map(Number);
-      if (latMaj > curMaj || latMin - curMin > 5) this.veryOutOfDate = true;
-      if (latMaj !== curMaj) return latMaj < curMaj;
-      if (latMin !== curMin) return latMin < curMin;
-      return latPatch <= curPatch;
+      const parse = (version) => parseInt(version.replaceAll('.', ''), 10);
+      const difference = parse(latestVersion) - parse(currentVersion);
+      if (difference > 5) this.veryOutOfDate = true;
+      return difference <= 0;
     },
     /* Checks that the input version is correctly parsed */
     isVersionValid() {
-      const isValid = typeof this.appVersion === 'string'
-        && /^\d+(\.\d+)*$/.test(this.appVersion);
+      const isValid = !Number.isNaN(parseInt(this.appVersion.replaceAll('.', ''), 10));
       if (!isValid) { // If invalid, then record an error
         ErrorHandler(
           'Unable to check for updates, because current version is unavailible.'
@@ -118,9 +109,6 @@ div.app-version {
     margin: 0.5rem auto;
     color: var(--transparent-white-50);
     cursor: default;
-    &.current-version {
-        margin: 0;
-    }
     &.up-to-date {
       color: var(--success);
       font-weight: bold;

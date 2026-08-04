@@ -18,19 +18,17 @@ Dashy has support for displaying dynamic content in the form of widgets. There a
   - [Crypto Wallet Balance](#wallet-balance)
   - [Code Stats](#code-stats)
   - [Mullvad Status](#mullvad-status)
-  - [Email Aliases (addy.io)](#addyio)
+  - [Email Aliases (AnonAddy)](#anonaddy)
   - [Vulnerability Feed](#vulnerability-feed)
   - [Exchange Rates](#exchange-rates)
   - [Public Holidays](#public-holidays)
   - [Covid-19 Status](#covid-19-status)
   - [Sports Scores](#sports-scores)
-  - [Live Tennis](#live-tennis)
   - [News Headlines](#news-headlines)
   - [TFL Status](#tfl-status)
   - [Stock Price History](#stock-price-history)
   - [ETH Gas Prices](#eth-gas-prices)
   - [Joke of the Day](#joke)
-  - [Chuck Norris quotes](#chucknorris)
   - [XKCD Comics](#xkcd-comics)
   - [Flight Data](#flight-data)
   - [NASA APOD](#astronomy-picture-of-the-day)
@@ -41,19 +39,15 @@ Dashy has support for displaying dynamic content in the form of widgets. There a
   - [Mvg Departure](#mvg-departure)
   - [Mvg Connection](#mvg-connection)
   - [Custom search](#custom-search)
-  - [Rescuetime overview](#rescuetime-overview)
-  - [Minecraft Server](#minecraft-server)
 - **[Self-Hosted Services Widgets](#self-hosted-services-widgets)**
   - [System Info](#system-info)
+  - [Cron Monitoring](#cron-monitoring-health-checks)
   - [CPU History](#cpu-history-netdata)
   - [Memory History](#memory-history-netdata)
   - [System Load History](#load-history-netdata)
-  - [Pi-Hole Stats](#pi-hole-stats)
-  - [Pi-Hole Stats v6](#pi-hole-stats-v6)
-  - [Pi-Hole Queries](#pi-hole-queries)
-  - [Pi-Hole Queries v6](#pi-hole-queries-v6)
-  - [Pi-Hole Recent Traffic](#pi-hole-recent-traffic)
-  - [Pi-Hole Recent Traffic v6](#pi-hole-recent-traffic-v6)
+  - [Pi Hole Stats](#pi-hole-stats)
+  - [Pi Hole Queries](#pi-hole-queries)
+  - [Pi Hole Recent Traffic](#pi-hole-recent-traffic)
   - [Stat Ping Statuses](#stat-ping-statuses)
   - [Synology Download Station](#synology-download-station)
   - [AdGuard Home Block Stats](#adguard-home-block-stats)
@@ -66,16 +60,11 @@ Dashy has support for displaying dynamic content in the form of widgets. There a
   - [Nextcloud System](#nextcloud-system)
   - [Nextcloud Stats](#nextcloud-stats)
   - [Nextcloud PHP OPcache](#nextcloud-php-opcache-stats)
-  - [Ntfy stream](#ntfy-stream)
   - [Proxmox lists](#proxmox-lists)
   - [Sabnzbd](#sabnzbd)
   - [Gluetun VPN Info](#gluetun-vpn-info)
   - [Drone CI Build](#drone-ci-builds)
-  - [Filebrowser](#filebrowser)
   - [Linkding](#linkding)
-  - [Uptime Kuma](#uptime-kuma)
-  - [Uptime Kuma Status Page](#uptime-kuma-status-page)
-  - [Tactical RMM](#tactical-rmm)
 - **[System Resource Monitoring](#system-resource-monitoring)**
   - [CPU Usage Current](#current-cpu-usage)
   - [CPU Usage Per Core](#cpu-usage-per-core)
@@ -91,8 +80,6 @@ Dashy has support for displaying dynamic content in the form of widgets. There a
   - [Resource Usage Alerts](#resource-usage-alerts)
   - [Public & Private IP](#ip-address)
   - [CPU Temperature](#cpu-temp)
-  - [GPU](#gpu)
-  - [Compact Metrics](#compact-metrics)
 - **[Dynamic Widgets](#dynamic-widgets)**
   - [Iframe Widget](#iframe-widget)
   - [HTML Embed Widget](#html-embedded-widget)
@@ -103,7 +90,6 @@ Dashy has support for displaying dynamic content in the form of widgets. There a
   - [Widget Usage Guide](#widget-usage-guide)
   - [Continuous Updates](#continuous-updates)
   - [Proxying Requests](#proxying-requests)
-  - [Handling Secrets](#handling-secrets)
   - [Setting Timeout](#setting-timeout)
   - [Adding Labels](#adding-labels)
   - [Ignoring Errors](#ignoring-errors)
@@ -121,7 +107,7 @@ Dashy has support for displaying dynamic content in the form of widgets. There a
 
 A simple, live-updating time and date widget with time-zone support. All fields are optional.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/clock" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/vjb4RTv/clock.png" /></p>
 
 #### Options
 
@@ -154,7 +140,7 @@ _No external data requests._
 
 A simple, live-updating local weather component, showing temperature, conditions and more info.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/weather" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/r6MCfsL/weather.png" /></p>
 
 #### Options
 
@@ -162,11 +148,8 @@ A simple, live-updating local weather component, showing temperature, conditions
 --- | --- | --- | ---
 **`apiKey`** | `string` |  Required | Your OpenWeatherMap API key. You can get one for free at [openweathermap.org](https://openweathermap.org/)
 **`city`** | `string` | Required | A city name to use for fetching weather. This can also be a state code or country code, following the ISO-3166 format
-**`cityId`** | `number` |  _Optional_ | An OpenWeatherMap numeric city ID, used to disambiguate cities that share a name. You can find the ID in the URL of the city's page on [openweathermap.org](https://openweathermap.org/) (e.g. `2643743` for London, GB). If provided, this will override the `city` option
 **`units`** | `string` |  _Optional_ | The units to use for displaying data, can be either `metric` or `imperial`. Defaults to `metric`
 **`hideDetails`** | `boolean` |  _Optional_ | If set to `true`, the additional details (wind, humidity, pressure, etc) will not be shown. Defaults to `false`
-**`lat`** | `number` |  _Optional_ | To show weather for a specific location, you can provide the latitude and longitude coordinates. If provided, this will override the `city` and `cityId` options
-**`lon`** | `number` |  _Optional_ | To show weather for a specific location, you can provide the latitude and longitude coordinates. If provided, this will override the `city` and `cityId` options
 
 #### Example
 
@@ -176,7 +159,7 @@ A simple, live-updating local weather component, showing temperature, conditions
     apiKey: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     city: London
     units: metric
-    hideDetails: true
+    hideDetails: false
 ```
 
 #### Info
@@ -192,7 +175,7 @@ A simple, live-updating local weather component, showing temperature, conditions
 
 Displays the weather (temperature and conditions) for the next few days for a given location. Note that this requires either the free [OpenWeatherMap Student Plan](https://home.openweathermap.org/students), or the Premium Plan.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/weather-forecast" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/vshwgZB/weather-forecast.png" /></p>
 
 #### Options
 
@@ -200,9 +183,6 @@ Displays the weather (temperature and conditions) for the next few days for a gi
 --- | --- | --- | ---
 **`apiKey`** | `string` |  Required | Your OpenWeatherMap API key. You can get one at [openweathermap.org](https://openweathermap.org/) or for free via the [OWM Student Plan](https://home.openweathermap.org/students)
 **`city`** | `string` | Required | A city name to use for fetching weather. This can also be a state code or country code, following the ISO-3166 format
-**`cityId`** | `number` |  _Optional_ | An OpenWeatherMap numeric city ID, used to disambiguate cities that share a name. You can find the ID in the URL of the city's page on [openweathermap.org](https://openweathermap.org/) (e.g. `2643743` for London, GB). If provided, this will override the `city` option
-**`lat`** | `number` |  _Optional_ | Latitude for a specific location. If provided alongside `lon`, this will override the `city` and `cityId` options
-**`lon`** | `number` |  _Optional_ | Longitude for a specific location. If provided alongside `lat`, this will override the `city` and `cityId` options
 **`numDays`** | `number` |  _Optional_ | The number of days to display of forecast info to display. Defaults to `4`, max `16` days
 **`units`** | `string` |  _Optional_ | The units to use for displaying data, can be either `metric` or `imperial`. Defaults to `metric`
 **`hideDetails`** | `boolean` |  _Optional_ | If set to `true`, the additional details (wind, humidity, pressure, etc) will not be shown. Defaults to `false`
@@ -231,7 +211,7 @@ Displays the weather (temperature and conditions) for the next few days for a gi
 
 Display news and updates from any RSS-enabled service.
 
-<p align="center"><img width="600" src="https://pixelflare.cc/alicia/dashy/rss" /></p>
+<p align="center"><img width="600" src="https://i.ibb.co/N9mvLh4/rss-feed.png" /></p>
 
 #### Options
 
@@ -276,7 +256,7 @@ If you'd like to embed a live screenshot, of all or just part of a website, then
 
 Or what about showing a photo of the day? Try `https://source.unsplash.com/random/400x300` or `https://picsum.photos/400/300`
 
-<p align="center"><img width="300" src="https://pixelflare.cc/alicia/dashy/image" /></p>
+<p align="center"><img width="300" src="https://i.ibb.co/P48Y443/image-widget.png" /></p>
 
 #### Options
 
@@ -302,36 +282,26 @@ Unless image fetched from remote source, no external data request is made.
 
 ### Public IP
 
-Displays your public IP address, ISP and approximate location.
+Often find yourself searching "What's my IP", just so you can check your VPN is still connected? This widget displays your public IP address, along with ISP name and approx location. Data can be fetched from either [IpApi.co](https://ipapi.co/), [IP-API.com](https://ip-api.com/) or [IpGeolocation.io](https://ipgeolocation.io/).
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/public-ip" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/vc3c8zN/public-ip.png" /></p>
 
 #### Options
 
+_All fields are optional._
+
 **Field** | **Type** | **Required** | **Description**
 --- | --- | --- | ---
-**`provider`** | `string` |  _Optional_ | One of `ipinfo` _(default)_, `freeipapi`, `ipquery`, `ip-api`, or `ipgeolocation`. See the table below
-**`apiKey`** | `string` |  _Optional_ | Required for `ipgeolocation`. Optional for `ipinfo` (a [free token](https://ipinfo.io/signup) raises the rate limit from ~1k/day to ~50k/month)
-**`hideLocation`** | `boolean` |  _Optional_ | Set to `true` to hide the flag, ISP name and city/region — only the IP address is shown. Defaults to `false`
+**`provider`** | `string` |  _Optional_ | The name of the service to fetch IP address from. Can be either `ipapi.co`, `ip-api` or `ipgeolocation`. Defaults to `ipapi.co`. Note, `ip-api` doesn't work on HTTPS, and if you set to `ipgeolocation` then you must also provide an API key
+**`apiKey`** | `string` |  _Optional_ | Only required if provider is set to `ipgeolocation`. You can get a free API key [here](https://ipgeolocation.io/signup.html)
 
 #### Example
 
-Default (no options needed)
-
 ```yaml
 - type: public-ip
 ```
 
-Using `ip-api` via the proxy (gets server IP, because of `useProxy`)
-
-```yaml
-- type: public-ip
-  useProxy: true
-  options:
-    provider: ip-api
-```
-
-Using `ipgeolocation` with a key:
+Or
 
 ```yaml
 - type: public-ip
@@ -340,27 +310,13 @@ Using `ipgeolocation` with a key:
     apiKey: xxxxxxxxxxxxxxx
 ```
 
-> [!TIP]
-> Setting `useProxy: true` makes the lookup happen from Dashy's server instead of your browser, so the upstream API returns the public IP of the machine running Dashy, whereas without `useProxy` it will show your public IP.
-
-#### Supported providers
-
-**Provider** | **Key** | **Proxy** | **Notes**
---- | --- | --- | ---
-`ipinfo` _(default)_ | 🟢 Not needed / 🟠 Optional | 🟢 Not needed | Service from [ipinfo.io](https://ipinfo.io/). Keyless gives ~1k/day; a [free token](https://ipinfo.io/signup) raises this to ~50k/month. Sometimes blocked by adblockers.
-`freeipapi` | 🟢 Not needed | 🟢 Not needed | Keyless, 60 req/min via [freeipapi.com](https://freeipapi.com/).
-`ipquery` | 🟢 Not needed | 🟢 Not needed | Modern keyless API from [ipquery.io](https://ipquery.io/). Includes VPN/Tor/datacenter risk flags in the raw response.
-`ip-api` | 🟢 Not needed | 🔴 **Required** | [ip-api.com](https://ip-api.com/) is HTTP-only on the free tier, so the proxy is needed to avoid mixed-content errors.
-`ipgeolocation` | 🔴 **Required** | 🟢 Not needed | Get a free key from [ipgeolocation.io](https://ipgeolocation.io/signup.html).
-
-
 #### Info
 
-- **CORS**: 🟢 Enabled (only `provider: ip-api` needs the proxy)
-- **Auth**: 🟠 Optional (only `ipgeolocation` requires a key, and `ipinfo` is optional)
+- **CORS**: 🟢 Enabled
+- **Auth**: 🟠 Optional
 - **Price**: 🟢 Free
 - **Host**: Managed Instance Only
-- **Privacy**: See the policy for whichever provider you choose: [freeipapi.com](https://freeipapi.com/), [ipinfo.io](https://ipinfo.io/privacy-policy), [ipquery.io](https://ipquery.io/), [ip-api.com](https://ip-api.com/docs/legal), [IPGeoLocation](https://ipgeolocation.io/privacy.html).
+- **Privacy**: _See [IPGeoLocation Privacy Policy](https://ipgeolocation.io/privacy.html) or [IP-API Privacy Policy](https://ip-api.com/docs/legal)_
 
 ---
 
@@ -368,7 +324,7 @@ Using `ipgeolocation` with a key:
 
 Notice certain web pages aren't loading? This widget quickly shows which blacklists your IP address (or host, or email) appears on, using data from [blacklistchecker.com](https://blacklistchecker.com/).
 
-<p align="center"><img width="600" src="https://pixelflare.cc/alicia/dashy/ip-blacklist" /></p>
+<p align="center"><img width="600" src="https://i.ibb.co/hX0fp5Z/ip-blacklist.png" /></p>
 
 #### Options
 
@@ -400,7 +356,7 @@ Notice certain web pages aren't loading? This widget quickly shows which blackli
 
 Keep an eye on the expiry dates of your domain names, using public whois records fetched from [whoapi.com](https://whoapi.com/). Click the domain name to view additional info, like registrar, name servers and date last updated.
 
-<p align="center"><img width="600" src="https://pixelflare.cc/alicia/dashy/domain-monitor" /></p>
+<p align="center"><img width="600" src="https://i.ibb.co/7XjByG9/domain-monitor.png" /></p>
 
 #### Options
 
@@ -438,7 +394,7 @@ Keep an eye on the expiry dates of your domain names, using public whois records
 
 Keep track of price changes of your favorite crypto assets. Data is fetched from [CoinGecko](https://www.coingecko.com/). All fields are optional.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/crypto-prices" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/WtS6jQ8/crypto-prices.png" /></p>
 
 #### Options
 
@@ -486,7 +442,7 @@ Or
 
 Shows recent price history for a given crypto asset, using price data fetched from [CoinGecko](https://www.coingecko.com/)
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/crypto-price-history" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/jr38m6S/crypto-price-history.png" /></p>
 
 #### Options
 
@@ -521,7 +477,7 @@ Shows recent price history for a given crypto asset, using price data fetched fr
 
 Keep track of your crypto balances and see recent transactions. Data is fetched from [BlockCypher](https://www.blockcypher.com/dev/)
 
-<p align="center"><img width="600" src="https://pixelflare.cc/alicia/dashy/crypto-wallet" /></p>
+<p align="center"><img width="600" src="https://i.ibb.co/27HG4nj/wallet-balances.png" /></p>
 
 #### Options
 
@@ -554,7 +510,7 @@ Keep track of your crypto balances and see recent transactions. Data is fetched 
 
 Display your coding summary. [Code::Stats](https://codestats.net/) is a free and open source app that aggregates statistics about your programming activity. Dashy supports both the public instance, as well as self-hosted versions.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/code-stats" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/dc0DTBW/code-stats.png" /></p>
 
 #### Options
 
@@ -590,7 +546,7 @@ Display your coding summary. [Code::Stats](https://codestats.net/) is a free and
 
 Shows your Mullvad VPN connection status, as well as server info. Fetched from [am.i.mullvad.net](https://mullvad.net/en/check/)
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/mullvad" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/3BCb2YV/mullvad-check.png" /></p>
 
 #### Options
 
@@ -612,20 +568,20 @@ _No Options._
 
 ---
 
-### addy.io
+### AnonAddy
 
-[addy.io](https://addy.io/) is a free and open source mail forwarding service. Use it to protect your real email address, by using a different alias for each of your online accounts, and have all emails land in your normal inbox(es). Supports custom domains, email replies, PGP-encryption, multiple recipients and more
+[AnonAddy](https://anonaddy.com/) is a free and open source mail forwarding service. Use it to protect your real email address, by using a different alias for each of your online accounts, and have all emails land in your normal inbox(es). Supports custom domains, email replies, PGP-encryption, multiple recipients and more
 
-This widget display email addresses / aliases from addy.io. Click an email address to copy to clipboard, or use the toggle switch to enable/ disable it. Shows usage stats (bandwidth, used aliases etc), as well as total messages received, blocked and sent. Works with both self-hosted and managed instances of addy.io.
+This widget display email addresses / aliases from AnonAddy. Click an email address to copy to clipboard, or use the toggle switch to enable/ disable it. Shows usage stats (bandwidth, used aliases etc), as well as total messages received, blocked and sent. Works with both self-hosted and managed instances of AnonAddy.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/addy" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/ZhfyRdV/anonaddy.png" /></p>
 
 #### Options
 
 **Field** | **Type** | **Required** | **Description**
 --- | --- | --- | ---
-**`apiKey`** | `string` |  Required | Your addy.io API Key / Personal Access Token. You can generate this under [API Settings](https://app.addy.io/settings/api)
-**`hostname`** | `string` |  _Optional_ | If your self-hosting addy.io, then supply the host name. By default it will use the public hosted instance
+**`apiKey`** | `string` |  Required | Your AnonAddy API Key / Personal Access Token. You can generate this under [Account Settings](https://app.anonaddy.com/settings)
+**`hostname`** | `string` |  _Optional_ | If your self-hosting AnonAddy, then supply the host name. By default it will use the public hosted instance
 **`apiVersion`** | `string` |  _Optional_ | If you're using an API version that is not version `v1`, then specify it here
 **`limit`** | `number` |  _Optional_ | Limit the number of emails shown per page. Defaults to `10`
 **`sortBy`** | `string` |  _Optional_ | Specify the sort order for email addresses. Defaults to `updated_at`. Can be either: `local_part`, `domain`, `email`, `emails_forwarded`, `emails_blocked`, `emails_replied`, `emails_sent`, `created_at`, `updated_at` or `deleted_at`. Precede with a `-` character to reverse order.
@@ -637,7 +593,7 @@ This widget display email addresses / aliases from addy.io. Click an email addre
 #### Example
 
 ```yaml
-  - type: addy
+  - type: anonaddy
     options:
       apiKey: "xxxxxxxxxxxxxxxxxxxxxxxx\
         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\
@@ -653,27 +609,26 @@ This widget display email addresses / aliases from addy.io. Click an email addre
 - **Auth**: 🔴 Required
 - **Price**: 🟠 Free for Self-Hosted / Free Plan available on managed instance or $1/month for premium
 - **Host**: Self-Hosted or Managed
-- **Privacy**: _See [addy.io Privacy Policy](https://addy.io/privacy/)_
+- **Privacy**: _See [AnonAddy Privacy Policy](https://anonaddy.com/privacy/)_
 
 ---
 
 ### Vulnerability Feed
 
-Keep track of recent security advisories and vulnerabilities, with optional filtering by score, exploits, vendor and product. Using data from [NIST Vulnerability API](https://nvd.nist.gov/developers/vulnerabilities). All fields are optional.
+Keep track of recent security advisories and vulnerabilities, with optional filtering by score, exploits, vendor and product. All fields are optional.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/cve" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/DYJMpjp/vulnerability-feed.png" /></p>
 
 #### Options
 
 **Field** | **Type** | **Required** | **Description**
 --- | --- | --- | ---
-**`cveTag`** | `string` |  _Optional_ | This parameter returns only the CVE records that include the provided cveTag. Options are **disputed**, **unsupported-when-assigned** or **exclusively-hosted-service**
-**`limit`** | `number` |  _Optional_ | The number of results to fetch. Can be between `5` and `30`, defaults to `5`
-**`cvssV2Severity`** | `string` |  _Optional_ | This parameter returns only the CVEs that match the provided CVSSv2 qualitative severity rating. Options are **LOW**, **MEDIUM**, **HIGH** or **CRITICAL**
-**`cvssV3Severity`** | `string` |  _Optional_ | This parameter returns only the CVEs that match the provided CVSSv3 qualitative severity rating. Options are **LOW**, **MEDIUM**, **HIGH** or **CRITICAL**
-**`cvssV4Severity`** | `string` |  _Optional_ | This parameter returns only the CVEs that match the provided CVSSv4 qualitative severity rating. Options are **LOW**, **MEDIUM**, **HIGH** or **CRITICAL**
-**`keywordSearch`** | `string` |  _Optional_ | This parameter returns only the CVEs where a word or phrase is found in the current description
-**`apiKey`** | `string` |  _Optional_ | Without a key you're limited to 5 requests every 30 seconds. You can get a free API key from [here](https://nvd.nist.gov/developers/request-an-api-key)
+**`sortBy`** | `string` |  _Optional_ | The sorting method. Can be either `publish-date`, `last-update` or `cve-code`. Defaults to `publish-date`
+**`limit`** | `number` |  _Optional_ | The number of results to fetch. Can be between `5` and `30`, defaults to `10`
+**`minScore`** | `number` |  _Optional_ | If set, will only display results with a CVE score higher than the number specified. Can be a number between `0` and `9.9`. By default, vulnerabilities of all CVE scores are shown
+**`hasExploit`** | `boolean` |  _Optional_ | If set to `true`, will only show results with active exploits. Defaults to `false`
+**`vendorId`** | `number` |  _Optional_ | Only show results from a specific vendor, specified by ID. See [Vendor Search](https://www.cvedetails.com/vendor-search.php) for list of vendors. E.g. `23` (Debian), `26` (Microsoft), `23682` (CloudFlare)
+**`productId`** | `number` |  _Optional_ | Only show results from a specific app or product, specified by ID. See [Product Search](https://www.cvedetails.com/product-search.php) for list of products. E.g. `28125` (Docker), `34622` (NextCloud), `50211` (Portainer), `95391` (ProtonMail)
 
 #### Example
 
@@ -686,15 +641,17 @@ or
 ```yaml
 - type: cve-vulnerabilities
   options:
-    cveTag: disputed
-    cvssV2Severity: CRITICAL
+    sortBy: publish-date
+    productId: 28125
+    hasExploit: false
+    minScore: 5
     limit: 30
 ```
 
 #### Info
 
 - **CORS**: 🟠 Proxied
-- **Auth**: 🟢 Not Required (free apiKey recommended for multiple widgets)
+- **Auth**: 🟢 Not Required
 - **Price**: 🟢 Free
 - **Host**: Managed
 - **Privacy**: _See [CVE Details Privacy Policy](https://www.cvedetails.com/privacy.php)_
@@ -705,7 +662,7 @@ or
 
 Display current FX rates in your native currency. Hover over a row to view more info, or click to show rates in that currency.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/currencies" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/fMdyLTB/exchange-rates.png" /></p>
 
 #### Options
 
@@ -743,9 +700,7 @@ Display current FX rates in your native currency. Hover over a row to view more 
 
 Counting down to the next day off work? This widget displays upcoming public holidays for your country. Data is fetched from [Enrico](http://kayaposoft.com/enrico/)
 
-Note, config for this widget is case-sensitive (see [#1268](https://github.com/Lissy93/dashy/issues/1268))
-
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/holidays" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/VC6fZqn/public-holidays.png" /></p>
 
 #### Options
 
@@ -763,7 +718,7 @@ Note, config for this widget is case-sensitive (see [#1268](https://github.com/L
 - type: public-holidays
   options:
     country: GB
-    state: LND
+    region: LND
     holidayType: all
     monthsToShow: 12
     lang: en
@@ -783,7 +738,7 @@ Note, config for this widget is case-sensitive (see [#1268](https://github.com/L
 
 Keep track of the current COVID-19 status. Optionally also show cases by country, and a time-series chart. Uses live data from various sources, computed by [disease.sh](https://disease.sh/)
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/covid" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/7XjbyRg/covid-19-status.png?" /></p>
 
 #### Options
 
@@ -828,9 +783,9 @@ Or
 
 ### Sports Scores
 
-Show recent scores and upcoming matches from your favorite sports team. Data is fetched from [TheSportsDB.com](https://www.thesportsdb.com/). From the UI, you can click any other team to view their scores and upcoming games, or click a league name to see all teams.
+Show recent scores and upcoming matches from your favourite sports team. Data is fetched from [TheSportsDB.com](https://www.thesportsdb.com/). From the UI, you can click any other team to view their scores and upcoming games, or click a league name to see all teams.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/sports" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/8XhXGkN/sports-scores.png" /></p>
 
 #### Options
 
@@ -861,58 +816,11 @@ Show recent scores and upcoming matches from your favorite sports team. Data is 
 
 ---
 
-### Live Tennis
-
-Live tennis scores from the ATP and WTA tours, updating in place. Each match shows both players with their per-set game scores, the current game points, and a marker against whoever is serving. Set the `status` option to show upcoming or recently finished matches instead. Data is from [LiveTennisAPI](https://livetennisapi.com/).
-
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/tennis-scores" /></p>
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`apiKey`** | `string` | Required | Your LiveTennisAPI key. The [free plan](https://livetennisapi.com/subscribe/free) needs no card, and is enough for this widget
-**`status`** | `string` | _Optional_ | Which matches to show: `live`, `upcoming` or `completed`. Defaults to `live`
-**`limit`** | `number` | _Optional_ | Maximum number of matches to show, defaults to `5`
-**`hideRankings`** | `boolean` | _Optional_ | Set to `true` to hide each player's world ranking, defaults to `false`
-**`hideTournament`** | `boolean` | _Optional_ | Set to `true` to hide the tournament name, defaults to `false`
-
-#### Example
-
-```yaml
-- type: live-tennis
-  options:
-    apiKey: twjp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    limit: 5
-```
-
-Showing the next matches due on court, instead of those in play:
-
-```yaml
-- type: live-tennis
-  options:
-    apiKey: twjp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    status: upcoming
-    hideRankings: true
-```
-
-#### Info
-
-- **CORS**: 🟢 Enabled (no proxy needed)
-- **Auth**: 🔴 Required
-- **Price**: 🟠 Free plan (30 requests / minute)
-- **Host**: Managed Instance Only
-- **Privacy**: [LiveTennisAPI Privacy Policy](https://livetennisapi.com/privacy)
-
-The widget refreshes every 60 seconds by default, which sits comfortably inside the free plan's rate limit. You can change this with the standard `updateInterval` option, but note that several widgets sharing one key all count against the same limit.
-
----
-
 ### News Headlines
 
 Displays the latest news, click to read full article. Date is fetched from various news sources using [Currents API](https://currentsapi.services/en)
 
-<p align="center"><img width="380" src="https://pixelflare.cc/alicia/dashy/news" /></p>
+<p align="center"><img width="380" src="https://i.ibb.co/6NDWW0z/news-headlines.png" /></p>
 
 #### Options
 
@@ -949,7 +857,7 @@ Displays the latest news, click to read full article. Date is fetched from vario
 
 Shows real-time tube status of the London Underground. All fields are optional.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/tfl" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/LRDhXDn/tfl-status.png" /></p>
 
 #### Options
 
@@ -990,7 +898,7 @@ Shows real-time tube status of the London Underground. All fields are optional.
 
 Shows recent price history for a given publicly-traded stock or share
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/stocks" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/XZHRb4f/stock-price.png" /></p>
 
 #### Options
 
@@ -1025,7 +933,7 @@ Shows recent price history for a given publicly-traded stock or share
 
 Renders the current Gas cost of transactions on the Ethereum network (in both GWEI and USD), along with recent historical prices. Useful for spotting a good time to transact. Uses data from [ethgas.watch](https://ethgas.watch/)
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/eth-gas" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/LhHfQyp/eth-gas-prices.png" /></p>
 
 #### Options
 
@@ -1051,7 +959,7 @@ _No config options._
 
 Renders a programming or generic joke. Data is fetched from the [JokesAPI](https://github.com/Sv443/JokeAPI) by @Sv443. All fields are optional.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/joke" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/sQJGkyR/joke.png" /></p>
 
 #### Options
 
@@ -1081,41 +989,11 @@ Renders a programming or generic joke. Data is fetched from the [JokesAPI](https
 
 ---
 
-### Chuck Norris quotes
-
-Renders a Chuck Norris quote. Data is fetched from the [ChuckNorrisAPI](https://api.chucknorris.io/) by @matchilling. All fields are optional.
-
-<p align="center"><img width="400" src="https://tbd" /></p>
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`categories`** | `string` |  _Optional_ | Set the category of jokes to return. Use a string to specify a single category, or an array to pass in multiple options. Available options are: `animal`,`career`,`celebrity`,`dev`,`explicit`,`fashion`,`food`,`history`,`money`,`movie`,`music`,`political`,`religion`,`science`,`sport` and `travel`. An up-to-date list of supported categories can be found [here](https://api.chucknorris.io/jokes/categories). Defaults to not explicitely set and therefore any of the categories can come up.
-
-#### Example
-
-```yaml
-- type: chucknorris
-  options:
-    categories: history,sport
-```
-
-#### Info
-
-- **CORS**: 🟢 Enabled
-- **Auth**: 🟢 Not Required
-- **Price**: 🟢 Free
-- **Host**: Managed Instance
-- **Privacy**: _See [matchilling's Privacy Policy](https://api.chucknorris.io/privacy)_
-
----
-
 ### XKCD Comics
 
 Have a laugh with the daily comic from [XKCD](https://xkcd.com/). A classic webcomic website covering everything from Linux, math, romance, science and language. All fields are optional.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/xkcd" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/kqV68hy/xkcd-comic.png" /></p>
 
 #### Options
 
@@ -1144,7 +1022,7 @@ Have a laugh with the daily comic from [XKCD](https://xkcd.com/). A classic webc
 
 Displays airport departure and arrival flights, using data from [AeroDataBox](https://www.aerodatabox.com/). Useful if you live near an airport and often wonder where the flight overhead is going to. Hover over a row for more flight data.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/flights" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/yPMBJSY/flight-data.png" /></p>
 
 #### Options
 
@@ -1180,7 +1058,7 @@ Displays airport departure and arrival flights, using data from [AeroDataBox](ht
 
 Show the NASA Astronomy Picture of the Day. Data is fetched from [APOD](https://apod.nasa.gov/apod/) using [@Lissy93/go-apod](https://github.com/lissy93/go-apod) / hosted at [apod.as93.net](https://apod.as93.net/).
 
-<p align="center"><img width="400" src="https://storage.googleapis.com/as93-screenshots/dashy/apod.png" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/ZMkgLFK/apod.png" /></p>
 
 #### Options
 
@@ -1206,7 +1084,7 @@ _No config options._
 
 Displays currently trending projects on GitHub. Optionally specify a language and time-frame. Data is fetched from [Lissy93/gh-trending-no-cors](https://github.com/Lissy93/gh-trending-no-cors) using the GitHub API. All fields are optional.
 
-<p align="center"><img width="380" src="https://pixelflare.cc/alicia/dashy/github-trending" /></p>
+<p align="center"><img width="380" src="https://i.ibb.co/BGy7Q3g/github-trending.png" /></p>
 
 #### Options
 
@@ -1237,73 +1115,57 @@ Displays currently trending projects on GitHub. Optionally specify a language an
 
 ### GitHub Profile Stats
 
-Shows GitHub user stats (if `username`) and repos stats (for each repo in `repos`). Fetched from the GitHub API.
+Display stats from your GitHub profile, using embedded cards from [anuraghazra/github-readme-stats](https://github.com/anuraghazra/github-readme-stats)
 
-<p align="center"><img width="600" src="https://pixelflare.cc/alicia/dashy/github-stats-widget" /></p>
+<p align="center"><img width="380" src="https://i.ibb.co/L0K1zNN/github-profile-stats.png" /></p>
 
 #### Options
 
 **Field** | **Type** | **Required** | **Description**
 --- | --- | --- | ---
-**`username`** | `string` |  _Optional_ | A GitHub username, e.g. `lissy93`. If this is set, a profile card is shown, if it's unset the card isn't shown
-**`repos`** | `array` |  _Optional_ | A list of repositories to show stats for, each specified as `[owner]/[repo]`, e.g. `lissy93/dashy`
-**`token`** | `string` |  _Optional_ | An optional [GitHub token](https://github.com/settings/tokens). Used to raise the API rate limit from 60 to 5,000 requests per hour (can be set directly, or as an environment variable)
+**`username`** | `string` |  Required | The GitHub username to fetch info for. E.g. `lissy93`. (Not required if `hideProfileCard` and `hideLanguagesCard` are both set to `true`)
+**`hideProfileCard`** | `boolean` |  _Optional_ | If set to `true`, the users profile card will not be shown. Defaults to `false`
+**`hideLanguagesCard`** | `boolean` |  _Optional_ | If set to `true`, the users top languages card will not be shown. Defaults to `false`
+**`repos`** | `array` |  _Optional_ | If you'd like to also display stats for some GitHub repositories, then add an array or repo names here. Specified as `[username]/[repo-name]`, e.g. `lissy93/dashy`
 
 #### Example
 
 ```yaml
 - type: github-profile-stats
   options:
-    username: lissy93
+    username: Lissy93
+    hideLanguagesCard: true
     repos:
     - lissy93/dashy
-    - lissy93/portainer-templates
-    - lissy93/web-check
+    - lissy93/personal-security-checklist
+    - lissy93/twitter-sentiment-visualisation
 ```
-
-Or just show the user's profile card:
-```yaml
-- type: github-profile-stats
-  options:
-    username: octocat
-```
-
-Or just show repo(s)
-```yaml
-- type: github-profile-stats
-  options:
-    repos:
-    - lissy93/dashy
-```
-
 
 #### Info
 
 - **CORS**: 🟢 Enabled
-- **Auth**: 🟡 Optional (a `token` raises the rate limit)
+- **Auth**: 🟢 Not Required
 - **Price**: 🟢 Free
-- **Host**: GitHub ([docs.github.com/en/rest](https://docs.github.com/en/rest))
+- **Host**: Managed Instance or Self-Hosted (see [anuraghazra/github-readme-stats](https://github.com/anuraghazra/github-readme-stats))
 - **Privacy**: _See [GitHub's Privacy Policy](https://docs.github.com/en/github/site-policy/github-privacy-statement)_
 
 ---
 
 ### HealthChecks Status
 
-Display cron job monitor status of one or more HealthChecks project(s). Works with healthchecks.io and your selfhosted instance.
+Display status of one or more HealthChecks project(s). Works with healthchecks.io and your selfhosted instance.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/cron-monitor" /></p>
+<p align="center"><img width="380" src="https://i.ibb.co/W5dP6VN/Bildschirm-foto-2023-01-07-um-11-07-11.png" /></p>
 
 #### Options
 
 **Field** | **Type** | **Required** | **Description**
 --- | --- | --- | ---
 **`host`** | `string` |  Optional | The base url of your instance, default is `https://healthchecks.io`
-**`apiKey`** | `string` (or `string[]` for multiple) |  Required | API key(s) for project(s) to monitor. Generate a separate key per project (read-only is fine), under Project --> Settings --> API Access
-
-##### Example
+**`apiKey`** | `string` or `array` |  Required | One or more API keys for your healthcheck projects. (Read-only works fine)
 
 ```yaml
-- type: health-checks
+- type: HealthChecks
   options:
     host: https://healthcheck.your-domain.de
     apiKey: 
@@ -1311,17 +1173,9 @@ Display cron job monitor status of one or more HealthChecks project(s). Works wi
       - zxywvu...
 ```
 
-Or, a single project:
-```yaml
-      - type: health-checks
-        options:
-          host: https://healthchecks.io
-          apiKey: hcw_xxxxxxxxxxxxxxxxxxxxxxxx
-```
-
 #### Info
 
-- **CORS**: 🟠 Proxied
+- **CORS**: 🟢 Enabled
 - **Auth**: 🟢 Required
 - **Price**: 🟢 Free / Paid / Self-hosted 
 - **Host**: Managed Instance or Self-Hosted (see [healthchecks/healthchecks](https://github.com/healthchecks/healthchecks))
@@ -1435,155 +1289,6 @@ In other words: Private, noncomercial, moderate use of the API is tolerated. The
 
 ---
 
-### Custom List
-
-Renders custom schema-compliant JOSN  in a list.
-
-#### Options
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`url`** | `text` |  Required | A string containing the url of a json file.
-**`title`** | `text` |  optional | A title for the widget. Can be helpful if stacking multiple lists in the same section.
-**`daysForNew`** | `number` |  Optional | Used to highlight new items.
-
-#### Json Schema
-The input file should comply with the following schema:
-```json
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "array",
-  "items": [
-    {
-      "type": "object",
-      "properties": {
-        "link": {
-          "type": "object",
-          "properties": {
-            "text": {
-              "type": "string"
-            },
-            "url": {
-              "type": "string"
-            },
-            "title": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "text",
-            "url",
-            "title"
-          ]
-        },
-        "value": {
-          "type": "object",
-          "properties": {
-            "text": {
-              "type": "string"
-            },
-            "title": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "text",
-            "title"
-          ]
-        },
-        "date": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "link",
-        "value",
-        "date"
-      ]
-    }
-  ]
-}
-```
-
-Example: This json data was generated by a data worflow that gets the new releases of a few projects from GitHub. The system used to build the data workflow is n8n.
-
-```json
-[
-    {
-        "link": {
-            "text": "jellyfin/jellyfin",
-            "url": "https://github.com/jellyfin/jellyfin/releases/tag/v10.10.7",
-            "title": ""
-        },
-        "value": {
-            "text": "v10.10.7",
-            "title": "2025-04-05"
-        },
-        "date": "2025-04-05T19:14:59Z"
-    },
-    {
-        "link": {
-            "text": "jellyfin/jellyfin-web",
-            "url": "https://github.com/jellyfin/jellyfin-web/releases/tag/v10.10.7",
-            "title": ""
-        },
-        "value": {
-            "text": "v10.10.7",
-            "title": "2025-04-05"
-        },
-        "date": "2025-04-05T19:15:00Z"
-    },
-    {
-        "link": {
-            "text": "lissy93/dashy",
-            "url": "https://github.com/Lissy93/dashy/releases/tag/3.1.1",
-            "title": ""
-        },
-        "value": {
-            "text": "3.1.1",
-            "title": "2024-05-30"
-        },
-        "date": "2024-05-30T17:20:53Z"
-    },
-    {
-        "link": {
-            "text": "VSCodium/vscodium",
-            "url": "https://github.com/VSCodium/vscodium/releases/tag/1.102.14746",
-            "title": ""
-        },
-        "value": {
-            "text": "1.102.14746",
-            "title": "2025-07-16"
-        },
-        "date": "2025-07-16T18:27:49Z"
-    }
-]
-```
-#### Notes
-- This widget is designed to render data generated by another system that complies with the schema. The example JSON data above was generated using a n8n workflow, and other ETL or workflow systems can generate similar results.
-- To avoid requests to a different system in each refresh, you can save the input files locally in the user-data folder inside your Dashy installation.
-- To use json files from a different domain, remember to add `useProxy: true` to the widget configuration. I have not tested this use case because I save all my input data locally on the Dashy server. Please open a ticket if you have an issue in this use case.
- 
-#### Example
-
-This widget renders a json file that from a `json-data` directory inside the `user-data` directory on the Dashy server.
-```yaml
-  - type: custom-list
-    options:
-      url: /json-data/github-releases.json
-      title: 'Github Releases'
-      daysForNew: 5
-```
-
-#### Info
-
-- **CORS**: 🟢 Not needed for files hosted inside the `user-data` directory. Use `useProxy: true` to bypass CORS restrictions when using data from a different server.
-- **Auth**: 🟢 Not Required
-- **Price**: 🟢 Free 
-- **Host**: user defined
-- **Privacy**: depends on the user defined host.
-
----
-
 ### Custom search
 
 Allows web search using multiple user-defined search engines and other websites.
@@ -1594,7 +1299,6 @@ Allows web search using multiple user-defined search engines and other websites.
 --- | --- | --- | ---
 **`engines`** | `array` |  required | An array of search engine objects. Each search engine object should have two required properties: **title** and **url**. See the example below.
 **`placeholder`** | `string` |  optional | Placeholder text in the search box.
-**`openingMethod`** | `string` |  optional | Open search in one of `newtab`, `sametab` or `workspace`.
 
 #### Notes
 - The first search engine in the engines array will be treated as the default search engine, and used when the user presses `Enter` in the search box.
@@ -1635,77 +1339,6 @@ This widget allows searching multiple search engines from dashy.
 
 ---
 
-### RescueTime Overview
-
-Show an overview of how you have spent your time for the current day.
-
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/rescue-time" /></p>
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`apiKey`** | `string` |  required | The API-Key generated in the RescueTime UI.
-
-
-#### Example
-
-```yaml
-  - type: rescue-time
-    useProxy: true
-    options:
-      apiKey: abcdefghijkl_mnop
-```
-#### Info
-
-- **CORS**: 🟢 Required
-- **Auth**: 🔴 Required
-- **Price**: 🟠 Depends on user subscription 
-- **Host**: [RescueTime](https://www.rescuetime.com)
-- **Privacy**: _See [RescueTime Privacy](https://www.rescuetime.com/privacy)_
-
----
-
-### Minecraft Server
-
-Show minecraft server status
-
-<p align="center"><img width="380" src="https://i.ibb.co/hcmd4Wf/minecraft-widget.png" /></p>
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`title`**       | `string`  | _Optional_ | Display title for server uses server address if not set.
-**`server`**      | `string`  | Required   | Server hostname or ip(:port) will use srv records.
-**`bedrock`**     | `boolean` | _Optional_ | If server is a bedrock edition server. (default false)
-**`showMods`**    | `boolean` | _Optional_ | Display mod list if available
-**`showPlayers`** | `boolean` | _Optional_ | Display player list if available
-**`showPlugins`** | `boolean` | _Optional_ | Display plugin list if available
-
-#### Example
-
-```yaml
-  - type: minecraft-status
-    options:
-      title: Venity Network
-      server: play.venitymc.com
-      bedrock: true
-      showMods: true
-      showPlayers: true
-      showPlugins: true
-```
-#### Info
-
-- **CORS**: 🟢 Enabled
-- **Auth**: 🟢 Not Required
-- **Price**: 🟢 Free 
-- **Host**: [Minecraft Server Status](https://mcsrvstat.us/)
-- **Privacy**: _See [Minecraft Server Status FAQ](https://mcsrvstat.us/faq)_
-
----
-
-
 
 ## Self-Hosted Services Widgets
 
@@ -1713,7 +1346,7 @@ Show minecraft server status
 _See [MVG Datenschutz](https://www.mvg.de/datenschutz-mvg.html)_
 Displays info about the server which Dashy is hosted on. Includes user + host, operating system, uptime and basic memory & load data.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/system-info" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/rvDPBDF/system-info.png" /></p>
 
 #### Options
 
@@ -1733,11 +1366,42 @@ Note that this widget is not available if you are running Dashy in a container o
 
 ---
 
+### Cron Monitoring (Health Checks)
+
+Cron job monitoring using [Health Checks](https://github.com/healthchecks/healthchecks). Both managed and self-hosted instances are supported.
+
+<p align="center"><img width="400" src="https://i.ibb.co/Ptf2kwm/health-checks.png" /></p>
+
+#### Options
+
+**Field** | **Type** | **Required** | **Description**
+--- | --- | --- | ---
+**`apiKey`** | `string` |  Required | A read-only API key for the project to monitor. You can generate this by selecting a Project --> Settings --> API Access. Note that you must generate a separate key for each project
+**`host`** | `string` | _Optional_ | If you're self-hosting, or using any instance other than the official (healthchecks.io), you will need to specify the host address. E.g. `https://healthchecks.example.com` or `http://cron-monitoing.local`
+
+#### Example
+
+```yaml
+- type: health-checks
+  options:
+    apiKey: XXXXXXXXX
+```
+
+#### Info
+
+- **CORS**: 🟢 Enabled
+- **Auth**: 🔴 Required
+- **Price**: 🟠 Free plan (up to 20 services, or self-host for unlimited)
+- **Host**: Managed Instance or Self-Hosted (see [GitHub - HealthChecks](https://github.com/healthchecks/healthchecks))
+- **Privacy**: _See [Health-Checks Privacy Policy](https://healthchecks.io/privacy/)_
+
+---
+
 ### CPU History (NetData)
 
 Pull recent CPU usage history from NetData.
 
-<p align="center"><img width="600" src="https://pixelflare.cc/alicia/dashy/cpu-history" /></p>
+<p align="center"><img width="600" src="https://i.ibb.co/ZdyR5nJ/nd-cpu-history.png" /></p>
 
 #### Options
 
@@ -1801,7 +1465,7 @@ Pull recent system RAM usage from NetData, and show as a breakdown of different 
 
 Pull recent load usage in 1, 5 and 15 minute intervals, from NetData.
 
-<p align="center"><img width="600" src="https://pixelflare.cc/alicia/dashy/load-history" /></p>
+<p align="center"><img width="600" src="https://i.ibb.co/qR9C2tJ/nd-load-history.png" /></p>
 
 #### Options
 
@@ -1829,11 +1493,11 @@ Pull recent load usage in 1, 5 and 15 minute intervals, from NetData.
 
 ---
 
-### Pi-Hole Stats
+### Pi Hole Stats
 
 Displays the number of queries blocked by [Pi-Hole](https://pi-hole.net/).
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/pi-hole" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/zftCLJN/pi-hole-stats.png" /></p>
 
 #### Options
 
@@ -1852,60 +1516,21 @@ Displays the number of queries blocked by [Pi-Hole](https://pi-hole.net/).
     apiKey: xxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-> [!TIP]
-> To avoid storing secrets in plaintext, both `hostname` and `apiKey` can be supplied via environment variables. See [Handling Secrets](#handling-secrets).
-
 #### Info
 
 - **CORS**: 🟢 Enabled
 - **Auth**: 🔴 Required
 - **Price**: 🟢 Free
-- **Host**: Self-Hosted (see [GitHub - Pi-Hole](https://github.com/pi-hole/pi-hole))
+- **Host**: Self-Hosted (see [GitHub - Pi-hole](https://github.com/pi-hole/pi-hole))
 - **Privacy**: _See [Pi-Hole Privacy Guide](https://pi-hole.net/privacy/)_
 
 ---
 
-### Pi-Hole Stats v6
-
-Displays the number of queries blocked by [Pi-Hole](https://pi-hole.net/). Use this version of the widget if you have a v6+ Pi-Hole instance.
-
-<p align="center"><img width="400" src="https://i.ibb.co/zftCLJN/pi-hole-stats.png" /></p>
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`hostname`** | `string` |  Required | The URL to your Pi-Hole instance
-**`hideStatus`** / **`hideChart`** / **`hideInfo`** | `boolean` |  _Optional_ | Optionally hide any of the three parts of the widget
-**`apiKey`** | `string` |  Required | Your Pi-Hole web password or application password. It **IS** your Pi-Hole admin interface password **UNLESS** you have 2FA turned on (in contrast to the old widget). If you have 2FA turned on you will need to create an application password. Refer to Pi-Hole documentation for how to create an application password.
-
-#### Example
-
-```yaml
-- type: pi-hole-stats-v6
-  options:
-    hostname: http://192.168.130.1
-    apiKey: xxxxxxxxxxxxxxxxxxxxxxx
-```
-
-> [!TIP]
-> To avoid storing secrets in plaintext, both `hostname` and `apiKey` can be supplied via environment variables. See [Handling Secrets](#handling-secrets).
-
-#### Info
-
-- **CORS**: 🟢 Enabled
-- **Auth**: 🔴 Required
-- **Price**: 🟢 Free
-- **Host**: Self-Hosted (see [GitHub - Pi-Hole](https://github.com/pi-hole/pi-hole))
-- **Privacy**: _See [Pi-Hole Privacy Guide](https://pi-hole.net/privacy/)_
-
----
-
-### Pi-Hole Queries
+### Pi Hole Queries
 
 Shows top queries that were blocked and allowed by [Pi-Hole](https://pi-hole.net/).
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/pi-hole-queries" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/pXR0bdQ/pi-hole-queries.png" /></p>
 
 #### Options
 
@@ -1934,44 +1559,11 @@ Shows top queries that were blocked and allowed by [Pi-Hole](https://pi-hole.net
 
 ---
 
-### Pi-Hole Queries v6
-
-Shows top queries that were blocked and allowed by [Pi-Hole](https://pi-hole.net/). Use this version of the widget if you have a v6+ Pi-Hole instance.
-
-<p align="center"><img width="400" src="https://i.ibb.co/pXR0bdQ/pi-hole-queries.png" /></p>
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`hostname`** | `string` |  Required | The URL to your Pi-Hole instance
-**`apiKey`** | `string` |  Required | Your Pi-Hole web password or application password. It **IS** your Pi-Hole admin interface password **UNLESS** you have 2FA turned on (in contrast to the old widget). If you have 2FA turned on you will need to create an application password. Refer to Pi-Hole documentation for how to create an application password.
-**`count`** | `number` |  _Optional_ | The number of queries to display. Defaults to `10`
-
-#### Example
-
-```yaml
-- type: pi-hole-top-queries-v6
-  options:
-    hostname: https://pi-hole.local
-    apiKey: xxxxxxxxxxxxxxxxxxxxxxx
-```
-
-#### Info
-
-- **CORS**: 🟢 Enabled
-- **Auth**: 🔴 Required
-- **Price**: 🟢 Free
-- **Host**: Self-Hosted (see [GitHub - Pi-hole](https://github.com/pi-hole/pi-hole))
-- **Privacy**: _See [Pi-Hole Privacy Guide](https://pi-hole.net/privacy/)_
-
----
-
-### Pi-Hole Recent Traffic
+### Pi Hole Recent Traffic
 
 Shows number of recent traffic, using allowed and blocked queries from [Pi-Hole](https://pi-hole.net/)
 
-<p align="center"><img width="500" src="https://pixelflare.cc/alicia/dashy/pi-hole-trafic" /></p>
+<p align="center"><img width="500" src="https://i.ibb.co/7kdxxwx/pi-hole-recent-queries.png" /></p>
 
 #### Options
 
@@ -1999,43 +1591,11 @@ Shows number of recent traffic, using allowed and blocked queries from [Pi-Hole]
 
 ---
 
-### Pi-Hole Recent Traffic v6
-
-Shows number of recent traffic, using allowed and blocked queries from [Pi-Hole](https://pi-hole.net/). Use this version of the widget if you have a v6+ Pi-Hole instance.
-
-<p align="center"><img width="500" src="https://i.ibb.co/7kdxxwx/pi-hole-recent-queries.png" /></p>
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`hostname`** | `string` |  Required | The URL to your Pi-Hole instance
-**`apiKey`** | `string` |  Required | Your Pi-Hole web password or application password. It **IS** your Pi-Hole admin interface password **UNLESS** you have 2FA turned on (in contrast to the old widget). If you have 2FA turned on you will need to create an application password. Refer to Pi-Hole documentation for how to create an application password.
-
-#### Example
-
-```yaml
-- type: pi-hole-traffic-v6
-  options:
-    hostname: https://pi-hole.local
-    apiKey: xxxxxxxxxxxxxxxxxxxxxxx
-```
-
-#### Info
-
-- **CORS**: 🟢 Enabled
-- **Auth**: 🔴 Required
-- **Price**: 🟢 Free
-- **Host**: Self-Hosted (see [GitHub - Pi-hole](https://github.com/pi-hole/pi-hole))
-- **Privacy**: _See [Pi-Hole Privacy Guide](https://pi-hole.net/privacy/)_
-
----
-
 ### Stat Ping Statuses
 
 Displays the current and recent uptime of your running services, via a self-hosted instance of [StatPing](https://github.com/statping/statping)
 
-<p align="center"><img width="300" src="https://pixelflare.cc/alicia/dashy/statping" /></p>
+<p align="center"><img width="300" src="https://i.ibb.co/Fq7JDjQ/stat-ping.png" /></p>
 
 #### Options
 
@@ -2083,7 +1643,7 @@ Note, the Group Id is not directly visible in StatPing UI, you can inspect the g
 
 Displays the current downloads/torrents tasks of your Synology NAS
 
-<p align="center"><img width="500" src="https://pixelflare.cc/alicia/dashy/synology-downloads" /></p>
+<p align="center"><img width="500" src="https://i.ibb.co/N2kKWTN/image.png" /></p>
 
 #### Options
 
@@ -2120,7 +1680,7 @@ Displays the current downloads/torrents tasks of your Synology NAS
 Fetches data from your [AdGuard Home](https://adguard.com/en/adguard-home/overview.html) instance, and
 displays total number of allowed and blocked queries, plus a pie chart showing breakdown by block type.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/adguard-stats" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/qgkcxsN/adguard-block-percent-2.png" /></p>
 
 #### Options
 
@@ -2155,7 +1715,7 @@ displays total number of allowed and blocked queries, plus a pie chart showing b
 
 Fetches data from your [AdGuard Home](https://adguard.com/en/adguard-home/overview.html) instance, to display the current status of each of your filter lists. Includes filter name, last updated, number of items, and a link to the list.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/adguard-filters" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/WsJkf5g/adguard-filters-list.png" /></p>
 
 #### Options
 
@@ -2192,7 +1752,7 @@ Fetches data from your [AdGuard Home](https://adguard.com/en/adguard-home/overvi
 
 Fetches data from your [AdGuard Home](https://adguard.com/en/adguard-home/overview.html) instance, and displays the current status (Enabled / Disabled) of AdGuard DNS. Click show more to view detailed info, including upstream DNS provider, active ports, and the status of DNSSEC, EDNS CS, PTR and IPv6.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/adguard-dns" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/G0JngBb/adguard-dns-info.png" /></p>
 
 #### Options
 
@@ -2229,7 +1789,7 @@ Fetches data from your [AdGuard Home](https://adguard.com/en/adguard-home/overvi
 
 Fetches data from your [AdGuard Home](https://adguard.com/en/adguard-home/overview.html) instance, and displays a list of the most queried, and most blocked domains.
 
-<p align="center"><img width="600" src="https://pixelflare.cc/alicia/dashy/adguard-domains" /></p>
+<p align="center"><img width="600" src="https://i.ibb.co/qRhYYTk/adguard-top-domains.png" /></p>
 
 #### Options
 
@@ -2274,7 +1834,7 @@ Shows quota usage when quota is enabled for the user or disk usage when not enab
 
 Known issues: the User API incorrectly reports available disk space as total for admin users when quota is not enabled (which usually is the case for admins).
 
-<p align="center"><img width="450" src="https://pixelflare.cc/alicia/dashy/nextcloud-user" alt="nextcloud-user" /></p>
+<p align="center"><img width="450" src="https://i.ibb.co/F8Fdm3t/nextcloud-user.png" alt="nextcloud-user" /></p>
 
 #### Options
 
@@ -2309,7 +1869,7 @@ Known issues: the User API incorrectly reports available disk space as total for
 
 Show user statuses for selected users.
 
-<p align="center"><img width="450" src="https://pixelflare.cc/alicia/dashy/nextcloud-user-status" alt="nextcloud-userstatus" /></p>
+<p align="center"><img width="450" src="https://i.ibb.co/Lk4DFT5/nextcloud-userstatus.png" alt="nextcloud-userstatus" /></p>
 
 #### Options
 
@@ -2324,7 +1884,7 @@ Show user statuses for selected users.
 #### Example
 
 ```yaml
-- type: nextcloud-user-status
+- type: nextcloud-userstatus
   useProxy: true
   options:
     hostname: https://nextcloud.example.com
@@ -2347,7 +1907,7 @@ Show user statuses for selected users.
 
 Displays your notifications and allows deleting them.
 
-<p align="center"><img width="450" src="https://pixelflare.cc/alicia/dashy/next-cloud-notifications" alt="nextcloud-notifications" /></p>
+<p align="center"><img width="450" src="https://i.ibb.co/yQCS51k/nextcloud-notifications.png" alt="nextcloud-notifications" /></p>
 
 #### Options
 
@@ -2361,7 +1921,7 @@ Displays your notifications and allows deleting them.
 #### Example
 
 ```yaml
-- type: nextcloud-notifications
+- type: nextcloud-userstatus
   useProxy: true
   options:
     hostname: https://nextcloud.example.com
@@ -2384,7 +1944,7 @@ Displays your notifications and allows deleting them.
 
 Visualises overall memory utilisation and CPU load averages, shows server versions.
 
-<p align="center"><img width="450" src="https://pixelflare.cc/alicia/dashy/next-cloud-sysyem" alt="nextcloud-system" /></p>
+<p align="center"><img width="450" src="https://i.ibb.co/KW4t6nG/nextcloud-system.png" alt="nextcloud-system" /></p>
 
 #### Options
 
@@ -2419,7 +1979,7 @@ Visualises overall memory utilisation and CPU load averages, shows server versio
 
 Shows key usage statistics about your Nextcloud server.
 
-<p align="center"><img width="450" src="https://pixelflare.cc/alicia/dashy/nextcloud-stats" alt="nextcloud-stats" /></p>
+<p align="center"><img width="450" src="https://i.ibb.co/pPXPQFB/nextcloud-stats.png" alt="nextcloud-stats" /></p>
 
 #### Options
 
@@ -2454,7 +2014,7 @@ Shows key usage statistics about your Nextcloud server.
 
 Shows statistics about PHP OPcache performance on your Nextcloud server.
 
-<p align="center"><img width="450" src="https://pixelflare.cc/alicia/dashy/nextcloud-php" alt="nextcloud-phpopcache" /></p>
+<p align="center"><img width="450" src="https://i.ibb.co/xf6M4J2/nextcloud-phpopcache.png" alt="nextcloud-phpopcache" /></p>
 
 #### Options
 
@@ -2467,7 +2027,7 @@ Shows statistics about PHP OPcache performance on your Nextcloud server.
 #### Example
 
 ```yaml
-- type: nextcloud-php-opcache
+- type: nextcloud-stats
   useProxy: true
   options:
     hostname: https://nextcloud.example.com
@@ -2483,39 +2043,6 @@ Shows statistics about PHP OPcache performance on your Nextcloud server.
 - **Host**: Self-Hosted (see [Nextcloud](https://nextcloud.com))
 - **Privacy**: _See [Nextcloud Privacy Policy](https://nextcloud.com/privacy)_
 
----
-
-### ntfy stream
-
-Subscribes to topics on a **private** [ntfy](https://docs.ntfy.sh/) server, and shows **new messages** as they arrive.
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`server_url`** | `string` |  Required | The server url
-**`topic`** | `string` |  Required | A topic, or a comma separated list of topics
-**`auth`** | `string` |  optional | An [auth string](https://docs.ntfy.sh/subscribe/api/#authentication). ⚠️ This is sent as query parameter.
-**`title`** | `string` |  optional | A title for the widget.
-
-#### Example
-
-```yaml
-- type: ntfy-stream
-  useProxy: false
-  options:
-    title: NTFY stream
-    server_url: https://myntfy.server.tld
-    topic: alert,warning,mytopic
-```
-
-#### Info
-
-- **CORS**: Disabled
-- **Auth**: Optional
-- **Price**: Free
-- **Host**: [Self-hosted](https://docs.ntfy.sh/install/)
-- **Privacy**: [ntfy Privacy Policy](https://docs.ntfy.sh/privacy/)
 
 ---
 
@@ -2549,9 +2076,7 @@ This will show the list of nodes.
       token_name: dashy
       token_uuid: bfb152df-abcd-abcd-abcd-ccb95a472d01
 ```
-
 This will show the list of VMs, with a title and a linked fotter, hiding VM templates.
-
 ```yaml
   - type: proxmox-lists
     useProxy: true 
@@ -2568,7 +2093,6 @@ This will show the list of VMs, with a title and a linked fotter, hiding VM temp
       footer_as_link: true
       hide_templates: 1
 ```
-
 #### Info
 
 - **CORS**: 🟠 Proxied
@@ -2577,19 +2101,13 @@ This will show the list of VMs, with a title and a linked fotter, hiding VM temp
 - **Host**: Self-Hosted (see [Proxmox Virtual Environment](https://proxmox.com/en/proxmox-ve))
 - **Privacy**: _See [Proxmox's Privacy Policy](https://proxmox.com/en/privacy-policy)_
 
-#### Troubleshooting
-- **404 Error in development mode**: The error might disappear in production mode `yarn start`
-- **500 Error in production mode**: Try adding the certificate authority (CA) certificate of your Proxmox host to Node.js. 
-  - Download the Proxmox CA certificate to your Dashy host.
-  - Export environment variable `NODE_EXTRA_CA_CERTS` and set its value to the path of the downloaded CA certificate. Example:  `export NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/devlab_ca.pem`
-
 ---
 
 ### Sabnzbd
 
 Shows queue information regarding your self hosted Sabnzbd server.
 
-<p align="center"><img width="450" src="https://pixelflare.cc/alicia/dashy/sabnzbd" alt="Sabnzbd" /></p>
+<p align="center"><img width="450" src="https://i.ibb.co/5TTSRyM/sabnzbd.png" alt="Sabnzbd" /></p>
 
 #### Options
 
@@ -2625,7 +2143,7 @@ Shows queue information regarding your self hosted Sabnzbd server.
 
 Display info from the Gluetun VPN container public IP API. This can show the IP and location data for the exit VPN node.
 
-<p align="center"><img width="380" src="https://pixelflare.cc/alicia/dashy/guletn-vpn" /></p>
+<p align="center"><img width="380" src="https://i.ibb.co/xjXbZ7Z/Screenshot-from-2022-07-20-21-42-34.png" /></p>
 
 #### Options
 
@@ -2658,21 +2176,21 @@ Display info from the Gluetun VPN container public IP API. This can show the IP 
 
 Display the last builds from a [Drone CI](https://www.drone.ci) instance. A self-hosted CI system that uses docker.
 
-<p align="center"><img width="380" src="https://pixelflare.cc/alicia/dashy/drone-ci" /></p>
+<p align="center"><img width="380" src="https://i.ibb.co/nQM3BXj/Bildschirm-foto-2023-01-07-um-01-31-45.png" /></p>
 
 #### Options
 
 **Field** | **Type** | **Required** | **Description**
 --- | --- | --- | ---
 **`host`** | `string` |  Required | The hostname of the Drone CI instance.
-**`apiKey`** | `string` |  Required | The API key (https://[your-drone-instance]/account).
+**`apiKey`** | `string` |  Required | The API key (https://<your-drone-instance>/account).
 **`limit`** | `integer` | _Optional_ | Limit the amounts of listed builds.
 **`repo`** | `string` | _Optional_ | Show only builds of the specified repo
 
 #### Example
 
 ```yaml
-- type: drone-ci
+- type: drone-io
   updateInterval: 30
   options:
     host: https://drone.somedomain.com
@@ -2690,77 +2208,6 @@ Display the last builds from a [Drone CI](https://www.drone.ci) instance. A self
 
 ---
 
-### Filebrowser
-
-Displays storage statistics and file listings from a [Filebrowser Quantum](https://github.com/gtsteffaniak/filebrowser) instance. Shows directory size, file/folder counts, favorite files, and recently modified files with quick-access links.
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`hostname`** | `string` | Required | The URL of your Filebrowser instance
-**`apiKey`** | `string` | Required | A long-lived API key (create in Settings → API Keys)
-**`source`** | `string` | _Optional_ | The source/scope name to browse. Defaults to the first available source
-**`path`** | `string` | _Optional_ | The directory path to display. Defaults to `/`
-**`favorites`** | `array` | _Optional_ | List of filenames to show as quick-access favorites
-**`showRecent`** | `number` | _Optional_ | Number of recently modified files to display. Defaults to `5`, set to `0` to disable
-**`limit`** | `number` | _Optional_ | Maximum number of files to display per section. Defaults to `10`
-**`hideStats`** | `boolean` | _Optional_ | If `true`, hides the storage statistics section
-**`hideFavorites`** | `boolean` | _Optional_ | If `true`, hides the favorites section
-**`hideRecent`** | `boolean` | _Optional_ | If `true`, hides the recent files section
-**`showDetailedStats`** | `boolean` | _Optional_ | If `true`, shows additional statistics including last modified date, largest file, hidden file count, total items, and file type breakdown. Defaults to `false`
-
-#### Example
-
-**Basic usage:**
-
-```yaml
-- type: filebrowser
-  useProxy: true
-  options:
-    hostname: http://filebrowser.local:8080
-    apiKey: DASHY_FILEBROWSER_KEY
-    source: Documents
-    path: /
-    showRecent: 5
-    favorites:
-      - important-notes.txt
-      - config.yaml
-```
-
-**With detailed statistics:**
-
-```yaml
-- type: filebrowser
-  useProxy: true
-  options:
-    hostname: http://filebrowser.local:8080
-    apiKey: DASHY_FILEBROWSER_KEY
-    source: Downloads
-    showDetailedStats: true
-    showRecent: 10
-    limit: 15
-```
-
-#### Widget Sections
-
-The widget displays up to four sections:
-
-1. **Storage Stats** - Directory name, total size, file and folder counts
-2. **Detailed Stats** (optional) - Last modified date, largest file, hidden file count, total items, and file type breakdown with badges
-3. **Favorites** - Quick-access links to user-specified files
-4. **Recent Files** - Most recently modified files sorted by date
-
-#### Info
-
-- **CORS**: 🟠 Proxied
-- **Auth**: 🟢 Required
-- **Price**: 🟢 Free
-- **Host**: Self-Hosted (see [Filebrowser Quantum](https://github.com/gtsteffaniak/filebrowser))
-- **Privacy**: _Self-Hosted_
-
----
-
 ### Linkding
 
 Linkding is a self-hosted bookmarking service, which has a clean interface and is simple to set up. This lists the links, filterable by tags.
@@ -2770,7 +2217,7 @@ Linkding is a self-hosted bookmarking service, which has a clean interface and i
 **Field** | **Type** | **Required** | **Description**
 --- | --- | --- | ---
 **`host`** | `string` |  Required | The hostname of the Drone CI instance.
-**`apiKey`** | `string` |  Required | The API key (https://your-linkding-instance/settings/integrations).
+**`apiKey`** | `string` |  Required | The API key (https://<your-linkding-instance>/settings/integrations).
 **`tags`** | `list of string` | _Optional_ | Filter the links by tag.
 
 #### Example
@@ -2796,107 +2243,6 @@ Linkding is a self-hosted bookmarking service, which has a clean interface and i
 
 ---
 
-### Uptime Kuma
-
-[Uptime Kuma](https://github.com/louislam/uptime-kuma) is an easy-to-use self-hosted monitoring tool.
-
-#### Options
-
-| **Field**    | **Type** | **Required** | **Description**                                                          |
-| ------------ | -------- | ------------ | ------------------------------------------------------------------------ |
-| **`url`**    | `string` | Required     | The URL of the Uptime Kuma instance                                      |
-| **`apiKey`** | `string` | Required     | The API key (see https://github.com/louislam/uptime-kuma/wiki/API-Keys). |
-
-#### Example
-
-```yaml
-- type: uptime-kuma
-  useProxy: true
-  options:
-    apiKey: uk2_99H0Yd3I2pPNIRfn0TqBFu4g5q85R1Mh75yZzw6H
-    url: http://192.168.1.106:3691/metrics
-```
-
-#### Info
-
-- **CORS**: 🟢 Enabled
-- **Auth**: 🟢 Required
-- **Price**: 🟢 Free
-- **Host**: Self-Hosted (see [Uptime Kuma](https://github.com/louislam/uptime-kuma) )
-- **Privacy**: _See [Uptime Kuma](https://github.com/louislam/uptime-kuma)_
-
----
-
-### Uptime Kuma Status Page
-
-[Uptime Kuma](https://github.com/louislam/uptime-kuma) is an easy-to-use self-hosted monitoring tool.
-
-#### Options
-
-| **Field**          | **Type** | **Required** | **Description**                                                                   |
-| ------------------ | -------- | ------------ | --------------------------------------------------------------------------------- |
-| **`host`**         | `string` | Required     | The URL of the Uptime Kuma instance                                               |
-| **`slug`**         | `string` | Required     | The slug of the status page                                                       |
-| **`monitorNames`** | `strins` | _Optional_   | Names of monitored services (in the same order as on the kuma uptime status page) |
-
-#### Example
-
-```yaml
-- type: uptime-kuma-status-page
-  options:
-    host: http://localhost:3001
-    slug: another-beautiful-status-page
-    monitorNames:
-      - "Name1"
-      - "Name2"
-```
-
-#### Info
-
-- **CORS**: 🟢 Enabled
-- **Auth**: 🟢 Not Needed
-- **Price**: 🟢 Free
-- **Host**: Self-Hosted (see [Uptime Kuma](https://github.com/louislam/uptime-kuma) )
-- **Privacy**: _See [Uptime Kuma](https://github.com/louislam/uptime-kuma)_
-
----
-
-### Tactical RMM
-
-[Tactical RMM](https://github.com/amidaware/tacticalrmm) is a self-hosted remote monitoring & management tool.
-
-<p align="center"><a href="https://github.com/user-attachments/assets/152a7205-e5de-401f-bad8-19063ddfaf3c">
-    <img src="https://github.com/user-attachments/assets/5921d46f-d84c-494d-8aaf-6b20cc592640" alt="Capture" border="0"></a></p>
-
-
-#### Options
-
-| **Field**    | **Type** | **Required** | **Description**                                                          |
-| ------------ | -------- | ------------ | ------------------------------------------------------------------------ |
-| **`url`**    | `string` | Required     | The status endpoint URL (https://api.example.com/core/v2/status/)           |
-| **`token`**  | `string` | Required     | The MON_TOKEN (see https://docs.tacticalrmm.com/tipsntricks/#monitor-your-trmm-instance-via-the-built-in-monitoring-endpoint). |
-
-#### Example
-
-```yaml
-- type: trmm
-  useProxy: true
-  options:
-    token: PkPVKMzbmXgeQDlJWb0WXYvsIk3JvZyadURud2cSTdMia6hUbQ
-    url: https://api.example.com/core/v2/status/
-```
-
-#### Info
-
-- **CORS**: 🟠 Proxied
-- **Auth**: 🟢 Required
-- **Price**: 🟢 Free
-- **Host**: Self-Hosted (see [Tactical RMM](https://github.com/amidaware/tacticalrmm) )
-- **Privacy**: _See [Tactical RMM](https://github.com/amidaware/tacticalrmm)_
-
-
----
-
 ## System Resource Monitoring
 
 ### Glances
@@ -2906,27 +2252,7 @@ Glances is a cross-platform monitoring tool developed by [@nicolargo](https://gi
 
 If you don't already have it installed, either follow the [Installation Guide](https://github.com/nicolargo/glances/blob/master/README.rst) for your system, or setup [with Docker](https://glances.readthedocs.io/en/latest/docker.html), or use the one-line install script: `curl -L https://bit.ly/glances | /bin/bash`.
 
-If you are using Docker to run glances make sure to add the enviroment variable `-e TZ = {YourTimeZone}`. You can get a list of valid timezones by running `timedatectl list-timezones` on any linux system. This is needed so the graphs show the currect time.
-
-Here an example for Docker
-```
- docker run -d \
-    --name glances \
-    --restart unless-stopped \
-    -v /var/run/docker.sock:/var/run/docker.sock:ro \
-    -p 61208:61208 \
-    --pid host \
-    --privileged \
-    -e GLANCES_OPT=-w \
-    -e PUID=1000 \
-    -e PGID=1000 \
-    -e TZ=Europe/Zurich \
-    nicolargo/glances:latest
-```
-
 Glances can be launched with the `glances` command. You'll need to run it in web server mode, using the `-w` option for the API to be reachable. If you don't plan on using the Web UI, then you can disable it using `--disable-webui`. See the [command reference docs](https://glances.readthedocs.io/en/latest/cmds.html) for more info.
-
-If Glances is running on a Windows system it is recommended to add the following arguments ```--disable-plugin all --enable-plugin cpu,mem,diskio,ip,network,containers,quicklook,load,fs,alert -w``` This is due to Glances not being that stable on windows, so disabling all plugins that aren't used by Dashy widgets can save on ressources.
 
 #### Options
 
@@ -2952,7 +2278,7 @@ Note that if auth is configured, requests must be proxied with `useProxy: true`
 
 #### Screenshot
 
-[![example-screenshot](https://pixelflare.cc/alicia/dashy/monitor-board)](https://ibb.co/pR6dMZT)
+[![example-screenshot](https://i.ibb.co/xfK6BGb/system-monitor-board.png)](https://ibb.co/pR6dMZT)
 
 ---
 
@@ -2960,7 +2286,7 @@ Note that if auth is configured, requests must be proxied with `useProxy: true`
 
 Live-updating current CPU usage, as a combined average across all cores
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/current-cpu" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/qkLgxLp/gl-cpu-usage.png" /></p>
 
 #### Example
 
@@ -2972,27 +2298,11 @@ Live-updating current CPU usage, as a combined average across all cores
 
 ---
 
-### Current CPU Usage Speedometer
-
-Speedometer styled version of the Current CPU Usage widget
-
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/current-cpu-speedometer" /></p>
-
-#### Example
-
-```yaml
-- type: gl-cpu-speedometer
-  options:
-    hostname: http://192.168.130.2:61208
-```
-
----
-
 ### CPU Usage Per Core
 
 Live-updating CPU usage breakdown per core
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/cpu-per-core" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/512MYhT/gl-cpu-cores.png" /></p>
 
 #### Example
 
@@ -3008,7 +2318,7 @@ Live-updating CPU usage breakdown per core
 
 Recent CPU usage history, across all cores, and displayed by user and system
 
-<p align="center"><img width="500" src="https://pixelflare.cc/alicia/dashy/cpu-history-chart" /></p>
+<p align="center"><img width="500" src="https://i.ibb.co/zs8BDzR/gl-cpu-history.png" /></p>
 
 #### Options
 
@@ -3031,7 +2341,7 @@ Recent CPU usage history, across all cores, and displayed by user and system
 
 Real-time memory usage gauge, with more info visible on click
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/current-mem" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/rynp52J/gl-mem-usage.png" /></p>
 
 #### Example
 
@@ -3043,27 +2353,11 @@ Real-time memory usage gauge, with more info visible on click
 
 ---
 
-### Current Memory Usage Speedometer
-
-Speedometer styled version of the Current Memory Usage widget
-
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/current-mem-speedometer" /></p>
-
-#### Example
-
-```yaml
-- type: gl-mem-speedometer
-  options:
-    hostname: http://192.168.130.2:61208
-```
-
----
-
 ### Memory Usage History
 
 Recent memory usage chart
 
-<p align="center"><img width="500" src="https://pixelflare.cc/alicia/dashy/mem-history-glances" /></p>
+<p align="center"><img width="500" src="https://i.ibb.co/V3wSgW0/gl-mem-history.png" /></p>
 
 #### Options
 
@@ -3086,7 +2380,7 @@ Recent memory usage chart
 
 List connected disks, showing free / used space and other info (file system, mount point and space available)
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/diskspace-glances" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/25y94bB/gl-disk-usage.png" /></p>
 
 #### Example
 
@@ -3102,7 +2396,7 @@ List connected disks, showing free / used space and other info (file system, mou
 
 Shows real-time read and write speeds and operations per sec for each disk
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/disk-io-glances" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/JdgjCjG/gl-disk-io.png" /></p>
 
 #### Example
 
@@ -3118,7 +2412,7 @@ Shows real-time read and write speeds and operations per sec for each disk
 
 Shows the number of processes waiting in the run-queue, averaged across all cores. Displays for past 5, 10 and 15 minutes
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/system-load-glances" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/090FfNy/gl-system-load.png" /></p>
 
 #### Example
 
@@ -3130,25 +2424,11 @@ Shows the number of processes waiting in the run-queue, averaged across all core
 
 ---
 
-### Uptime
-
-Displays the system uptime fetched from Glances.
-
-#### Example
-
-```yaml
-- type: gl-uptime
-  options:
-    hostname: http://192.168.130.2:61208
-```
-
----
-
 ### System Load History
 
 Shows recent historical system load, calculated from the number of processes waiting in the run-queue, in 1, 5 and 15 minute intervals, and averaged across all cores. Optionally specify `limit` to set number of results returned, defaults to `500`, max `100000`, but the higher the number the longer the load and render times will be.
 
-<p align="center"><img width="500" src="https://pixelflare.cc/alicia/dashy/system-load-history-glances" /></p>
+<p align="center"><img width="500" src="https://i.ibb.co/C2rGMLg/system-load-history.png" /></p>
 
 #### Example
 
@@ -3164,7 +2444,7 @@ Shows recent historical system load, calculated from the number of processes wai
 
 Lists visible network interfaces, including real-time upload/ download stats
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/network-interfaces-glances" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/FnhgHfG/gl-network-interfaces.png" /></p>
 
 #### Example
 
@@ -3180,7 +2460,7 @@ Lists visible network interfaces, including real-time upload/ download stats
 
 Shows amount of data recently uploaded/ downloaded across all network interfaces. Optionally set the `limit` option to specify number historical of data points to return
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/network-traffic-glances" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/12RN6KT/gl-network-traffic.png" /></p>
 
 #### Example
 
@@ -3213,7 +2493,7 @@ Lists recent high resource usage alerts (e.g. CPU, mem, IO, load, temp)
 
 Shows public and private IP address. Note that the ip plugin is not available on all instances of Glances.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/ip-addresses-glances" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/ZhXBxZr/gl-ip-address.png" /></p>
 
 #### Example
 
@@ -3232,7 +2512,7 @@ Displays temperature data from system CPUs.
 Note: This widget uses the [`sensors`](https://github.com/nicolargo/glances/blob/develop/glances/plugins/glances_sensors.py) plugin, which is disabled by default, and may cause [performance issues](https://github.com/nicolargo/glances/issues/1664#issuecomment-632063558).
 You'll need to enable the sensors plugin to use this widget, using: `--enable-plugin sensors` when you start Glances.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/cpu-temp-glances" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/xSs4Gqd/gl-cpu-temp.png" /></p>
 
 #### Options
 
@@ -3251,67 +2531,13 @@ You'll need to enable the sensors plugin to use this widget, using: `--enable-pl
 
 ---
 
-### GPU
-
-Displays usage, memory and temperature for each NVIDIA GPU, plus fan speed where available.
-
-Note: This widget uses the [`gpu`](https://github.com/nicolargo/glances/tree/develop/glances/plugins/gpu) plugin, which requires the `py3nvml` library and is limited to NVIDIA chipsets.
-
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/glances-gpu" /></p>
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`units`** | `string` |  _Optional_ | Use `C` to display temperatures in Celsius or `F` to use Fahrenheit. Defaults to `C`.
-
-#### Example
-
-```yaml
-- type: gl-gpu
-  options:
-    hostname: http://192.168.130.2:61208
-    units: C
-```
-
----
-
-### Compact Metrics
-
-A multi-system overview widget that displays CPU, memory and disk usage for multiple Glances instances in a compact table. Click on a row to see detailed metrics for that system.
-
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`systems`** | `array` | Required | An array of systems to monitor, each with `header` (display name) and `url` (Glances base URL)
-**`apiVersion`** | `number` | _Optional_ | Glances API version. Defaults to `4`
-**`username`** | `string` | _Optional_ | If Glances is password-protected, specify the username
-**`password`** | `string` | _Optional_ | If Glances is password-protected, specify the password
-
-#### Example
-
-```yaml
-- type: gl-compact-metrics
-  options:
-    systems:
-      - header: Server 1
-        url: http://192.168.1.10:61208
-      - header: Server 2
-        url: http://192.168.1.11:61208
-      - header: NAS
-        url: http://192.168.1.20:61208
-```
-
----
-
 ## Dynamic Widgets
 
 ### Iframe Widget
 
 Embed any webpage into your dashboard as a widget.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/iframe" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/t4VHnh3/iframe-widget.gif" /></p>
 
 #### Options
 
@@ -3336,7 +2562,7 @@ Many websites and apps provide their own embeddable widgets. These can be used w
 
 ⚠️ **NOTE:** Use with extreme caution. Embedding a script from an untrustworthy source may have serious unintended consequences.
 
-<p align="center"><img width="400" src="https://pixelflare.cc/alicia/dashy/html-embed" /></p>
+<p align="center"><img width="400" src="https://i.ibb.co/fkwNnxT/embed-widget-2.png" /></p>
 
 #### Options
 
@@ -3385,91 +2611,9 @@ You can also use this widget to display an image, wither locally or from a remot
 
 ### API Response
 
-Display data from any HTTP/JSON API endpoint. Fetch a URL, then declaratively map response fields to labelled, formatted values.
-This was very much inspired by, and is broadly compatible with [Homepage's customapi widget](https://gethomepage.dev/widgets/services/customapi/)
+Directly output plain-text response from any API-enabled service.
 
-#### Options
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`url`** | `string` | Required | The full URL of the API endpoint to fetch
-**`refreshInterval`** | `number` | _Optional_ | How often to refetch, in milliseconds. Defaults to `10000` (10s). If omitted, the widget-level `updateInterval` (in seconds) is used instead
-**`username`** | `string` | _Optional_ | Username for HTTP basic auth
-**`password`** | `string` | _Optional_ | Password for HTTP basic auth
-**`method`** | `string` | _Optional_ | HTTP method, e.g. `GET` (default) or `POST`
-**`headers`** | `object` | _Optional_ | An object of custom request headers
-**`requestBody`** | `string` or `object` | _Optional_ | Request body for non-GET methods. Prefer an object. A raw string is JSON-encoded again, so don't pre-stringify
-**`display`** | `string` | _Optional_ | Layout for the fields: `block` (default, label and value on one row) or `list` (value stacked under the label)
-**`mappings`** | `array` | _Optional_ | The fields to display from the response (see below). If omitted, the raw response root is shown
-
-Each item in `mappings` accepts:
-
-**Field** | **Type** | **Required** | **Description**
---- | --- | --- | ---
-**`field`** | `string` | _Optional_ | Dot-path to the value, e.g. `path.to.key` or `items.0.name`. Omit to use the response root (useful with `size`)
-**`label`** | `string` | _Optional_ | Label shown beside the value
-**`format`** | `string` | _Optional_ | One of `text` (default), `number`, `percent`, `bytes`, `bitrate`, `duration`, `date`, `relativeDate` or `size`
-**`scale`** | `number` or `string` | _Optional_ | Multiply the value before formatting. A number or fraction string, e.g. `1024` or `1/16`
-**`prefix`** | `string` | _Optional_ | Text prepended to the formatted value
-**`suffix`** | `string` | _Optional_ | Text appended to the formatted value
-**`remap`** | `array` | _Optional_ | Swap raw values for display text, e.g. `0` → `Down`. Each entry has `value` and `to`; an entry with `any: true` matches everything else
-**`locale`** | `string` | _Optional_ | Locale for `number`/`percent`/`date`/`relativeDate`, e.g. `nl`. Defaults to the browser locale
-**`dateStyle`** | `string` | _Optional_ | For `date` format. One of `full`, `long` (default), `medium`, `short`
-**`timeStyle`** | `string` | _Optional_ | For `date` format. One of `full`, `long`, `medium`, `short`
-**`style`** | `string` | _Optional_ | For `relativeDate` format. One of `long` (default), `short`, `narrow`
-**`numeric`** | `string` | _Optional_ | For `relativeDate` format. One of `always` (default) or `auto`
-**`additionalField`** | `object` | _Optional_ | A secondary value shown next to the main one. Accepts `field`, `format` (and its options), plus `color` - one of `theme`, `adaptive` (action colour from the value's sign: positive green, negative red), `black` or `white`
-
-Notes:
-- **`percent`** treats the value as an already-computed percentage, so `42` is shown as `42%`
-- **`bytes`** and **`bitrate`** auto-select a unit: `1073741824` → `1 GB`, `2500000` → `2.5 Mbps`
-- **`duration`** shows seconds as a compact time: `3665` → `1h 1m`
-- **`scale`** is applied before formatting, useful for unit conversions — e.g. for an API reporting kilobytes, `scale: 1024` with `format: bytes`
-- **`size`** returns the number of items in an array (or keys in an object) — pair it with an omitted `field` to count the response root
-- For APIs that don't send CORS headers (most self-hosted services), set the widget-level `useProxy: true` to route the request through Dashy's server-side proxy
-
-#### Example
-
-```yaml
-- type: customapi
-  options:
-    url: https://api.github.com/repos/lissy93/dashy
-    refreshInterval: 60000
-    mappings:
-      - field: stargazers_count
-        label: Stars
-        format: number
-      - field: open_issues_count
-        label: Open Issues
-        format: number
-      - field: pushed_at
-        label: Last Push
-        format: relativeDate
-```
-
-Or, human-readable disk usage from a [Glances](https://nicolargo.github.io/glances/) instance:
-
-```yaml
-- type: customapi
-  useProxy: true
-  options:
-    url: http://192.168.0.1:61208/api/4/fs
-    mappings:
-      - field: 0.mnt_point
-        label: Mount
-      - field: 0.used
-        label: Used
-        format: bytes
-      - field: 0.percent
-        label: Used %
-        format: percent
-```
-
-#### Info
-
-- **CORS**: 🟠 Depends on target API (use `useProxy: true` if blocked)
-- **Auth**: 🟠 Optional (basic auth or custom headers)
-- **Price**: 🟢 Free
+// Coming soon...
 
 ---
 
@@ -3485,7 +2629,7 @@ Display data from any service with a Prometheus exporter.
 
 Show live data from an RSS-enabled service. The only required parameter is `rssUrl`, which is the URL to the ATOM feed. See [RSS Widget](#rss-feed) for full list of available options.
 
-<p align="center"><img width="700" src="https://pixelflare.cc/alicia/dashy/data-feed" /></p>
+<p align="center"><img width="700" src="https://i.ibb.co/1r88pvL/rss-feed-example-1.png" /></p>
 
 #### Example
 
@@ -3548,7 +2692,7 @@ Note that if you have many widgets, and set them to continuously update frequent
 
 If a widget fails to make a data request, and the console shows a CORS error, this means the server is blocking client-side requests.
 
-Dashy has a built-in CORS proxy ([`services/endpoints/cors-proxy.js`](https://github.com/Lissy93/dashy/blob/master/services/endpoints/cors-proxy.js)), which will be used automatically by some widgets, or can be forced to use by other by setting the `useProxy` option.
+Dashy has a built-in CORS proxy ([`services/cors-proxy.js`](https://github.com/Lissy93/dashy/blob/master/services/cors-proxy.js)), which will be used automatically by some widgets, or can be forced to use by other by setting the `useProxy` option.
 
 For example:
 
@@ -3566,37 +2710,6 @@ Alternatively, and more securely, you can set the auth headers on your service t
 Access-Control-Allow-Origin: https://location-of-dashy/
 Vary: Origin
 ```
-
----
-
-### Handling Secrets
-
-Some widgets require you to pass potentially sensitive info such as API keys. The `conf.yml` is not ideal for this, as it's stored in plaintext. Instead, for secrets you should use environment variables.
-
-In your widget options, set the value to the name of an environment variable starting with `DASHY_` (or `VITE_APP_` / `VUE_APP_` for backwards compatibility). The Dashy server will substitute it with the matching `process.env` value when proxying the request.
-
-The widget must be set to route through the Dashy server with `useProxy: true`. Without this, the placeholder is sent directly to the upstream API and will fail. Substitution covers the request URL, headers and body, so any auth pattern (Bearer, Basic, query param, POST body) works.
-
-For more information about setting and managing your environment variables, see [Management Docs --> Environmental Variables](/docs/management.md#passing-in-environmental-variables).
-
-For example:
-
-```yaml
-- type: weather
-  useProxy: true
-  options:
-    apiKey: DASHY_WEATHER_TOKEN
-    city: London
-    units: metric
-    hideDetails: true
-```
-
-Then set `DASHY_WEATHER_TOKEN='xxx'` in your container or local environment, and restart Dashy. To rotate the value, just update the env var and restart. No rebuild required.
-
-> [!NOTE]
-> Only env vars starting with `DASHY_`, `VITE_APP_` or `VUE_APP_` are eligible for substitution. Other server-side env vars are never exposed.
->
-> If you build Dashy from source yourself, `VITE_APP_*` and `DASHY_*` vars set at build time are also baked into the bundle by Vite, which works without `useProxy: true`.
 
 ---
 
@@ -3732,7 +2845,7 @@ Please only request widgets for services that:
 
 You can suggest a widget [here](https://git.io/Jygo3), please star the repo before submitting a ticket. If you are a monthly GitHub sponsor, I will happily build out a custom widget for any service that meets the above criteria, usually within 2 weeks of initial request.
 
-For services that are not officially supported, it is likely still possible to display data using either the [iframe](#iframe-widget), [embed](#html-embedded-widget) or [API response](#api-response) widgets. For more advanced features, like charts and action buttons, you could also build your own widget, using [this tutorial](/docs/development-guides.md/#building-a-widget), it's fairly straight forward, and you can use an [existing widget](https://github.com/Lissy93/dashy/tree/master/src/components/Widgets) (or [this example](https://git.io/JygKI)) as a template.
+For services that are not officially supported, it is likely still possible to display data using either the [iframe](#iframe-widget), [embed](#html-embedded-widget) or [API response](#api-response) widgets. For more advanced features, like charts and action buttons, you could also build your own widget, using [this tutorial](/docs/development-guides.md#building-a-widget), it's fairly straight forward, and you can use an [existing widget](https://github.com/Lissy93/dashy/tree/master/src/components/Widgets) (or [this example](https://git.io/JygKI)) as a template.
 
 ---
 

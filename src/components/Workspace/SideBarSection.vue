@@ -33,9 +33,8 @@ import SideBarItem from '@/components/Workspace/SideBarItem.vue';
 export default {
   name: 'SideBarSection',
   props: {
-    items: { type: Array, default: () => [] },
+    items: Array,
   },
-  emits: ['launch-app'],
   components: {
     SideBarItem,
   },

@@ -4,73 +4,73 @@
     <!-- Search bar, layout options and settings -->
     <SettingsContainer ref="filterComp"
       @user-is-searchin="searching"
+      @change-modal-visibility="updateModalVisibility"
+      :displayLayout="layout"
+      :iconSize="itemSizeBound"
+      :externalThemes="getExternalCSSLinks()"
+      :modalOpen="modalOpen"
       class="settings-outer"
     />
     <!-- Show back button, when on single-section view -->
     <div v-if="singleSectionView">
-      <router-link :to="backToAllPath" class="back-to-all-link">
+      <router-link to="/home" class="back-to-all-link">
         <BackIcon />
         <span>Back to All</span>
       </router-link>
     </div>
     <!-- Main content, section for each group of items -->
-    <div v-if="checkTheresData(sections) || isEditMode" :class="computedClass"
-      ref="sectionsContainer" v-drag-sort="sectionDragConfig">
-      <template v-for="section in filteredSections" :key="makeSectionId(section)">
+    <div v-if="checkTheresData(sections) || isEditMode"
+      :class="`item-group-container `
+        + `orientation-${layout} `
+        + `item-size-${itemSizeBound} `
+        + (isEditMode ? 'edit-mode ' : '')
+        + (singleSectionView ? 'single-section-view ' : '')
+        + (this.colCount ? `col-count-${this.colCount} ` : '')"
+      >
+      <template v-for="(section, index) in filteredTiles">
         <Section
-          :index="section.configIndex"
+          :key="index"
+          :index="index"
           :title="section.name"
           :icon="section.icon || undefined"
           :displayData="getDisplayData(section)"
-          :groupId="makeSectionId(section)"
-          :items="section.filteredItems"
+          :groupId="`${pageId}-section-${index}`"
+          :items="filterTiles(section.items, searchValue)"
           :widgets="section.widgets"
+          :searchTerm="searchValue"
           :itemSize="itemSizeBound"
           @itemClicked="finishedSearching()"
           @change-modal-visibility="updateModalVisibility"
           :isWide="!!singleSectionView || layoutOrientation === 'horizontal'"
-          :class="(searchValue && section.filteredItems.length === 0) ? 'no-results' : ''"
-          :activeColCount="activeColCount"
+          :class="
+          (searchValue && filterTiles(section.items, searchValue).length === 0) ? 'no-results' : ''"
         />
       </template>
       <!-- Show add new section button, in edit mode -->
       <AddNewSection v-if="isEditMode && !singleSectionView" />
     </div>
     <!-- Show message when there's no data to show -->
-    <div v-if="checkIfResults(filteredSections) && !isEditMode" class="no-data">
-      <template v-if="isBootstrap">
-        {{ $t('home.session-expired-line1') }}
-        <p class="hint">{{ $t('home.session-expired-line2') }}</p>
-        <Button :click="reAuth">{{ $t('home.sign-in-again') }}</Button>
-      </template>
-      <template v-else>
-        {{ searchValue ? $t('home.no-results') : $t('home.no-data') }}
-      </template>
+    <div v-if="checkIfResults() && !isEditMode" class="no-data">
+      {{searchValue ? $t('home.no-results') : $t('home.no-data')}}
     </div>
     <!-- Show banner at bottom of screen, for Saving config changes -->
     <EditModeSaveMenu v-if="isEditMode" />
-    <!-- Shows pertinent info -->
-    <NotificationThing v-if="$store.state.isUsingLocalConfig"/>
+    <!-- Modal for viewing and exporting configuration file -->
+    <ExportConfigMenu />
   </div>
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
 import HomeMixin from '@/mixins/HomeMixin';
 import SettingsContainer from '@/components/Settings/SettingsContainer.vue';
 import Section from '@/components/LinkItems/Section.vue';
-import NotificationThing from '@/components/Settings/LocalConfigWarning.vue';
-import Button from '@/components/FormElements/Button';
-import {
-  makePageName, makeRoutePath, resolveRouteIntent, viewFromPath,
-} from '@/utils/config/ConfigHelpers';
-import ErrorHandler from '@/utils/logging/ErrorHandler';
+import EditModeSaveMenu from '@/components/InteractiveEditor/EditModeSaveMenu.vue';
+import ExportConfigMenu from '@/components/InteractiveEditor/ExportConfigMenu.vue';
+import AddNewSection from '@/components/InteractiveEditor/AddNewSectionLauncher.vue';
 import StoreKeys from '@/utils/StoreMutations';
-import { reorder } from '@/directives/DragSort';
+import { localStorageKeys, modalNames } from '@/utils/defaults';
+import ErrorHandler from '@/utils/ErrorHandler';
 import BackIcon from '@/assets/interface-icons/back-arrow.svg';
-
-const EditModeSaveMenu = defineAsyncComponent(() => import('@/components/InteractiveEditor/EditModeSaveMenu.vue'));
-const AddNewSection = defineAsyncComponent(() => import('@/components/InteractiveEditor/AddNewSectionLauncher.vue'));
 
 export default {
   name: 'home',
@@ -78,28 +78,19 @@ export default {
   components: {
     SettingsContainer,
     EditModeSaveMenu,
+    ExportConfigMenu,
     AddNewSection,
-    NotificationThing,
     Section,
     BackIcon,
-    Button,
   },
   data: () => ({
     layout: '',
     itemSizeBound: '',
-    activeColCount: 1,
+    addNewSectionOpen: false,
   }),
   computed: {
     singleSectionView() {
-      const { sectionSlug } = resolveRouteIntent(this.$route, this.$store);
-      if (!sectionSlug) return undefined;
-      return this.findSingleSection(this.$store.getters.sections, sectionSlug);
-    },
-    /* Back link from single-section view */
-    backToAllPath() {
-      const view = viewFromPath(this.$route.path);
-      const confId = this.$store.state.currentConfigInfo?.confId || null;
-      return makeRoutePath(view, confId);
+      return this.findSingleSection(this.$store.getters.sections, this.$route.params.section);
     },
     /* Get class for num columns, if specified by user */
     colCount() {
@@ -109,18 +100,10 @@ export default {
       if (colCount > 8) colCount = 8;
       return colCount;
     },
-    /* Return sections with filtered items, that match users search term.
-     * Each is tagged with its index in the raw config, since the rendered
-     * list may be filtered (e.g. sections hidden for the current user) */
-    filteredSections() {
-      const rawSections = this.$store.state.config.sections || [];
+    /* Return all sections, that match users search term */
+    filteredTiles() {
       const sections = this.singleSectionView || this.sections;
-      const showHidden = this.isEditMode || !!this.searchValue || !!this.singleSectionView;
-      return sections.map((section) => ({
-        ...section,
-        configIndex: rawSections.indexOf(section),
-        filteredItems: this.filterTiles(section.items, section.name, { showHidden }),
-      }));
+      return sections.filter((section) => this.filterTiles(section.items, this.searchValue));
     },
     /* Updates layout (when button clicked), and saves in local storage */
     layoutOrientation() {
@@ -130,30 +113,15 @@ export default {
     iconSize() {
       return this.$store.getters.iconSize;
     },
-    computedClass() {
-      let classes = 'item-group-container '
-      + ` orientation-${this.$store.getters.layout} item-size-${this.itemSizeBound}`;
-      if (this.isEditMode) classes += ' edit-mode';
-      if (this.singleSectionView) classes += ' single-section-view';
-      if (this.colCount) classes += ` col-count-${this.colCount}`;
-      return classes;
-    },
-    /* Config for drag-and-drop. Is disabled if sections don't match stored config */
-    sectionDragConfig() {
-      const storedSections = this.$store.state.config.sections || [];
-      return {
-        enabled: this.isEditMode && !this.singleSectionView
-          && this.sections.length === storedSections.length,
-        handle: '.section-header',
-        draggable: '.collapsable',
-        onSorted: this.handleSectionMoved,
-      };
-    },
   },
   watch: {
-    /* Re-read col count once after config loaded */
-    sections() {
-      this.$nextTick(this.readActiveColCount);
+    layoutOrientation(layout) {
+      localStorage.setItem(localStorageKeys.LAYOUT_ORIENTATION, layout);
+      this.layout = layout;
+    },
+    iconSize(size) {
+      localStorage.setItem(localStorageKeys.ICON_SIZE, size);
+      this.itemSizeBound = size;
     },
   },
   methods: {
@@ -163,31 +131,48 @@ export default {
     },
     /* Returns optional section display preferences if available */
     getDisplayData(section) {
-      const displayData = section.displayData ? { ...section.displayData } : {};
-      if (this.singleSectionView) displayData.collapsed = false;
-      return displayData;
+      return !section.displayData ? {} : section.displayData;
+    },
+    openAddNewSectionMenu() {
+      this.addNewSectionOpen = true;
+      this.$modal.show(modalNames.EDIT_SECTION);
+      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+    },
+    closeEditSection() {
+      this.addNewSectionOpen = false;
+      this.$modal.hide(modalNames.EDIT_SECTION);
+      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
     },
     /* If on sub-route, and section exists, then return only that section */
     findSingleSection: (allSections, sectionTitle) => {
       if (!sectionTitle) return undefined;
-      const target = makePageName(sectionTitle);
-      const match = allSections.find((s) => makePageName(s.name || '') === target);
-      if (!match) ErrorHandler(`No section named '${sectionTitle}' was found`);
-      return match ? [match] : undefined;
+      let sectionToReturn;
+      const parse = (section) => section.replaceAll(' ', '-').toLowerCase().trim();
+      allSections.forEach((section) => {
+        if (parse(sectionTitle) === parse(section.name || '')) {
+          sectionToReturn = [section];
+        }
+      });
+      if (!sectionToReturn) ErrorHandler(`No section named '${sectionTitle}' was found`);
+      return sectionToReturn;
     },
-    /* Commits the new section order, after a drag-and-drop */
-    handleSectionMoved({ oldIndex, newIndex }) {
-      const { sections } = this.$store.state.config;
-      this.$store.commit(StoreKeys.SET_SECTIONS, reorder(sections || [], oldIndex, newIndex));
-    },
-    readActiveColCount() {
-      const { sectionsContainer } = this.$refs;
-      if (!sectionsContainer) return;
-      const cs = getComputedStyle(sectionsContainer);
-      const varVal = parseInt(cs.getPropertyValue('--col-count'), 10);
-      if (!Number.isNaN(varVal) && varVal > 0) {
-        this.activeColCount = varVal;
+    /* Returns an array of links to external CSS from the Config */
+    getExternalCSSLinks() {
+      const availibleThemes = {};
+      if (this.appConfig) {
+        if (this.appConfig.externalStyleSheet) {
+          const externals = this.appConfig.externalStyleSheet;
+          if (Array.isArray(externals)) {
+            externals.forEach((ext, i) => {
+              availibleThemes[`External Stylesheet ${i + 1}`] = ext;
+            });
+          } else {
+            availibleThemes['External Stylesheet'] = this.appConfig.externalStyleSheet;
+          }
+        }
       }
+      availibleThemes.Default = '#';
+      return availibleThemes;
     },
   },
   mounted() {
@@ -195,11 +180,6 @@ export default {
     this.initiateMaterialDesignIcons();
     this.layout = this.layoutOrientation;
     this.itemSizeBound = this.iconSize;
-    this.readActiveColCount();
-    window.addEventListener('resize', this.readActiveColCount);
-  },
-  beforeUnmount() {
-    window.removeEventListener('resize', this.readActiveColCount);
   },
 };
 </script>
@@ -229,19 +209,11 @@ export default {
   display: grid;
   gap: 0.5rem;
   margin: 0 auto;
-  max-width: var(--content-max-width, 90%);
+  max-width: 90%;
   overflow: auto;
   @extend .scroll-bar;
   @include monitor-up {
-    max-width: var(--content-max-width, 85%);
-  }
-
-  /* Masonry layout - sections auto-positioned to make best use of space.
-   * Row span is computed per-section from content height against --masonry-row-unit */
-  &.orientation-masonry {
-    grid-auto-rows: var(--masonry-row-unit, 8px);
-    grid-auto-flow: row dense;
-    row-gap: 0;
+    max-width: 85%;
   }
 
   /* Options for alternate layouts, triggered by buttons */
@@ -257,12 +229,13 @@ export default {
     }
   }
   &.orientation-horizontal, &.orientation-vertical, &.single-section-view {
-    @include phone { max-width: var(--content-max-width, 100%); }
-    @include tablet { max-width: var(--content-max-width, 98%); }
-    @include laptop { max-width: var(--content-max-width, 90%); }
-    @include monitor { max-width: var(--content-max-width, 85%); }
-    @include big-screen { max-width: var(--content-max-width, 80%); }
-    @include big-screen-up { max-width: var(--content-max-width, 60%); }
+    @include phone { --content-max-width: 100%; }
+    @include tablet { --content-max-width: 98%; }
+    @include laptop { --content-max-width: 90%; }
+    @include monitor { --content-max-width: 85%; }
+    @include big-screen { --content-max-width: 80%; }
+    @include big-screen-up { --content-max-width: 60%; }
+    max-width: var(--content-max-width, 90%);
   }
 
   /* Specify number of columns, based on screen size or user preference */
@@ -294,25 +267,6 @@ export default {
     margin-bottom: 12rem;
   }
 
-  /* Drag-and-drop things, when section sorting is enabled */
-  &.drag-sort-active {
-    :deep(.collapsable .section-header) {
-      cursor: grab;
-    }
-    // for empty drop slot
-    :deep(.collapsable.drag-sort-ghost) {
-      opacity: 0.4;
-      outline: 2px dashed var(--primary);
-      outline-offset: -2px;
-      transition: none !important;
-      transform: none !important;
-      > * {
-        visibility: hidden;
-        transition: none !important;
-      }
-    }
-  }
-
   /* When in single-section view mode */
   &.single-section-view {
     display: block;
@@ -333,20 +287,13 @@ export default {
 
 /* Custom styles only applied when there is no sections in config */
 .no-data {
-    background: var(--background-darker);
-    color: var(--primary);
+    font-size: 2rem;
+    color: var(--background);
+    background: #ffffffeb;
     width: fit-content;
     margin: 2rem auto;
     padding: 0.5rem 1rem;
     border-radius: var(--curve-factor);
-    border: 1px solid var(--primary);
-    font-size: 1.8rem;
-    text-align: center;
-    .hint {
-      margin: 0.25rem auto;
-      font-size: 1rem;
-      opacity: 0.8;
-    }
 }
 
 /* Settings section, includes search, config and user settings */

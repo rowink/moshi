@@ -5,8 +5,8 @@
     <div class="repo-info">
       <p class="repo-name">{{ repo.name }}</p>
       <div class="star-wrap">
-        <p class="all-stars" v-if="repo.stars">{{ formatStars(repo.stars) }}</p>
-        <p class="new-stars" v-if="repo.newStars">↑{{ formatStars(repo.newStars) }}</p>
+        <p class="all-stars" v-if="repo.stars">{{ repo.stars | formatStars }}</p>
+        <p class="new-stars" v-if="repo.newStars">↑{{ repo.newStars | formatStars }}</p>
       </div>
       <a class="repo-link" :href="repo.link">{{ repo.slug }}</a>
       <p class="repo-desc">{{ repo.desc }}</p>
@@ -16,9 +16,9 @@
 </template>
 
 <script>
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 import { capitalize, showNumAsThousand } from '@/utils/MiscHelpers';
 
 export default {
@@ -27,6 +27,14 @@ export default {
     return {
       trendingRepos: null,
     };
+  },
+  filters: {
+    formatStars(starCount) {
+      if (!starCount) return null;
+      const numericCount = typeof starCount === 'string'
+        ? parseInt(starCount.replaceAll(',', ''), 10) : starCount;
+      return `${showNumAsThousand(numericCount) || starCount} ★`;
+    },
   },
   computed: {
     since() {
@@ -46,14 +54,8 @@ export default {
     },
   },
   methods: {
-    formatStars(starCount) {
-      if (!starCount) return null;
-      const numericCount = typeof starCount === 'string'
-        ? parseInt(starCount.replaceAll(',', ''), 10) : starCount;
-      return `${showNumAsThousand(numericCount) || starCount} ★`;
-    },
     fetchData() {
-      request.get(this.endpoint)
+      axios.get(this.endpoint)
         .then((response) => {
           if (response.data.items) {
             this.processData(response.data.items);
@@ -75,11 +77,11 @@ export default {
           slug: repo.repo,
           desc: repo.desc,
           lang: repo.lang,
-          link: `https://github.com/${repo.repo}`,
+          link: repo.repo_link,
           stars: repo.stars,
           forks: repo.forks,
-          newStars: repo.change,
-          avatar: repo.build_by[0] || 'https://github.com/fluidicon.png',
+          newStars: parseInt(repo.added_stars, 10),
+          avatar: repo.avatars[0] || 'https://github.com/fluidicon.png',
         });
       });
       if (this.limit && this.limit < results.length) {

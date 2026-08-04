@@ -2,25 +2,20 @@
   <div :class="`item-wrapper wrap-size-${size} span-${makeColumnCount}`" >
     <a @click="itemClicked"
       @long-press="openContextMenu"
-      @contextmenu="preventNativeContextMenu"
+      @contextmenu.prevent
       @mouseup.right="openContextMenu"
-      @mouseenter="startTitleScroll"
-      @mouseleave="endTitleScroll"
-      @focus="startTitleScroll"
-      @blur="endTitleScroll"
       v-longPress="true"
-      :href="effectiveUrl"
+      :href="item.url"
       :target="anchorTarget"
       :class="`item ${makeClassList}`"
       v-tooltip="getTooltipOptions()"
-      :rel="`${item.rel || 'noopener noreferrer'}`"
-      tabindex="0"
+      rel="noopener noreferrer" tabindex="0"
       :id="`link-${item.id}`"
       :style="customStyle"
     >
       <!-- Item Text -->
-      <div :id="`tile-${item.id}`" :class="`tile-title ${!itemIcon? 'bounce no-icon': ''}`">
-        <span ref="titleText" class="text">{{ item.title }}</span>
+      <div :class="`tile-title  ${!itemIcon? 'bounce no-icon': ''}`" :id="`tile-${item.id}`" >
+        <span class="text">{{ item.title }}</span>
         <p class="description">{{ item.description }}</p>
       </div>
       <!-- Item Icon -->
@@ -31,25 +26,13 @@
         :isSmall="!itemIcon || size === 'small'"
         :openingMethod="accumulatedTarget"  position="bottom right"
         :hotkey="item.hotkey" />
-      <div class="indicators-container">
-        <!-- Status indicator dot (if enabled) showing weather service is available -->
-        <StatusIndicator
-          v-if="enableStatusCheck"
-          :statusSuccess="statusResponse?.successStatus"
-          :statusText="statusResponse?.message"
-          :statusAccessibility="appConfig.statusCheckAccessibility"
-        />
-        <!-- Status indicator dot (if enabled) showing host ping status -->
-        <StatusIndicator
-          v-if="isPingCheckEnabled"
-          :statusSuccess="pingResponse?.successStatus"
-          :statusText="pingResponse?.message"
-          :statusTimeout="pingCheckTimeout"
-          :statusAccessibility="appConfig.pingCheckAccessibility"
-        />
-      </div>
-      <!-- URL of the item (shown on hover, only on some themes) -->
-      <p class="item-url">{{ shortUrl(item.url) }}</p>
+      <!-- Status indicator dot (if enabled) showing weather service is available -->
+      <StatusIndicator
+        class="status-indicator"
+        v-if="enableStatusCheck"
+        :statusSuccess="statusResponse ? statusResponse.successStatus : undefined"
+        :statusText="statusResponse ? statusResponse.message : undefined"
+      />
       <!-- Edit icon (displayed only when in edit mode) -->
       <EditModeIcon v-if="isEditMode" class="edit-mode-item" @click="openItemSettings()" />
     </a>
@@ -74,28 +57,26 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
 import Icon from '@/components/LinkItems/ItemIcon.vue';
 import ItemOpenMethodIcon from '@/components/LinkItems/ItemOpenMethodIcon';
 import StatusIndicator from '@/components/LinkItems/StatusIndicator';
+import EditItem from '@/components/InteractiveEditor/EditItem';
 import MoveItemTo from '@/components/InteractiveEditor/MoveItemTo';
 import ContextMenu from '@/components/LinkItems/ItemContextMenu';
-
-const EditItem = defineAsyncComponent(() => import('@/components/InteractiveEditor/EditItem.vue'));
 import StoreKeys from '@/utils/StoreMutations';
 import ItemMixin from '@/mixins/ItemMixin';
 import EditModeIcon from '@/assets/interface-icons/interactive-editor-edit-mode.svg';
-import { modalNames } from '@/utils/config/defaults';
+import { modalNames } from '@/utils/defaults';
 
 export default {
   name: 'Item',
   mixins: [ItemMixin],
   props: {
-    itemSize: { type: String, default: '' },
-    parentSectionTitle: { type: String, default: '' }, // Title of parent section (for add new)
+    itemSize: String,
+    parentSectionTitle: String, // Title of parent section (for add new)
     isAddNew: Boolean, // Only set if 'fake' item used as Add New button
-    sectionWidth: { type: Number, default: undefined }, // Width of parent section
-    sectionDisplayData: { type: Object, default: () => ({}) },
+    sectionWidth: Number, // Width of parent section
+    sectionDisplayData: Object,
   },
   components: {
     Icon,
@@ -136,7 +117,6 @@ export default {
         case 'modal': return '"\\f2d0"';
         case 'workspace': return '"\\f0b1"';
         case 'clipboard': return '"\\f0ea"';
-        case 'newwindow': return '"\\f2d2"';
         default: return '"\\f054"';
       }
     },
@@ -144,110 +124,39 @@ export default {
   data() {
     return {
       editMenuOpen: false,
-      titleTruncated: false,
     };
   },
-  watch: {
-    /* Watch for when item gets rename, to re-measure it's length check for truncation */
-    'item.title': function titleChanged() {
-      this.$nextTick(this.checkTitleTruncation);
-    },
-  },
   methods: {
-    shortUrl(value) {
-      if (!value || typeof value !== 'string') {
-        return '';
-      }
-      try {
-        // Use URL constructor to parse the input
-        const url = new URL(value);
-        return url.hostname;
-      } catch {
-        // If the input is not a valid URL, try to handle it as an IP address
-        const ipPattern = /^(\d{1,3}\.){3}\d{1,3}/;
-        const match = value.match(ipPattern);
-        if (match) {
-          return match[0];
-        }
-        return '';
-      }
-    },
     /* Returns configuration object for the tooltip */
     getTooltipOptions() {
-      const {
-        title, description, provider, hotkey,
-      } = this.item;
-      if (!description && !provider && !this.titleTruncated) return {}; // Nothing to show
-      const parts = [];
-      if (this.titleTruncated) parts.push(`<b>${title}</b>`);
-      if (provider) parts.push(`<b>Provider</b>: ${provider}`);
-      if (description) parts.push(description);
-      if (hotkey) parts.push(`Press '${hotkey}' to launch`);
+      if (!this.item.description && !this.item.provider) return {}; // If no description, then skip
+      const description = this.item.description || '';
+      const providerText = this.item.provider ? `<b>Provider</b>: ${this.item.provider}` : '';
+      const lb1 = description && providerText ? '<br>' : '';
+      const hotkeyText = this.item.hotkey ? `<br>Press '${this.item.hotkey}' to launch` : '';
+      const tooltipText = providerText + lb1 + description + hotkeyText;
       const editText = this.$t('interactive-editor.edit-section.edit-tooltip');
       return {
-        content: (this.isEditMode ? editText : parts.join('<br>')),
+        content: (this.isEditMode ? editText : tooltipText),
+        trigger: 'hover focus',
+        hideOnTargetClick: true,
         html: true,
-        placement: this.statusResponse || this.pingResponse ? 'left' : 'auto',
+        placement: this.statusResponse ? 'left' : 'auto',
         delay: { show: 600, hide: 200 },
-        popperClass: `item-description-tooltip tooltip-is-${this.size}`,
+        classes: `item-description-tooltip tooltip-is-${this.size}`,
       };
-    },
-    /* Measure whether the title is truncated in its tile */
-    checkTitleTruncation() {
-      const title = this.$refs.titleText;
-      this.titleTruncated = !!title && title.scrollWidth > title.clientWidth;
-    },
-    /* Slowly scroll truncated titles into view, while hovered or focused */
-    startTitleScroll() {
-      const TITLE_SCROLL_SPEED = 90; // Pixels per second for item scroll
-      clearTimeout(this.titleScrollTimer);
-      cancelAnimationFrame(this.titleScrollRaf);
-      if (!this.titleTruncated || !window.matchMedia('(hover: hover)').matches) return;
-      this.titleScrollTimer = setTimeout(() => {
-        const title = this.$refs.titleText;
-        if (!title) return;
-        const target = title.scrollWidth - title.clientWidth;
-        if (target <= title.scrollLeft) return;
-        if (this.reducedMotion()) {
-          title.scrollLeft = target;
-          return;
-        }
-        let start; let from; let duration;
-        const step = (now) => {
-          if (!start) {
-            start = now;
-            from = title.scrollLeft;
-            duration = ((target - from) / TITLE_SCROLL_SPEED) * 1000;
-          }
-          const progress = Math.min((now - start) / duration, 1);
-          title.scrollLeft = from + (target - from) * progress;
-          if (progress < 1) this.titleScrollRaf = requestAnimationFrame(step);
-        };
-        this.titleScrollRaf = requestAnimationFrame(step);
-      }, 300);
-    },
-    /* Scroll the title back, unless the item is still hovered or focused */
-    endTitleScroll(event) {
-      const link = event?.currentTarget;
-      if (link && (link.matches(':hover') || link === document.activeElement)) return;
-      clearTimeout(this.titleScrollTimer);
-      cancelAnimationFrame(this.titleScrollRaf);
-      const title = this.$refs.titleText;
-      if (title && title.scrollLeft > 0) {
-        title.scrollTo({ left: 0, behavior: this.reducedMotion() ? 'auto' : 'smooth' });
-      }
-    },
-    reducedMotion() {
-      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     },
     openItemSettings() {
       this.editMenuOpen = true;
       this.contextMenuOpen = false;
+      this.$modal.show(modalNames.EDIT_ITEM);
       this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
     },
     /* Ensure conditional is updated, once menu closed */
     closeEditMenu() {
       this.editMenuOpen = false;
+      this.$modal.hide(modalNames.EDIT_ITEM);
+      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
     },
     /* Open the modal for moving/ copying item to other section */
     openMoveItemMenu() {
@@ -264,21 +173,7 @@ export default {
     },
   },
   mounted() {
-    // Watch for size changes, to know when title no longer fits
-    if (typeof ResizeObserver !== 'undefined') {
-      this.titleObserver = new ResizeObserver(this.checkTitleTruncation);
-      this.titleObserver.observe(this.$refs.titleText);
-    }
-    if (document.fonts) document.fonts.ready.then(this.checkTitleTruncation);
-    // If ping checking is enabled, then check ping status
-    if (this.isPingCheckEnabled) {
-      this.checkPingStatus();
-      // If continious ping checking is enabled, then start ever-lasting loop
-      if (this.pingCheckInterval > 0) {
-        this.pingIntervalId = setInterval(this.checkPingStatus, this.pingCheckInterval * 1000);
-      }
-    }
-    // If status checking is enabled, then check service status
+    // If ststus checking is enabled, then check service status
     if (this.enableStatusCheck) {
       this.checkWebsiteStatus();
       // If continious status checking is enabled, then start ever-lasting loop
@@ -287,13 +182,9 @@ export default {
       }
     }
   },
-  beforeUnmount() {
-    // Stop periodic ping-check and status-check when item is destroyed (e.g. navigating in multi-page setup)
-    if (this.pingIntervalId) clearInterval(this.pingIntervalId);
+  beforeDestroy() {
+    // Stop periodic status-check when item is destroyed (e.g. navigating in multi-page setup)
     if (this.intervalId) clearInterval(this.intervalId);
-    if (this.titleObserver) this.titleObserver.disconnect();
-    clearTimeout(this.titleScrollTimer);
-    cancelAnimationFrame(this.titleScrollRaf);
   },
 };
 </script>
@@ -301,10 +192,8 @@ export default {
 <style lang="scss">
 
 .item-wrapper {
-  display: flex;
   flex-grow: 1;
   flex-basis: 6rem;
-  min-width: 0;
   &.wrap-size-large {
     flex-basis: 12rem;
   }
@@ -319,14 +208,10 @@ export default {
     &.span-7 { min-width: 14%; }
     &.span-8 { min-width: 12.5%; }
   }
-  .item-url {
-    display: none;
-  }
 }
 
 .item {
   flex-grow: 1;
-  min-width: 0;
   color: var(--item-text-color);
   vertical-align: middle;
   margin: 0.5rem;
@@ -353,7 +238,7 @@ export default {
     border: 2px dashed var(--primary) !important;
   }
   &.short:not(.size-large) {
-    min-height: 2rem;
+    height: 2rem;
   }
 }
 
@@ -361,8 +246,7 @@ export default {
 .tile-title {
   white-space: nowrap;
   text-overflow: ellipsis;
-  min-width: 0;
-  flex: 1 1 auto;
+  min-width: 120px;
   height: 30px;
   position: relative;
   padding: 0;
@@ -370,21 +254,14 @@ export default {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
   word-break: keep-all;
-  overflow: hidden;
   span.text {
     white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    display: block;
   }
 }
 
-/* Container for status and ping indicators */
-.indicators-container {
-  display: flex;
-  align-items: center;
+/* Colored dot showing service status */
+.status-indicator {
   position: absolute;
   top: 0;
   right: 0;
@@ -401,9 +278,14 @@ export default {
     display: block;
   }
 
-  /* Hide the ellipsis while a truncated title is scrolled into view */
-  .tile-title span.text {
-    text-overflow: clip;
+  /* Trigger text-marquee for text that doesn't fit */
+  .tile-title.is-overflowing{
+    .overflow-dots {
+      opacity: 0;
+    }
+    span.text {
+      transform: translateX(calc(100px - 100%));
+    }
   }
 
   /* Apply transformation of icons on hover */
@@ -462,8 +344,8 @@ p.description {
       margin-bottom: 0.25rem;
     }
     .tile-title {
-      min-width: 0;
-      max-width: min(160px, 100%);
+      min-width: 100px;
+      max-width: 160px;
       &.no-icon {
         text-align: left;
         width: 100%;
@@ -503,7 +385,6 @@ p.description {
         font-size: .9em;
         line-height: 1rem;
         height: 2rem;
-        overflow: hidden;
       }
     }
   }
@@ -516,9 +397,9 @@ p.description {
 
 /* Adjust positioning of status indicator, when in edit mode */
 a.item.is-edit-mode {
-  &.size-medium .indicators-container { top: 1rem; }
-  &.size-small .indicators-container { right: 1rem; }
-  &.size-large .indicators-container { top: 1.5rem; }
+  &.size-medium .status-indicator { top: 1rem; }
+  &.size-small .status-indicator { right: 1rem; }
+  &.size-large .status-indicator { top: 1.5rem; }
 }
 
 </style>

@@ -7,8 +7,8 @@
       <p class="user-level">{{ basicInfo.level }}</p>
     </div>
     <div class="total-xp-wrap">
-      <p class="total-xp">{{ formatTotalXp(basicInfo.totalXp) }}</p>
-      <p class="new-xp">{{ formatNewXp(basicInfo.newXp) }}</p>
+      <p class="total-xp">{{ basicInfo.totalXp | formatTotalXp }}</p>
+      <p class="new-xp">{{ basicInfo.newXp | formatNewXp }}</p>
     </div>
   </div>
   <!-- XP History Heatmap -->
@@ -21,10 +21,10 @@
 </template>
 
 <script>
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
 import ChartingMixin from '@/mixins/ChartingMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 import { putCommasInBigNum, showNumAsThousand } from '@/utils/MiscHelpers';
 
 export default {
@@ -38,12 +38,12 @@ export default {
     /* The username to fetch data from - REQUIRED */
     username() {
       if (!this.options.username) this.error('You must specify a username');
-      return this.parseAsEnvVar(this.options.username);
+      return this.options.username;
     },
     /* Optionally override hostname, if using a self-hosted instance */
     hostname() {
       if (this.options.hostname) return this.options.hostname;
-      return this.parseAsEnvVar(widgetApiEndpoints.codeStats);
+      return widgetApiEndpoints.codeStats;
     },
     hideMeta() {
       return this.options.hideMeta || false;
@@ -68,16 +68,18 @@ export default {
       return new Date((now.setMonth(now.getMonth() - this.monthsToShow)));
     },
   },
-  methods: {
+  filters: {
     formatTotalXp(bigNum) {
       return showNumAsThousand(bigNum);
     },
     formatNewXp(newXp) {
       return `+${putCommasInBigNum(newXp)} XP`;
     },
+  },
+  methods: {
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
-      request.get(this.endpoint)
+      axios.get(this.endpoint)
         .then((response) => {
           this.processData(response.data);
         })

@@ -1,26 +1,28 @@
 /* A Netlify cloud function to handle requests to CORS-disabled services */
-const request = require('../utils/request');
+const axios = require('axios');
 
-const { validateTargetUrl } = request;
-
-exports.handler = async (event) => {
+exports.handler = (event, context, callback) => {
   // Get input data
   const { body, headers, queryStringParameters } = event;
 
   // Get URL from header or GET param
-  const requestUrl = queryStringParameters?.url || headers['Target-URL'] || headers['target-url'];
+  const requestUrl = queryStringParameters.url || headers['Target-URL'] || headers['target-url'];
 
-  const returnError = (msg, error) => ({
-    statusCode: 400,
-    body: JSON.stringify({ success: false, msg, error }),
-  });
+  const returnError = (msg, error) => {
+    callback(null, {
+      statusCode: 400,
+      body: JSON.stringify({ success: false, msg, error }),
+    });
+  };
   // If URL missing, return error
-  if (!requestUrl) return returnError('Missing Target-URL header', null);
+  if (!requestUrl) {
+    returnError('Missing Target-URL header', null);
+  }
 
-  let custom;
+  let custom = {};
   try {
     custom = JSON.parse(headers.CustomHeaders || headers.customheaders || '{}');
-  } catch { return returnError('Unable to parse custom headers'); }
+  } catch (e) { returnError('Unable to parse custom headers'); }
 
   // Response headers
   const requestHeaders = {
@@ -32,18 +34,15 @@ exports.handler = async (event) => {
   const requestConfig = {
     method: 'GET',
     url: requestUrl,
-    data: body,
+    json: body,
     headers: requestHeaders,
-    validateUrl: validateTargetUrl,
-    timeout: 30000,
-    maxResponseSize: 10 * 1024 * 1024, // 10 MB
   };
 
   // Make request
-  try {
-    const response = await request(requestConfig);
-    return { statusCode: 200, body: JSON.stringify(response.data) };
-  } catch (error) {
-    return returnError('Request failed', error);
-  }
+  axios.request(requestConfig)
+    .then((response) => {
+      callback(null, { statusCode: 200, body: JSON.stringify(response.data) });
+    }).catch((error) => {
+      returnError('Request failed', error);
+    });
 };

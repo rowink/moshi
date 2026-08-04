@@ -41,7 +41,7 @@
 
 <script>
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 import { timestampToDate, timestampToTime, getTimeAgo } from '@/utils/MiscHelpers';
 
 export default {
@@ -53,7 +53,7 @@ export default {
     },
     address() {
       if (!this.options.address) this.error('You must specify a public address');
-      return this.parseAsEnvVar(this.options.address);
+      return this.options.address;
     },
     network() {
       return this.options.network || 'main';

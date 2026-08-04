@@ -4,7 +4,7 @@
     <a class="headline" :href="article.url">{{ article.title }}</a>
     <div class="article-meta">
       <span class="publisher">{{ article.author }}</span>
-      <span class="date">{{ date(article.published) }}</span>
+      <span class="date">{{ article.published | date }}</span>
     </div>
     <p class="description">{{ article.description }}</p>
     <img class="thumbnail" v-if="article.image && !hideImages" :src="article.image" alt="Image" />
@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 import { timestampToDate } from '@/utils/MiscHelpers';
 
 export default {
@@ -29,7 +29,7 @@ export default {
   computed: {
     apiKey() {
       if (!this.options.apiKey) this.error('An API key is required, see docs for more info');
-      return this.parseAsEnvVar(this.options.apiKey);
+      return this.options.apiKey;
     },
     country() {
       return this.options.country ? `&country=${this.options.country}` : '';
@@ -54,13 +54,15 @@ export default {
       + `${this.country}${this.category}${this.lang}${this.count}`;
     },
   },
-  methods: {
+  filters: {
     date(date) {
       return timestampToDate(date);
     },
+  },
+  methods: {
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
-      request.get(this.endpoint)
+      axios.get(this.endpoint)
         .then((response) => {
           if (!response.data.news || response.data.news.length === 0) {
             this.error('API didn\'t return any results for your query');

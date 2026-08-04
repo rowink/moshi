@@ -35,6 +35,7 @@ export default {
       return this.makeGlancesUrl('ip');
     },
   },
+  filters: {},
   methods: {
     processData(ipData) {
       this.ipAddresses = ipData;

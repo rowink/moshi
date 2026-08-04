@@ -67,9 +67,8 @@ import Input from '@/components/FormElements/Input';
 // Import utils and constants
 import StoreKeys from '@/utils/StoreMutations';
 import { backup, update, restore } from '@/utils/CloudBackup';
-import { localStorageKeys } from '@/utils/config/defaults';
-import { configScope, stripRootOwnedFields } from '@/utils/config/ConfigHelpers';
-import { InfoHandler, WarningInfoHandler, InfoKeys } from '@/utils/logging/ErrorHandler';
+import { localStorageKeys } from '@/utils/defaults';
+import { InfoHandler, WarningInfoHandler, InfoKeys } from '@/utils/ErrorHandler';
 // Import Icons
 import IconBackup from '@/assets/interface-icons/config-backup.svg';
 import IconRestore from '@/assets/interface-icons/config-restore.svg';
@@ -77,10 +76,8 @@ import IconRestore from '@/assets/interface-icons/config-restore.svg';
 export default {
   name: 'CloudBackupRestore',
   computed: {
-    // Back up the active page's OWN config (partial for sub-pages, full for root)
-    // so a restored sub-page file doesn't pin root's inherited values.
-    config() {
-      return this.$store.state.configSource;
+    config() { // Users config from store
+      return this.$store.state.config;
     },
   },
   data() {
@@ -156,29 +153,20 @@ export default {
         this.showErrorMsg(this.$t('cloud-sync.backup-error-password'));
       }
     },
-    /* When restored data is received, save to localStorage (scoped to active page) and apply it */
+    /* When restored data is revieved, then save to local storage, and apply it in state */
     applyRestoredData(config, backupId) {
-      const { confId } = this.$store.state.currentConfigInfo;
-      const isSubPage = !!confId;
-      const scope = configScope(confId);
-      const clean = isSubPage ? stripRootOwnedFields(config) : config;
-      const appConfig = clean.appConfig || {};
-      localStorage.setItem(scope.APP_CONFIG, JSON.stringify(appConfig));
-      localStorage.setItem(scope.PAGE_INFO, JSON.stringify(clean.pageInfo || {}));
-      localStorage.setItem(scope.CONF_SECTIONS, JSON.stringify(clean.sections || []));
-      const setOrClear = (key, value) => {
-        if (value) localStorage.setItem(key, value);
-        else localStorage.removeItem(key);
-      };
-      setOrClear(scope.THEME, appConfig.theme);
-      setOrClear(scope.LAYOUT, appConfig.layout);
-      setOrClear(scope.ICON_SIZE, appConfig.iconSize);
-      setOrClear(scope.LANGUAGE, appConfig.language);
-      if (!isSubPage) {
-        localStorage.setItem(localStorageKeys.CONF_PAGES, JSON.stringify(config.pages || []));
+      // Store restored data in local storage
+      localStorage.setItem(localStorageKeys.CONF_SECTIONS, JSON.stringify(config.sections));
+      localStorage.setItem(localStorageKeys.APP_CONFIG, JSON.stringify(config.appConfig));
+      localStorage.setItem(localStorageKeys.PAGE_INFO, JSON.stringify(config.pageInfo));
+      if (config.appConfig.theme) {
+        localStorage.setItem(localStorageKeys.THEME, config.appConfig.theme);
       }
+      // Save hashed token in local storage
       this.setBackupIdLocally(backupId, this.restorePassword);
-      this.$store.dispatch(StoreKeys.APPLY_EDITED_CONFIG, clean);
+      // Update the current state
+      this.$store.commit(StoreKeys.SET_CONFIG, config);
+      // Show success message
       this.showSuccessMsg(this.$t('cloud-sync.restore-success-msg'));
     },
     /* After backup/ update is made, then replace 'Make Backup' with 'Update Backup' */
@@ -192,12 +180,12 @@ export default {
     /* If the server returns a warning, then show to user and log it */
     showErrorMsg(errorMsg) {
       WarningInfoHandler(errorMsg, InfoKeys.CLOUD_BACKUP);
-      this.$toast.error(errorMsg);
+      this.$toasted.show(errorMsg, { className: 'toast-error' });
     },
     /* When server returns success message, then show to user and log it */
     showSuccessMsg(msg) {
       InfoHandler(msg, InfoKeys.CLOUD_BACKUP);
-      this.$toast.success(msg);
+      this.$toasted.show(msg, { className: 'toast-success' });
     },
     /* Call to hash function, to hash the users chosen/ entered password */
     makeHash(pass) {

@@ -4,26 +4,13 @@
  * Note that exiting with code 1 indicates failure, and 0 is success
  */
 
-const fs = require('fs');
-/* setting default paths for public and pvt keys to match of ssl-server.js */
-const httpsCerts = {
-  private: process.env.SSL_PRIV_KEY_PATH || '/etc/ssl/certs/dashy-priv.key',
-  public: process.env.SSL_PUB_KEY_PATH || '/etc/ssl/certs/dashy-pub.pem',
-};
-
-/* Check if either if simular conditions exist that would of had ssl-server.js to enable ssl */
-const isSsl = !!fs.existsSync(httpsCerts.private) && !!fs.existsSync(httpsCerts.public);
+const isSsl = !!process.env.SSL_PRIV_KEY_PATH && !!process.env.SSL_PUB_KEY_PATH;
 
 const http = require(isSsl ? 'https' : 'http');
 
 /* Location of the server to test */
 const isDocker = !!process.env.IS_DOCKER;
-
-/* Get the port to use (depending on, if docker, if SSL) */
-const sslPort = process.env.SSL_PORT || (isDocker ? 443 : 4001);
-const normalPort = process.env.PORT || (isDocker ? 8080 : 4000);
-const port = isSsl ? sslPort : normalPort;
-
+const port = isSsl ? (process.env.SSL_PORT || (isDocker ? 443 : 4001)) : (process.env.PORT || isDocker ? 80 : 4000);
 const host = process.env.HOST || '0.0.0.0';
 const timeout = 2000;
 
@@ -31,9 +18,7 @@ const agent = new http.Agent({
   rejectUnauthorized: false, // Allow self-signed certificates
 });
 
-const requestOptions = {
-  host, port, timeout, agent, path: '/healthz',
-};
+const requestOptions = { host, port, timeout, agent };
 
 const startTime = new Date(); // Initialize timestamp to calculate time taken
 

@@ -1,6 +1,6 @@
 <template>
   <transition name="slide">
-    <div class="context-menu" v-if="show"
+    <div class="context-menu" v-if="show && !isMenuDisabled"
       :style="posX && posY ? `top:${posY}px;left:${posX}px;` : ''">
       <!-- Open Options -->
       <ul class="menu-section">
@@ -26,10 +26,6 @@
         <li @click="launch('clipboard')">
           <ClipboardOpenIcon />
           <span>{{ $t('context-menus.item.clipboard') }}</span>
-        </li>
-        <li @click="launch('newwindow')">
-          <NewWindowOpenIcon />
-          <span>{{ $t('context-menus.item.newwindow') }}</span>
         </li>
       </ul>
       <!-- Edit Options -->
@@ -64,7 +60,6 @@ import NewTabOpenIcon from '@/assets/interface-icons/open-new-tab.svg';
 import IframeOpenIcon from '@/assets/interface-icons/open-iframe.svg';
 import WorkspaceOpenIcon from '@/assets/interface-icons/open-workspace.svg';
 import ClipboardOpenIcon from '@/assets/interface-icons/open-clipboard.svg';
-import NewWindowOpenIcon from '@/assets/interface-icons/open-new-window.svg';
 
 export default {
   name: 'ContextMenu',
@@ -77,16 +72,17 @@ export default {
     IframeOpenIcon,
     WorkspaceOpenIcon,
     ClipboardOpenIcon,
-    NewWindowOpenIcon,
   },
   props: {
-    posX: { type: Number, default: 0 }, // The X coordinate for positioning
-    posY: { type: Number, default: 0 }, // The Y coordinate for positioning
+    posX: Number, // The X coordinate for positioning
+    posY: Number, // The Y coordinate for positioning
     show: Boolean, // Should show or hide the menu
     disableEdit: Boolean, // Disable editing for certain items
   },
-  emits: ['launchItem', 'openItemSettings', 'openMoveItemMenu', 'openDeleteItem'],
   computed: {
+    isMenuDisabled() {
+      return !!this.$store.getters.appConfig.disableContextMenu;
+    },
     isEditMode() {
       return this.$store.state.editMode;
     },

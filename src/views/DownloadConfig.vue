@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import { dump as yamlDump } from '@/utils/yaml';
+import JsYaml from 'js-yaml';
 import AccessError from '@/components/Configuration/AccessError';
 
 export default {
@@ -14,10 +14,10 @@ export default {
   },
   computed: {
     config() {
-      return this.$store.state.configSource;
+      return this.$store.state.config;
     },
     yamlConfig() {
-      return yamlDump(this.config);
+      return JsYaml.dump(this.config);
     },
     allowViewConfig() {
       return this.$store.getters.permissions.allowViewConfig;

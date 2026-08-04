@@ -40,9 +40,7 @@ export default {
     },
     /* Generate a URL param, to be updated in order to re-fetch image */
     updatePathParam() {
-      if (!this.updateCount || !this.options.imagePath) return '';
-      const separator = this.options.imagePath.includes('?') ? '&' : '?';
-      return `${separator}dashy-update=${this.updateCount}`;
+      return this.updateCount ? `#dashy-update-${this.updateCount}` : '';
     },
   },
   methods: {

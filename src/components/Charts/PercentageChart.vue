@@ -36,11 +36,11 @@ export default {
       default: true,
     },
     height: {
-      type: Number,
+      number: Boolean,
       default: 1,
     },
-    values: { type: Array, required: true },
-    title: { type: String, default: '' },
+    values: Array,
+    title: String,
   },
   data() {
     return {

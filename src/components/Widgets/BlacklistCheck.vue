@@ -20,14 +20,25 @@
 
 <script>
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin],
   computed: {
+    version() {
+      return this.options.version || 'v2';
+    },
+    ipAddress() {
+      if (this.autoIp) return this.autoIp;
+      if (!this.options.apiKey) this.error('Missing IP Address');
+      return this.options.ipAddress;
+    },
     apiKey() {
       if (!this.options.apiKey) this.error('Missing API Key');
-      return this.parseAsEnvVar(this.options.apiKey);
+      return this.options.apiKey;
+    },
+    endpoint() {
+      return `${widgetApiEndpoints.blacklistCheck}/${this.ipAddress}`;
     },
     blacklistFiltered() {
       return this.showAll ? this.blacklisted : this.blacklisted.filter(bl => (bl.detected));
@@ -38,29 +49,30 @@ export default {
       blacklisted: null,
       message: '',
       showAll: false,
+      autoIp: null,
     };
   },
   methods: {
-    /* Fetch the user's IP (if not supplied), then run the blacklist check */
-    async fetchData() {
-      let ip = this.options.ipAddress;
-      if (!ip) {
-        const ipInfo = await this.makeRequest(widgetApiEndpoints.userIpLookup);
-        if (!ipInfo || !ipInfo.ip) {
-          this.error('Unable to determine your IP. Set `ipAddress` in options to check manually.');
-          return;
-        }
-        ip = ipInfo.ip;
+    /* Make GET request to CoinGecko API endpoint */
+    fetchData() {
+      if (!this.ipAddress) {
+        this.getUsersIpAddress(); return;
       }
       this.defaultTimeout = 200000;
-      const endpoint = `${widgetApiEndpoints.blacklistCheck}/${ip}`;
-      const options = { Authorization: `Basic ${btoa(`${this.apiKey}:`)}` };
-      this.makeRequest(endpoint, options).then(this.processData);
+      const options = { Authorization: `Basic ${this.apiKey}` };
+      this.makeRequest(this.endpoint, options).then(this.processData);
     },
     /* Assign data variables to the returned data */
     processData(blResponse) {
       this.message = `${blResponse.detections} detections found for ${blResponse.ip_address}`;
       this.blacklisted = blResponse.blacklists;
+    },
+    getUsersIpAddress() {
+      this.makeRequest(widgetApiEndpoints.publicIp)
+        .then((ipInfo) => {
+          this.autoIp = ipInfo.ip;
+          this.fetchData();
+        });
     },
   },
 };

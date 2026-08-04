@@ -38,7 +38,7 @@
         v-model="timeout"
         :selectOnTab="true"
         :options="dropDownMenu"
-        :map-keydown="(map) => ({ ...map, 13: () => submitLogin() })"
+        :map-keydown="(map) => ({ ...map, 13: () => this.submitLogin() })"
         class="login-time-dropdown"
       />
       <Button class="login-button" :click="submitLogin">
@@ -75,17 +75,15 @@
 import router from '@/router';
 import Button from '@/components/FormElements/Button';
 import Input from '@/components/FormElements/Input';
-import Keys from '@/utils/StoreMutations';
-import { localStorageKeys } from '@/utils/config/defaults';
-import { InfoHandler, WarningInfoHandler, InfoKeys } from '@/utils/logging/ErrorHandler';
+import Defaults, { localStorageKeys } from '@/utils/defaults';
+import { InfoHandler, WarningInfoHandler, InfoKeys } from '@/utils/ErrorHandler';
 import {
   checkCredentials,
   login,
   isLoggedIn,
   logout,
   isGuestAccessEnabled,
-  getLogoutRedirectUrl,
-} from '@/utils/auth/Auth';
+} from '@/utils/Auth';
 
 export default {
   name: 'login',
@@ -160,7 +158,6 @@ export default {
       this.status = response.correct ? 'success' : 'error';
       if (response.correct) { // Yay, credentials were correct :)
         login(this.username, this.password, timeout); // Login, to set the cookie
-        this.$store.commit(Keys.AUTH_CHANGED); // Trigger reactive auth-dependent getters
         this.goHome();
         InfoHandler(`Succesfully signed in as ${this.username}`, InfoKeys.AUTH);
       } else {
@@ -171,11 +168,11 @@ export default {
     guestLogin() {
       const isAllowed = this.isGuestAccessEnabled;
       if (isAllowed) {
-        this.$toast.success(this.$t('login.logged-in-guest'));
+        this.$toasted.show(this.$t('login.logged-in-guest'), { className: 'toast-success' });
         InfoHandler('Logged in as Guest', InfoKeys.AUTH);
         this.goHome();
       } else {
-        this.$toast.error(this.$t('login.error-guest-access'));
+        this.$toasted.show(this.$t('login.error-guest-access'), { className: 'toast-error' });
         WarningInfoHandler('Guest Access Not Allowed', InfoKeys.AUTH);
       }
     },
@@ -184,12 +181,7 @@ export default {
       logout();
       this.status = 'success';
       this.message = 'Logging out...';
-      const redirectUrl = getLogoutRedirectUrl();
-      if (redirectUrl) {
-        setTimeout(() => { window.location.href = redirectUrl; }, 250);
-      } else {
-        this.refreshPage();
-      }
+      this.refreshPage();
     },
     /* Logged in user redirects to home page */
     stayLoggedIn() {
@@ -199,7 +191,7 @@ export default {
     },
     /* Refreshes the page */
     refreshPage() {
-      setTimeout(() => { location.reload(); }, 250);  
+      setTimeout(() => { location.reload(); }, 250); // eslint-disable-line no-restricted-globals
     },
     /* Redirects to the homepage */
     goHome() {
@@ -207,9 +199,15 @@ export default {
         router.push({ path: '/' });
       }, 250);
     },
+    /* Since Theme setter isn't loaded at this point, we must manually get and apply users theme */
+    setTheme() {
+      const theme = localStorage[localStorageKeys.THEME] || Defaults.theme;
+      document.getElementsByTagName('html')[0].setAttribute('data-theme', theme);
+    },
   },
   created() {
-    setTimeout(() => { this.timeout = this.dropDownMenu[0]; }, 1);  
+    this.setTheme();
+    setTimeout(() => { this.timeout = this.dropDownMenu[0]; }, 1); //eslint-disable-line
   },
 };
 

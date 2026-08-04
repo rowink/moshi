@@ -77,7 +77,7 @@ export default {
     // Update the time and date every second (1000 ms)
     this.timeUpdateInterval = setInterval(this.update, 1000);
   },
-  beforeUnmount() {
+  beforeDestroy() {
     // Remove the clock interval listener
     clearInterval(this.timeUpdateInterval);
   },
@@ -85,6 +85,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@font-face {
+  font-family: 'Digital';
+  src: url('/fonts/Digital-Regular.ttf');
+}
 
 .clock {
   padding: 0.5rem 0;

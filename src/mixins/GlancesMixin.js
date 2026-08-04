@@ -6,9 +6,9 @@ export default {
       if (!this.options.hostname) this.error('You must specify a \'hostname\' for Glances');
       return this.options.hostname;
     },
-    /* Optionally specify the API version, defaults to V 4 */
+    /* Optionally specify the API version, defaults to V 3 */
     apiVersion() {
-      return this.options.apiVersion || 4;
+      return this.options.apiVersion || 3;
     },
     /* Optionally specify basic auth credentials for Glances instance */
     credentials() {
@@ -23,7 +23,7 @@ export default {
     /* Make the request to Glances API, and calls handler function with results
     * Requires endpoint attribute and processData method to be implemented by child */
     fetchData() {
-      this.makeRequest(this.endpoint, this.credentials).then(this.processData).catch(() => {});
+      this.makeRequest(this.endpoint, this.credentials).then(this.processData);
     },
     /* Returns URL to Glances API endpoint */
     makeGlancesUrl(apiPath) {

@@ -2,7 +2,7 @@
  * A Vue directive to trigger an event when the user
  * clicks anywhere other than the specified elements
  * Used to close context menus popup modals and tips
- * Dashy: Licensed under MIT - (C) Alicia Sykes 2024
+ * Dashy: Licensed under MIT - (C) Alicia Sykes 2022
  */
 
 const instances = []; // List of click event instances
@@ -17,7 +17,7 @@ function onDocumentClick(event, elem, action) {
 
 export default {
   /* Add event listeners */
-  mounted(element, binding) {
+  bind(element, binding) {
     const elem = element;
     elem.dataset.outsideClickIndex = instances.length;
 
@@ -31,7 +31,7 @@ export default {
     instances.push(click);
   },
   /* Remove event listeners */
-  unmounted(elem) {
+  unbind(elem) {
     if (!elem.dataset) return;
     const index = elem.dataset.outsideClickIndex;
     const handler = instances[index];

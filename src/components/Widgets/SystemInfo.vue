@@ -2,11 +2,11 @@
 <div class="system-info-wrapper">
   <div class="some-info" v-if="info">
     <p class="host">
-      {{ isUsername(info.username) }}{{ info.hostname }}
+      {{ info.username | isUsername }}{{ info.hostname }}
     </p>
     <p class="system">
       {{ info.system }} <span class="gap">|</span>
-      {{ $t('widgets.system-info.uptime') }}: {{ makeUptime(info.uptime) }}
+      {{ $t('widgets.system-info.uptime') }}: {{ info.uptime | makeUptime }}
     </p>
   </div>
   <div class="some-charts">
@@ -17,10 +17,10 @@
 </template>
 
 <script>
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
 import ChartingMixin from '@/mixins/ChartingMixin';
-import { serviceEndpoints } from '@/utils/config/defaults';
+import { serviceEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin, ChartingMixin],
@@ -32,11 +32,11 @@ export default {
   },
   computed: {
     endpoint() {
-      const baseUrl = import.meta.env.VITE_APP_DOMAIN || window.location.origin;
+      const baseUrl = process.env.VUE_APP_DOMAIN || window.location.origin;
       return `${baseUrl}${serviceEndpoints.systemInfo}`;
     },
   },
-  methods: {
+  filters: {
     isUsername(username) {
       return username ? `${username}@` : '';
     },
@@ -51,9 +51,11 @@ export default {
       if (seconds >= 31557600) return `${(seconds / 31557600).toFixed(2)} years`;
       return '';
     },
+  },
+  methods: {
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
-      request.get(this.endpoint)
+      axios.get(this.endpoint)
         .then((response) => {
           if (!response.data.success) this.error('Error generating backend data');
           this.processData(response.data);

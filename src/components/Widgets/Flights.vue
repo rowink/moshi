@@ -5,23 +5,23 @@
     Live {{ direction !== 'both' ? direction: 'flight' }} data from {{ airport }}
   </p>
   <!-- Departures -->
-  <div v-if="direction !== 'arrival' && departures.length > 0" class="flight-group">
+  <div v-if="departures.length > 0" class="flight-group">
     <h3 class="flight-type-subtitle" v-if="direction === 'both'">
       {{ $t('widgets.flight-data.departures') }}
     </h3>
     <div v-for="flight in departures" :key="flight.number" class="flight" v-tooltip="tip(flight)">
-      <p class="info flight-time">{{ formatDate(flight.time) }}</p>
+      <p class="info flight-time">{{ flight.time | formatDate }}</p>
       <p class="info flight-number">{{ flight.number }}</p>
       <p class="info flight-airport">{{ flight.airport }}</p>
     </div>
   </div>
   <!-- Arrivals -->
-  <div v-if="direction !== 'departure' && arrivals.length > 0" class="flight-group">
+  <div v-if="arrivals.length > 0" class="flight-group">
     <h3 class="flight-type-subtitle" v-if="direction === 'both'">
       {{ $t('widgets.flight-data.arrivals') }}
     </h3>
     <div v-for="flight in arrivals" :key="flight.number" class="flight" v-tooltip="tip(flight)">
-      <p class="info flight-time">{{ formatDate(flight.time) }}</p>
+      <p class="info flight-time">{{ flight.time | formatDate }}</p>
       <p class="info flight-number">{{ flight.number }}</p>
       <p class="info flight-airport">{{ flight.airport }}</p>
     </div>
@@ -30,9 +30,9 @@
 </template>
 
 <script>
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 
 export default {
   mixins: [WidgetMixin],
@@ -42,6 +42,13 @@ export default {
       departures: [],
       arrivals: [],
     };
+  },
+  filters: {
+    formatDate(date) {
+      const d = new Date(date);
+      if (Number.isNaN(d.getHours())) return '[UNKNOWN]';
+      return `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+    },
   },
   computed: {
     /* The users desired airport, specified as a 4-digit ICAO-code */
@@ -64,7 +71,7 @@ export default {
         this.error('An API key must be supplied');
         return '';
       }
-      return this.parseAsEnvVar(usersChoice);
+      return usersChoice;
     },
     /* The direction of flights: Arrival, Departure or Both */
     direction() {
@@ -95,11 +102,6 @@ export default {
     },
   },
   methods: {
-    formatDate(date) {
-      const d = new Date(date);
-      if (Number.isNaN(d.getHours())) return '[UNKNOWN]';
-      return `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-    },
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
       const requestConfig = {
@@ -115,7 +117,7 @@ export default {
           'x-rapidapi-key': this.apiKey,
         },
       };
-      request(requestConfig)
+      axios.request(requestConfig)
         .then((response) => {
           this.processData(response.data);
         }).catch((error) => {
@@ -135,12 +137,10 @@ export default {
       flights.forEach((flight) => {
         results.push({
           number: flight.number,
-          airline: flight.airline?.name ?? 'unknown airline',
-          aircraft: flight.aircraft?.model ?? 'unknown aircraft',
-          airport: flight.movement?.airport?.name ?? 'unknown airport',
-          time: flight.movement
-            ? (flight.movement?.revisedTime?.local ?? flight.movement?.scheduledTime?.local ?? 'unknown time')
-            : 'unknown time',
+          airline: flight.airline.name,
+          aircraft: flight.aircraft.model,
+          airport: flight.movement.airport.name,
+          time: flight.movement.actualTimeUtc,
         });
       });
       return results;
@@ -148,7 +148,7 @@ export default {
     tip(flight) {
       const content = `${flight.aircraft} | ${flight.airline}`;
       return {
-        content, popperClass: 'in-modal-tt',
+        content, trigger: 'hover focus', delay: 250, classes: 'in-modal-tt',
       };
     },
   },

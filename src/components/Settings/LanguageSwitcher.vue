@@ -1,51 +1,42 @@
 <template>
-  <div class="language-switcher" :class="{ mini: miniView }">
-    <h3 v-if="!miniView" class="title">{{ $t('language-switcher.title') }}</h3>
-    <p v-if="!miniView" class="intro">{{ $t('language-switcher.dropdown-label') }}:</p>
-    <span v-if="miniView" class="options-label">{{ $t('settings.language-label') }}</span>
+  <div class="language-switcher">
+    <h3 class="title">{{ $t('language-switcher.title') }}</h3>
+    <p class="intro">{{ $t('language-switcher.dropdown-label') }}:</p>
     <v-select
       v-model="language"
       :selectOnTab="true"
       :options="languageList"
       class="language-dropdown"
       label="friendlyName"
-      @input="applyLanguageLocally"
-      @option:selected="onOptionSelected"
+      :input="applyLanguageLocally()"
     />
-    <template v-if="!miniView">
-      <Button class="save-button" :click="saveLanguage" :disallow="!language">
-        {{ $t('language-switcher.save-button') }}
-        <SaveConfigIcon />
-      </Button>
-      <p v-if="language" class="current-lang">
-        🌐 {{ language.flag }} {{ language.name }}
-      </p>
-      <p v-if="$i18n.availableLocales.length <= 1" class="sad-times">
-        There are not currently any additional languages supported,
-        but stay tuned as more are on their way!
-      </p>
-    </template>
+    <Button class="save-button" :click="saveLanguage" :disallow="!language">
+      {{ $t('language-switcher.save-button') }}
+      <SaveConfigIcon />
+    </Button>
+    <p v-if="language" class="current-lang">
+      🌐 {{ language.flag }} {{ language.name }}
+    </p>
+    <p v-if="$i18n.availableLocales.length <= 1" class="sad-times">
+      There are not currently any additional languages supported,
+      but stay tuned as more are on their way!
+    </p>
   </div>
 </template>
 
 <script>
 import Button from '@/components/FormElements/Button';
 import SaveConfigIcon from '@/assets/interface-icons/save-config.svg';
-import ErrorHandler from '@/utils/logging/ErrorHandler';
+import ErrorHandler from '@/utils/ErrorHandler';
 import Keys from '@/utils/StoreMutations';
-import { languages, loadLocale } from '@/utils/languages';
-import i18n from '@/utils/i18n';
-import { getUsersLanguage } from '@/utils/config/ConfigHelpers';
-import { localStorageKeys, modalNames } from '@/utils/config/defaults';
+import { languages } from '@/utils/languages';
+import { localStorageKeys, modalNames } from '@/utils/defaults';
 
 export default {
   name: 'LanguageSwitcher',
   components: {
     Button,
     SaveConfigIcon,
-  },
-  props: {
-    miniView: Boolean, // If true, render only the dropdown and auto-save on select
   },
   data() {
     return {
@@ -62,10 +53,10 @@ export default {
     appConfig() {
       return this.$store.getters.appConfig;
     },
-    /* The ISO code for users current lang */
+    /* The ISO code for the users language, synced with VueX store */
     savedLanguage: {
       get() {
-        return getUsersLanguage();
+        return this.getIsoFromLangObj(this.$store.getters.appConfig.lang);
       },
       set(newLang) {
         this.$store.commit(Keys.SET_LANGUAGE, newLang.code);
@@ -94,32 +85,25 @@ export default {
       }
     },
     /* Save language to local storage, show success msg and close modal */
-    async saveLanguage() {
+    saveLanguage() {
       const selectedLanguage = this.language;
-      if (!this.checkLocale(selectedLanguage)) {
-        this.$toast.error('Unable to update language');
+      if (this.checkLocale(selectedLanguage)) {
+        localStorage.setItem(localStorageKeys.LANGUAGE, selectedLanguage.code);
+        this.applyLanguageLocally();
+        this.savedLanguage = selectedLanguage;
+        const successMsg = `${selectedLanguage.flag} `
+          + `${this.$t('language-switcher.success-msg')} ${selectedLanguage.name}`;
+        this.$toasted.show(successMsg, { className: 'toast-success' });
+        this.$modal.hide(this.modalName);
+      } else {
+        this.$toasted.show('Unable to update language', { className: 'toast-error' });
         ErrorHandler('Unable to apply language');
-        return;
       }
-      try {
-        const msg = await loadLocale(selectedLanguage.code);
-        i18n.global.setLocaleMessage(selectedLanguage.code, msg);
-      } catch (e) {
-        this.$toast.error('Unable to update language');
-        ErrorHandler(`Failed to load locale '${selectedLanguage.code}'`, e);
-        return;
-      }
-      localStorage.setItem(localStorageKeys.LANGUAGE, selectedLanguage.code);
-      this.applyLanguageLocally();
-      this.savedLanguage = selectedLanguage;
-      const successMsg = `${selectedLanguage.flag} `
-        + `${this.$t('language-switcher.success-msg')} ${selectedLanguage.name}`;
-      this.$toast.success(successMsg);
-      if (!this.miniView) this.$modal.hide(this.modalName);
     },
-    /* In miniView, commit immediately on selection (no save button) */
-    onOptionSelected() {
-      if (this.miniView) this.saveLanguage();
+    /* Gets the ISO code for a given language object */
+    getIsoFromLangObj(langObj) {
+      const getLanguageFromIso = (iso) => languages.find((lang) => lang.code === iso);
+      return getLanguageFromIso(langObj);
     },
   },
 };
@@ -128,13 +112,11 @@ export default {
 <style scoped lang="scss">
 
 .language-switcher {
+  height: 100%;
   margin: 0;
   padding: 1rem;
-  width: calc(100% - 2rem);
-  height: calc(100% - 2rem);
   background: var(--config-settings-background);
   color: var(--config-settings-color);
-  position: relative;
   h3.title {
     text-align: center;
   }
@@ -156,14 +138,8 @@ export default {
     position: absolute;
     margin: 1rem auto;
     cursor: default;
+    width: 100%;
     bottom: 0;
-    width: inherit;
-  }
-  &.mini {
-    height: auto;
-    padding: 0;
-    background: transparent;
-    flex: 1;
   }
 }
 
@@ -182,24 +158,6 @@ export default {
   }
   div, input {
     cursor: pointer;
-  }
-  button.vs__clear {
-    display: none;
-  }
-}
-
-.language-switcher.mini .language-dropdown {
-  margin: 0;
-  width: 100%;
-  div.vs__dropdown-toggle {
-    border-color: var(--primary);
-    border-radius: var(--curve-factor);
-    height: 1.8rem;
-    font-size: 0.85rem;
-  }
-  span.vs__selected { margin: 0.1rem 0 0.5rem 0; }
-  svg.vs__open-indicator {
-    fill: var(--primary);
   }
 }
 

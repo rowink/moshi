@@ -3,25 +3,20 @@
 </template>
 
 <script>
-/* eslint-disable vue/one-component-per-file -- intentional: dynamically-mounted inline component */
-import { createApp, h } from 'vue';
+import Vue from 'vue';
 import WebContent from '@/components/Workspace/WebContent';
 
 export default {
   name: 'WebContent',
   props: {
-    url: { type: String, default: '' }, // The URL of currently visible app
+    url: String, // The URL of currently visible app
   },
   data: () => ({
     openApps: [], // List of all currently open apps
-    appInstances: [], // Track mounted app instances for cleanup
   }),
   watch: {
     /* Update the currently open app, when URL changes */
     url() { this.launchApp(); },
-  },
-  beforeUnmount() {
-    this.appInstances.forEach(instance => instance.unmount());
   },
   methods: {
     /* Check if app already open or not, and call appropriate opener */
@@ -35,22 +30,19 @@ export default {
     },
     /* Opens a new app */
     appendNewApp() {
-      const wrapper = document.createElement('div');
-      this.$refs.container.appendChild(wrapper);
-      const appUrl = this.url;
-      const instance = createApp({
-        render() { return h(WebContent, { url: appUrl, id: btoa(appUrl) }); },
+      const ComponentClass = Vue.extend(WebContent);
+      const instance = new ComponentClass({
+        propsData: { url: this.url, id: btoa(this.url) },
       });
-      instance.mount(wrapper);
-      this.appInstances.push(instance);
+      instance.$mount(); // pass nothing
+      this.$refs.container.appendChild(instance.$el);
     },
     /* Switches visibility to an already open app */
     openExistingApp() {
       Array.from(document.getElementsByClassName('web-content')).forEach((frame) => {
         frame.classList.add('hide');
       });
-      const el = document.getElementById(btoa(this.url));
-      if (el) el.classList.remove('hide');
+      document.getElementById(btoa(this.url)).classList.remove('hide');
     },
   },
 };

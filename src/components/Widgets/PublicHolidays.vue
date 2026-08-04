@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import request from '@/utils/request';
+import axios from 'axios';
 import WidgetMixin from '@/mixins/WidgetMixin';
-import { widgetApiEndpoints } from '@/utils/config/defaults';
+import { widgetApiEndpoints } from '@/utils/defaults';
 import { timestampToDate, capitalize } from '@/utils/MiscHelpers';
 
 export default {
@@ -70,7 +70,7 @@ export default {
   methods: {
     /* Make GET request to CoinGecko API endpoint */
     fetchData() {
-      request.get(this.endpoint)
+      axios.get(this.endpoint)
         .then((response) => {
           this.processData(response.data);
         })
@@ -84,17 +84,13 @@ export default {
     /* Assign data variables to the returned data */
     processData(holidays) {
       const results = [];
-      const makeDate = (date) => {
-        const formattedMonth = date.month.toString().padStart(2, '0'); // Ensure two digits
-        const formattedDay = date.day.toString().padStart(2, '0'); // Ensure two digits
-        const dateString = `${date.year}-${formattedMonth}-${formattedDay}T00:00:00`;
-        return timestampToDate(new Date(dateString).getTime());
-      };
+      const makeDate = (date) => timestampToDate(
+        new Date(`${date.year}-${date.month}-${date.day}`).getTime(),
+      );
       const formatType = (ht) => capitalize(ht.replaceAll('_', ' '));
       holidays.forEach((holiday) => {
         results.push({
-          name: holiday.name
-            .filter(p => p.lang === this.options.lang)[0].text || holiday.name[0].text,
+          name: holiday.name.filter(p => p.lang == this.options.lang)[0].text || holiday.name[0].text,
           date: makeDate(holiday.date),
           type: formatType(holiday.holidayType),
           observed: holiday.observedOn ? makeDate(holiday.observedOn) : '',
@@ -106,7 +102,7 @@ export default {
       const observed = holiday.observed ? `<br><b>Observed On</b>: ${holiday.observed}` : '';
       const content = `<b>Type</b>: ${holiday.type}${observed}`;
       return {
-        content,  html: true, popperClass: 'in-modal-tt',
+        content, trigger: 'hover focus', html: true, delay: 250, classes: 'in-modal-tt',
       };
     },
   },

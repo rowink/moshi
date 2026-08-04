@@ -35,8 +35,6 @@ export default {
     },
   },
 
-  emits: ['change'],
-
   data() {
     return {
       currentState: this.defaultState,

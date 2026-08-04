@@ -8,7 +8,7 @@
       ]" />
     <p class="info">
       <b>{{ $t('widgets.glances.disk-space-free') }}</b>:
-      {{ formatSize(disk.size - disk.used) }} out of {{ formatSize(disk.size) }}
+      {{ disk.size - disk.used | formatSize }} out of {{ disk.size | formatSize }}
     </p>
     <p class="info"><b>{{ $t('widgets.glances.disk-mount-point') }}</b>: {{ disk.mnt_point }}</p>
     <p class="info"><b>{{ $t('widgets.glances.disk-file-system') }}</b>: {{ disk.fs_type }}</p>
@@ -37,10 +37,12 @@ export default {
       return this.makeGlancesUrl('fs');
     },
   },
-  methods: {
+  filters: {
     formatSize(byteValue) {
       return convertBytes(byteValue);
     },
+  },
+  methods: {
     processData(diskData) {
       this.disks = diskData;
     },
