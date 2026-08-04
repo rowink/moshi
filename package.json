@@ -49,10 +49,10 @@
   "devDependencies": {
     "@architect/sandbox": "^4.5.2",
     "@babel/preset-env": "^7.17.10",
-    "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-eslint": "^4.5.15",
-    "@vue/cli-plugin-pwa": "^4.5.15",
-    "@vue/cli-service": "^4.5.15",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-plugin-pwa": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^7.24.0",
@@ -61,47 +61,11 @@
     "npm-run-all": "^4.1.5",
     "progress-bar-webpack-plugin": "^2.1.0",
     "sass": "^1.38.0",
-    "sass-loader": "^7.1.0",
-    "vue-cli-plugin-yaml": "^1.0.2",
+    "sass-loader": "^12.6.0",
     "vue-svg-loader": "^0.16.0",
     "vue-template-compiler": "^2.7.0"
   },
-  "engines": {
-    "node": ">=16.0.0 <18.0.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "@vue/standard",
-      "airbnb-base"
-    ],
-    "rules": {
-      "import/no-unresolved": "off",
-      "import/extensions": "off",
-      "arrow-parens": 0,
-      "no-else-return": 0
-    },
-    "parserOptions": {
-      "parser": "babel-eslint"
-    }
-  },
-  "babel": {
-    "presets": [
-      "@vue/app",
-      "@babel/preset-env"
-    ]
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions"
-  ]
+  "resolutions": {
+    "@achrinza/node-ipc": "9.2.10"
+  }
 }

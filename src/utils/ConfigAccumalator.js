@@ -16,7 +16,10 @@ import ErrorHandler from '@/utils/ErrorHandler';
 import { applyItemId } from '@/utils/SectionHelpers';
 import $store from '@/store';
 
-import buildConf from '../../public/conf.yml';
+import buildConfRaw from '../../public/conf.yml';
+import yaml from 'js-yaml';
+
+const buildConf = yaml.load(buildConfRaw);
 
 export default class ConfigAccumulator {
   constructor() {

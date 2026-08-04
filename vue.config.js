@@ -49,9 +49,16 @@ module.exports = {
   publicPath,
   pwa,
   integrity,
+  lintOnSave: false,
   configureWebpack,
   pages,
   chainWebpack: config => {
     config.module.rules.delete('svg');
+    // Load YAML files as raw strings (replaces vue-cli-plugin-yaml, which
+    // depends on webpack 4-only loaders). Parsing happens via js-yaml
+    // at the import site - see src/utils/ConfigAccumalator.js
+    config.module.rule('yaml')
+      .test(/\.ya?ml$/)
+      .type('asset/source');
   },
 };
