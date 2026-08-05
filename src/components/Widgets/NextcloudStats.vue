@@ -189,7 +189,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/widgets/nextcloud-shared.scss';
+@use '@/styles/widgets/nextcloud-shared';
 .nextcloud-stats-wrapper {
   div.server-info .nc-updates {
     color: var(--success);

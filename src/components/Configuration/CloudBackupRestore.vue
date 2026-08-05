@@ -203,7 +203,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import '@/styles/style-helpers.scss';
+  @use '@/styles/style-helpers' as *;
   div.cloud-backup-restore-wrapper {
     display: flex;
     flex-wrap: wrap;

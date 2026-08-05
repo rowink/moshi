@@ -43,7 +43,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/media-queries.scss';
+@use '@/styles/media-queries' as *;
 
 div.select-container {
   margin: 0.25rem auto;
@@ -93,7 +93,7 @@ div.select-container {
 </style>
 
 <style lang="scss">
-@import '@/styles/style-helpers.scss';
+@use '@/styles/style-helpers' as *;
 
 .form-dropdown {
   margin: 1rem auto;

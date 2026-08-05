@@ -1,6 +1,6 @@
 
-@import '@/styles/style-helpers.scss';
-@import '@/styles/media-queries.scss';
+@use '@/styles/style-helpers' as *;
+@use '@/styles/media-queries' as *;
 
 /* Essential global page layout styles */
 html {

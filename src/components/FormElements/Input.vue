@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/media-queries.scss';
+@use '@/styles/media-queries' as *;
 
 div.input-container {
   margin: 0.25rem auto;

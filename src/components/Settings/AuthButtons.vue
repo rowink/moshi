@@ -85,7 +85,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/style-helpers.scss';
+@use '@/styles/style-helpers' as *;
 
 span.user-type-note {
   color: var(--settings-text-color);

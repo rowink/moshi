@@ -187,7 +187,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/styles/media-queries.scss';
+@use '@/styles/media-queries' as *;
 
 .json-editor-outer {
   text-align: center;

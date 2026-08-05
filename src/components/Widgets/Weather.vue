@@ -116,7 +116,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/weather-icons.scss';
+@use '@/styles/weather-icons';
 
 .loader {
   margin: 0 auto;

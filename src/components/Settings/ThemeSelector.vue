@@ -178,8 +178,8 @@ export default {
 
 <style lang="scss">
 
-@import 'vue-select/src/scss/vue-select.scss';
-@import '@/styles/style-helpers.scss';
+@use 'vue-select/src/scss/vue-select';
+@use '@/styles/style-helpers' as *;
 
 .theme-dropdown {
   div.vs__dropdown-toggle {

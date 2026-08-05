@@ -153,7 +153,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/weather-icons.scss';
+@use '@/styles/weather-icons';
 
   p {
     color: var(--widget-text-color);

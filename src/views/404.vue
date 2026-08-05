@@ -27,8 +27,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/media-queries.scss';
-@import '@/styles/style-helpers.scss';
+@use '@/styles/media-queries' as *;
+@use '@/styles/style-helpers' as *;
 main.not-found-page {
   margin: 0;
   padding: 0;

@@ -146,7 +146,7 @@ export default {
 </style>
 
 <style lang="scss">
-@import '@/styles/style-helpers.scss';
+@use '@/styles/style-helpers' as *;
 .language-dropdown {
   margin: 1rem auto;
   ul.vs__dropdown-menu {

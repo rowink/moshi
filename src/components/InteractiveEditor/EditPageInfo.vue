@@ -75,9 +75,9 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/styles/style-helpers.scss';
-@import '@/styles/media-queries.scss';
-@import '@/styles/schema-editor.scss';
+@use '@/styles/style-helpers' as *;
+@use '@/styles/media-queries' as *;
+@use '@/styles/schema-editor' as *;
 
 .edit-page-info-inner {
   padding: 1rem;

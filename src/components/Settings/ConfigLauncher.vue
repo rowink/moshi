@@ -118,7 +118,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/style-helpers.scss';
+@use '@/styles/style-helpers' as *;
 
 .config-options {
   @extend .svg-button;

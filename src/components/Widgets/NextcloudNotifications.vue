@@ -142,7 +142,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/widgets/nextcloud-shared.scss';
+@use '@/styles/widgets/nextcloud-shared';
 .nextcloud-status-wrapper {
 
   div p small i {

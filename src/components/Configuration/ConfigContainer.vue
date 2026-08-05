@@ -201,8 +201,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/style-helpers.scss';
-@import '@/styles/media-queries.scss';
+@use '@/styles/style-helpers' as *;
+@use '@/styles/media-queries' as *;
 
 pre {
   color: var(--config-code-color);

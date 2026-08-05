@@ -146,7 +146,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/widgets/nextcloud-shared.scss';
+@use '@/styles/widgets/nextcloud-shared';
 .nextcloud-info-wrapper {
   > div:first-child {
     display: flex;

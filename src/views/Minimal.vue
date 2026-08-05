@@ -132,8 +132,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/media-queries.scss';
-@import '@/styles/style-helpers.scss';
+@use '@/styles/media-queries' as *;
+@use '@/styles/style-helpers' as *;
 
 .minimal-home {
   display: flex;

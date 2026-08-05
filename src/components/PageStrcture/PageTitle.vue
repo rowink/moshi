@@ -49,7 +49,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/media-queries.scss';
+@use '@/styles/media-queries' as *;
 
 .page-titles {
   display: flex;

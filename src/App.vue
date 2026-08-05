@@ -167,11 +167,11 @@ export default {
 
 <style lang="scss">
 /* Import styles used globally throughout the app */
-@import '@/styles/global-styles.scss';
-@import '@/styles/color-palette.scss';
-@import '@/styles/dimensions.scss';
-@import '@/styles/color-themes.scss';
-@import '@/styles/typography.scss';
-@import '@/styles/user-defined-themes.scss';
+@use '@/styles/global-styles';
+@use '@/styles/color-palette';
+@use '@/styles/dimensions';
+@use '@/styles/color-themes';
+@use '@/styles/typography';
+@use '@/styles/user-defined-themes';
 
 </style>

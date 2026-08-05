@@ -179,7 +179,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/media-queries.scss';
+@use '@/styles/media-queries' as *;
 
 div.edit-mode-bottom-banner {
   position: fixed;

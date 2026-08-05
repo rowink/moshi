@@ -221,7 +221,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/styles/style-helpers.scss';
+@use '@/styles/style-helpers' as *;
 
 div.theme-configurator-wrapper {
   position: absolute;

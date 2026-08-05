@@ -66,7 +66,7 @@ export default {
 
 <style scoped lang="scss">
 
-@import '@/styles/media-queries.scss';
+@use '@/styles/media-queries' as *;
 
 .kb-sc-info {
   position: fixed;

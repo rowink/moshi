@@ -50,6 +50,16 @@ module.exports = defineConfig(({ mode }) => ({
     // list omits .vue, so it is appended here
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
+  // Dart Sass deprecation warnings from vue-select (node_modules) cannot be
+  // fixed in source, so they are silenced here. src/ styles no longer use
+  // @import or global built-ins.
+  css: {
+    preprocessorOptions: {
+      scss: {
+        silenceDeprecations: ['import', 'global-builtin'],
+      },
+    },
+  },
   // Dashy reads build-time values via process.env.*; Vite only exposes
   // import.meta.env by default, so the used variables are defined here
   define: {

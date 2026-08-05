@@ -40,7 +40,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/media-queries.scss';
+@use '@/styles/media-queries' as *;
 
 footer {
   width: calc(100% - 0.5rem);

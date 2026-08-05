@@ -111,8 +111,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/media-queries.scss';
-@import '@/styles/style-helpers.scss';
+@use '@/styles/media-queries' as *;
+@use '@/styles/style-helpers' as *;
 
 .minimal-section-inner {
   height: 100%;

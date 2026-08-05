@@ -202,7 +202,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/media-queries.scss';
+@use '@/styles/media-queries' as *;
 .widget-base {
   position: relative;
   padding: 0.75rem 0.5rem 0.5rem 0.5rem;

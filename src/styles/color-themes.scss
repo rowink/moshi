@@ -1,4 +1,6 @@
 
+@use '@/styles/media-queries' as *;
+
 html[data-theme='callisto'] {
   --primary: #00CCB4;
   --background: #141b33;

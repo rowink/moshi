@@ -102,8 +102,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/styles/style-helpers.scss';
-@import '@/styles/media-queries.scss';
+@use '@/styles/style-helpers' as *;
+@use '@/styles/media-queries' as *;
 .tooltip { z-index: 99; }
 .export-config-inner {
   padding: 1rem;
