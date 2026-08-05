@@ -5,6 +5,7 @@
  * The main config object is made up of three parts: appConfig, pageInfo and sections
  * For anything other than these three sections, please see @utils/ConfigHelpers.js
  */
+import yaml from 'js-yaml';
 import {
   localStorageKeys,
   appConfig as defaultAppConfig,
@@ -16,8 +17,7 @@ import ErrorHandler from '@/utils/ErrorHandler';
 import { applyItemId } from '@/utils/SectionHelpers';
 import $store from '@/store';
 
-import buildConfRaw from '../../public/conf.yml';
-import yaml from 'js-yaml';
+import buildConfRaw from '../../public/conf.yml?raw';
 
 const buildConf = yaml.load(buildConfRaw);
 

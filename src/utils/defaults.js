@@ -1,4 +1,4 @@
-module.exports = {
+const defaults = {
   /* Default pageInfo object, used if user does not specify their own */
   pageInfo: {
     title: 'Dashy',
@@ -314,3 +314,15 @@ module.exports = {
     },
   },
 };
+
+export default defaults;
+export const {
+  pageInfo, appConfig, language, startingView, iconSize, layout,
+  theme, fontAwesomeKey, faviconApi, sortOrder, openingMethod, routePaths,
+  serviceEndpoints, builtInThemes, swatches, mainCssVars, visibleComponents,
+  hideFurnitureOn, localStorageKeys, cookieKeys, sessionStorageKeys, modalNames,
+  topLevelConfKeys, splashScreenTime, metaTagData, toastedOptions, tooltipOptions,
+  backupEndpoint, faviconApiEndpoints, iconCdns, widgetApiEndpoints,
+  searchEngineUrls, defaultSearchEngine, defaultSearchOpeningMethod, searchBangs,
+  sentryDsn, userStateEnum, pwa,
+} = defaults;

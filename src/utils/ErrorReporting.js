@@ -12,7 +12,7 @@
 import ConfigAccumulator from '@/utils/ConfigAccumalator';
 import { sentryDsn } from '@/utils/defaults';
 
-const ErrorReporting = (Vue, router) => {
+const ErrorReporting = async (Vue, router) => {
   // Fetch users config
   const appConfig = new ConfigAccumulator().appConfig() || {};
   // Check if error reporting is enabled. Only proceed if user has turned it on.
@@ -20,8 +20,8 @@ const ErrorReporting = (Vue, router) => {
     // Get current app version
     const appVersion = process.env.VUE_APP_VERSION ? `Dashy@${process.env.VUE_APP_VERSION}` : '';
     // Import Sentry
-    const Sentry = require('@sentry/vue');
-    const { Integrations } = require('@sentry/tracing');
+    const Sentry = await import('@sentry/vue');
+    const { Integrations } = await import('@sentry/tracing');
     // Get the Data Source Name for your or Dashy's Sentry instance
     const dsn = appConfig.sentryDsn || sentryDsn;
     // Initialize Sentry

@@ -10,6 +10,7 @@ import Router from 'vue-router';
 import { Progress } from 'rsup-progress';
 
 // Import views, that are not lazy-loaded
+import yaml from 'js-yaml';
 import Home from '@/views/Home.vue';
 
 // Import helper functions, config data and defaults
@@ -19,7 +20,9 @@ import { metaTagData, startingView, routePaths } from '@/utils/defaults';
 import ErrorHandler from '@/utils/ErrorHandler';
 
 // Import data from users conf file. Note that rebuild is required for this to update.
-import conf from '../public/conf.yml';
+import confRaw from '../public/conf.yml?raw';
+
+const conf = yaml.load(confRaw);
 
 if (!conf) {
   ErrorHandler('You\'ve not got any data in your config file yet.');
