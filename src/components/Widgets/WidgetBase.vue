@@ -41,6 +41,10 @@ import UpdateIcon from '@/assets/interface-icons/widget-update.svg';
 import OpenIcon from '@/assets/interface-icons/open-new-tab.svg';
 import LoadingAnimation from '@/assets/interface-icons/loader.svg';
 
+// Statically-analysed map of widget components, keyed by their resolved
+// path. Vite can bundle and code-split these without dynamic import warnings.
+const widgetModules = import.meta.glob('@/components/Widgets/*.vue');
+
 const COMPAT = {
   'adguard-dns-info': 'AdGuardDnsInfo',
   'adguard-filter-status': 'AdGuardFilterStatus',
@@ -174,8 +178,9 @@ export default {
         ErrorHandler('Widget type was not found');
         return null;
       }
-      // eslint-disable-next-line prefer-template
-      return () => import('@/components/Widgets/' + type + '.vue').catch(() => import('@/components/Widgets/Blank.vue'));
+      // Lazily load the requested widget, falling back to a blank widget
+      return widgetModules[`/src/components/Widgets/${type}.vue`]
+        || widgetModules['/src/components/Widgets/Blank.vue'];
     },
   },
   methods: {

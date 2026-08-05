@@ -26,11 +26,31 @@ const svgAsVueComponent = () => ({
   },
 });
 
+// conf.yml must stay in public/ (Docker volume mount + runtime server
+// reads/writes), but Vite forbids importing from the public dir. Resolve
+// `?raw` imports of it to a virtual module reading the file directly.
+const loadPublicConfigRaw = () => ({
+  name: 'load-public-config-raw',
+  enforce: 'pre',
+  resolveId(source) {
+    if (source.endsWith('conf.yml?raw') && !source.startsWith('\0')) {
+      return '\0public-conf.yml';
+    }
+    return null;
+  },
+  load(id) {
+    if (id !== '\0public-conf.yml') return null;
+    const file = path.resolve(__dirname, 'public', 'conf.yml');
+    return `export default ${JSON.stringify(fs.readFileSync(file, 'utf-8'))}`;
+  },
+});
+
 module.exports = defineConfig(({ mode }) => ({
   base,
   plugins: [
     vue(),
     svgAsVueComponent(),
+    loadPublicConfigRaw(),
     VitePWA({
       filename: 'service-worker.js',
       injectRegister: false, // Dashy registers the SW itself in InitServiceWorker.js
