@@ -79,9 +79,9 @@ import AccessError from '@/components/Configuration/AccessError';
 import Input from '@/components/FormElements/Input';
 import Radio from '@/components/FormElements/Radio';
 import Select from '@/components/FormElements/Select';
-import StoreKeys from '@/utils/StoreMutations';
 import DashySchema from '@/utils/ConfigSchema';
 import { modalNames } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'EditItem',
@@ -104,8 +104,9 @@ export default {
     parentSectionTitle: String, // If adding new item, which section to add it under
   },
   computed: {
+    appStore() { return useAppStore(); },
     allowViewConfig() {
-      return this.$store.getters.permissions.allowViewConfig;
+      return this.appStore.permissions.allowViewConfig;
     },
   },
   components: {
@@ -127,7 +128,7 @@ export default {
   methods: {
     /* For a given item ID, return the item obj from store */
     getItemFromState(id) {
-      return this.$store.getters.getItemById(id);
+      return this.appStore.getItemById(id);
     },
     /* Using the schema, make data structure for the UI form fields to use */
     makeRowData(property) {
@@ -216,12 +217,12 @@ export default {
         if (this.isNew) { // Insert new item into data store
           newItem.id = `temp_${newItem.title}`;
           const payload = { newItem, targetSection: this.parentSectionTitle };
-          this.$store.commit(StoreKeys.INSERT_ITEM, payload);
+          this.appStore.insertItem(payload);
         } else { // Update existing item from form data, in the store
-          this.$store.commit(StoreKeys.UPDATE_ITEM, { newItem, itemId: this.itemId });
+          this.appStore.updateItem({ newItem, itemId: this.itemId });
         }
         // If we're not already in edit mode, enable it now
-        this.$store.commit(StoreKeys.SET_EDIT_MODE, true);
+        this.appStore.setEditMode(true);
         // Close edit menu
         this.$emit('closeEditMenu');
       }
@@ -249,7 +250,7 @@ export default {
     },
     /* Clean up work, triggered when modal closed */
     modalClosed() {
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
       this.$emit('closeEditMenu');
     },
   },

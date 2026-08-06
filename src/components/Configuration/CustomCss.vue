@@ -27,8 +27,8 @@
 import CustomThemeMaker from '@/components/Settings/CustomThemeMaker';
 import ThemeSelector from '@/components/Settings/ThemeSelector';
 import Button from '@/components/FormElements/Button';
-import StoreKeys from '@/utils/StoreMutations';
 import { localStorageKeys, theme as defaultTheme } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'StyleEditor',
@@ -38,8 +38,9 @@ export default {
     CustomThemeMaker,
   },
   computed: {
+    appStore() { return useAppStore(); },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     currentTheme() {
       return this.appConfig.theme || defaultTheme;
@@ -58,7 +59,7 @@ export default {
     /* Sanitizes input, saves to browser and store, applies to page and shows message */
     save() {
       const css = this.customCss.replace(/<\/?[^>]+(>|$)/g, '');
-      this.$store.commit(StoreKeys.UPDATE_CUSTOM_CSS, css);
+      this.appStore.updateCustomCss(css);
       this.saveToBrowser(css);
       this.injectToPage(css);
       this.showSuccessMsg();

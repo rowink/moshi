@@ -33,13 +33,13 @@
 // Import components, and store-key identifiers
 import ConfigContainer from '@/components/Configuration/ConfigContainer';
 import LanguageSwitcher from '@/components/Settings/LanguageSwitcher';
-import Keys from '@/utils/StoreMutations';
 import { topLevelConfKeys, localStorageKeys, modalNames } from '@/utils/defaults';
 import ViewSwitcher from '@/components/Settings/ViewSwitcher';
 // Import icons for config launcher buttons
 import IconSpanner from '@/assets/interface-icons/config-editor.svg';
 import IconInteractiveEditor from '@/assets/interface-icons/interactive-editor-edit-mode.svg';
 import IconViewMode from '@/assets/interface-icons/application-change-view.svg';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'ConfigLauncher',
@@ -58,20 +58,21 @@ export default {
     IconViewMode,
   },
   computed: {
+    appStore() { return useAppStore(); },
     sections() {
-      return this.$store.getters.sections;
+      return this.appStore.sections;
     },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     pageInfo() {
-      return this.$store.getters.pageInfo;
+      return this.appStore.pageInfo;
     },
     isEditMode() {
-      return this.$store.state.editMode;
+      return this.appStore.editMode;
     },
     isEditAllowed() {
-      return this.$store.getters.permissions.allowViewConfig;
+      return this.appStore.permissions.allowViewConfig;
     },
     /* Tooltip text for Edit Mode button, to change depending on it in edit mode */
     enterEditModeTooltip() {
@@ -85,10 +86,10 @@ export default {
   methods: {
     showEditor: function show() {
       this.$modal.show(modalNames.CONF_EDITOR);
-      this.$store.commit(Keys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
     },
     editorClosed: function show() {
-      this.$store.commit(Keys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
     },
     combineConfig() {
       const conf = {};
@@ -110,7 +111,7 @@ export default {
     },
     startInteractiveEditor() {
       if (!this.isEditMode && this.isEditAllowed) {
-        this.$store.commit(Keys.SET_EDIT_MODE, true);
+        this.appStore.setEditMode(true);
       }
     },
   },

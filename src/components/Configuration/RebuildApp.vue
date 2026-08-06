@@ -54,12 +54,14 @@ import LoadingAnimation from '@/assets/interface-icons/loader.svg';
 import ErrorHandler from '@/utils/ErrorHandler';
 import { modalNames, serviceEndpoints } from '@/utils/defaults';
 import { isUserAdmin } from '@/utils/Auth';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'RebuildApp',
   computed: {
+    appStore() { return useAppStore(); },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
   },
   components: {

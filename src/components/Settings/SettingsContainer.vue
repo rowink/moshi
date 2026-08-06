@@ -36,6 +36,7 @@ import {
   localStorageKeys,
   visibleComponents as defaultVisibleComponents,
 } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'SettingsContainer',
@@ -60,23 +61,24 @@ export default {
     };
   },
   computed: {
+    appStore() { return useAppStore(); },
     sections() {
-      return this.$store.getters.sections;
+      return this.appStore.sections;
     },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     pageInfo() {
-      return this.$store.getters.pageInfo;
+      return this.appStore.pageInfo;
     },
     /**
     * Object indicating which components should be hidden, based on user preferences
     */
     visibleComponents() {
-      return this.$store.getters.visibleComponents;
+      return this.appStore.visibleComponents;
     },
     searchVisible() {
-      return this.$store.getters.visibleComponents.searchBar;
+      return this.appStore.visibleComponents.searchBar;
     },
   },
   mounted() {

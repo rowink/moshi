@@ -5,7 +5,7 @@
     <v-select
       :options="themeNames"
       v-model="selectedTheme"
-      :value="$store.getters.theme"
+      :value="appStore.theme"
       class="theme-dropdown"
       :tabindex="-2"
       @input="themeChanged"
@@ -34,9 +34,9 @@ import {
   ApplyCustomVariables,
 } from '@/utils/ThemeHelper';
 import Defaults, { localStorageKeys } from '@/utils/defaults';
-import Keys from '@/utils/StoreMutations';
 import ErrorHandler from '@/utils/ErrorHandler';
 import IconPalette from '@/assets/interface-icons/config-color-palette.svg';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'ThemeSelector',
@@ -64,13 +64,14 @@ export default {
     };
   },
   computed: {
+    appStore() { return useAppStore(); },
     /* Get appConfig from store */
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     /* Get users theme from store */
     themeFromStore() {
-      return this.$store.getters.theme;
+      return this.appStore.theme;
     },
     /* Combines all theme names (builtin and user defined) together */
     themeNames: function themeNames() {
@@ -127,8 +128,8 @@ export default {
      * Updates store, which will in turn update theme through watcher
      */
     themeChanged() {
-      const pageId = this.$store.state.currentConfigInfo?.pageId || null;
-      this.$store.commit(Keys.SET_THEME, { theme: this.selectedTheme, pageId });
+      const pageId = this.appStore.currentConfigInfo?.pageId || null;
+      this.appStore.setTheme({ theme: this.selectedTheme, pageId });
       this.updateTheme(this.selectedTheme);
     },
     /* Returns the initial theme */
@@ -144,13 +145,13 @@ export default {
     },
     /* Opens the theme color configurator popup */
     openThemeConfigurator() {
-      this.$store.commit(Keys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
       this.themeConfiguratorOpen = true;
     },
     /* Closes the theme color configurator popup */
     closeThemeConfigurator() {
       if (this.themeConfiguratorOpen) {
-        this.$store.commit(Keys.SET_MODAL_OPEN, false);
+        this.appStore.setModalOpen(false);
         this.themeConfiguratorOpen = false;
       }
     },

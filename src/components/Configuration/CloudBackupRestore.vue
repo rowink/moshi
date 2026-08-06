@@ -65,19 +65,20 @@ import { Progress } from 'rsup-progress';
 import Button from '@/components/FormElements/Button';
 import Input from '@/components/FormElements/Input';
 // Import utils and constants
-import StoreKeys from '@/utils/StoreMutations';
 import { backup, update, restore } from '@/utils/CloudBackup';
 import { localStorageKeys } from '@/utils/defaults';
 import { InfoHandler, WarningInfoHandler, InfoKeys } from '@/utils/ErrorHandler';
 // Import Icons
 import IconBackup from '@/assets/interface-icons/config-backup.svg';
 import IconRestore from '@/assets/interface-icons/config-restore.svg';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'CloudBackupRestore',
   computed: {
+    appStore() { return useAppStore(); },
     config() { // Users config from store
-      return this.$store.state.config;
+      return this.appStore.config;
     },
   },
   data() {
@@ -165,7 +166,7 @@ export default {
       // Save hashed token in local storage
       this.setBackupIdLocally(backupId, this.restorePassword);
       // Update the current state
-      this.$store.commit(StoreKeys.SET_CONFIG, config);
+      this.appStore.setConfig(config);
       // Show success message
       this.showSuccessMsg(this.$t('cloud-sync.restore-success-msg'));
     },

@@ -47,9 +47,9 @@
           </Button>
           <!-- Display app version and language -->
           <p class="language">{{ getLanguage() }}</p>
-          <p v-if="$store.state.currentConfigInfo" class="config-location">
+          <p v-if="appStore.currentConfigInfo" class="config-location">
             Using Config From<br>
-            {{ $store.state.currentConfigInfo.confPath }}
+            {{ appStore.currentConfigInfo.confPath }}
           </p>
           <AppVersion />
         </div>
@@ -80,7 +80,6 @@
 import { localStorageKeys, modalNames } from '@/utils/defaults';
 import { getUsersLanguage } from '@/utils/ConfigHelpers';
 import ErrorHandler from '@/utils/ErrorHandler';
-import StoreKeys from '@/utils/StoreMutations';
 import JsonEditor from '@/components/Configuration/JsonEditor';
 import CustomCssEditor from '@/components/Configuration/CustomCss';
 import CloudBackupRestore from '@/components/Configuration/CloudBackupRestore';
@@ -96,6 +95,7 @@ import CloudIcon from '@/assets/interface-icons/cloud-backup-restore.svg';
 import RebuildIcon from '@/assets/interface-icons/application-rebuild.svg';
 import LanguageIcon from '@/assets/interface-icons/config-language.svg';
 import IconAbout from '@/assets/interface-icons/application-about.svg';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'ConfigContainer',
@@ -110,11 +110,12 @@ export default {
     config: Object,
   },
   computed: {
+    appStore() { return useAppStore(); },
     sections: function getSections() {
       return this.config.sections;
     },
     enableConfig() {
-      return this.$store.getters.permissions.allowViewConfig;
+      return this.appStore.permissions.allowViewConfig;
     },
   },
   components: {
@@ -176,7 +177,7 @@ export default {
       if (isTheUserSure) {
         localStorage.clear();
         this.$toasted.show(this.$t('config.data-cleared-msg'));
-        this.$store.dispatch(StoreKeys.INITIALIZE_CONFIG);
+        this.appStore.initializeConfig();
       }
     },
     getLanguage() {
@@ -185,10 +186,10 @@ export default {
     },
     /* If launching menu from editor, navigate to correct starting tab */
     navigateToStartingTab() {
-      const navToTab = this.$store.state.navigateConfToTab;
+      const navToTab = this.appStore.navigateConfToTab;
       const isValidTabIndex = (indx) => typeof indx === 'number' && indx >= 0 && indx <= 5;
       if (navToTab && isValidTabIndex(navToTab)) this.navigateToTab(navToTab);
-      this.$store.commit(StoreKeys.CONF_MENU_INDEX, undefined);
+      this.appStore.setConfMenuIndex(undefined);
     },
     unauthorized() {
       ErrorHandler('Unauthorized Operation - Config Disabled');

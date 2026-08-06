@@ -55,11 +55,11 @@ import VJsoneditor from 'v-jsoneditor';
 import ConfigSavingMixin from '@/mixins/ConfigSaving';
 import { InfoHandler, InfoKeys } from '@/utils/ErrorHandler';
 import configSchema from '@/utils/ConfigSchema.json';
-import StoreKeys from '@/utils/StoreMutations';
 import { modalNames } from '@/utils/defaults';
 import Button from '@/components/FormElements/Button';
 import Radio from '@/components/FormElements/Radio';
 import AccessError from '@/components/Configuration/AccessError';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'JsonEditor',
@@ -89,15 +89,16 @@ export default {
     };
   },
   computed: {
+    appStore() { return useAppStore(); },
     config() {
-      return this.$store.state.config;
+      return this.appStore.config;
     },
     isValid() {
       return this.errorMessages.length < 1;
     },
     permissions() {
       // Returns: { allowWriteToDisk, allowSaveLocally, allowViewConfig }
-      return this.$store.getters.permissions;
+      return this.appStore.permissions;
     },
     allowWriteToDisk() {
       return this.permissions.allowWriteToDisk;
@@ -133,11 +134,11 @@ export default {
     startPreview() {
       InfoHandler('Applying changes to local state...', InfoKeys.RAW_EDITOR);
       const data = this.jsonData;
-      this.$store.commit(StoreKeys.SET_APP_CONFIG, data.appConfig);
-      this.$store.commit(StoreKeys.SET_PAGE_INFO, data.pageInfo);
-      this.$store.commit(StoreKeys.SET_SECTIONS, data.sections);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
-      this.$store.commit(StoreKeys.SET_EDIT_MODE, true);
+      this.appStore.setAppConfig(data.appConfig);
+      this.appStore.setPageInfo(data.pageInfo);
+      this.appStore.setSections(data.sections);
+      this.appStore.setModalOpen(false);
+      this.appStore.setEditMode(true);
       this.$modal.hide(modalNames.CONF_EDITOR);
     },
     writeToDisk() {

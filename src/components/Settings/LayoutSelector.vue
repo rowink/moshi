@@ -25,12 +25,15 @@
 </template>
 
 <script>
-import StoreKeys from '@/utils/StoreMutations';
 import IconDeafault from '@/assets/interface-icons/layout-default.svg';
 import IconHorizontal from '@/assets/interface-icons/layout-horizontal.svg';
 import IconVertical from '@/assets/interface-icons/layout-vertical.svg';
+import { useAppStore } from '@/store';
 
 export default {
+  computed: {
+    appStore() { return useAppStore(); },
+  },
   name: 'LayoutSelector',
   props: {
     displayLayout: String,
@@ -42,7 +45,7 @@ export default {
   },
   methods: {
     updateDisplayLayout(layout) {
-      this.$store.commit(StoreKeys.SET_ITEM_LAYOUT, layout);
+      this.appStore.setItemLayout(layout);
     },
     tooltip(content) {
       return { content, trigger: 'hover focus', delay: 250 };

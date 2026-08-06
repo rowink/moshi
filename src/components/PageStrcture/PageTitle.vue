@@ -15,8 +15,8 @@
 
 <script>
 import EditModeIcon from '@/assets/interface-icons/interactive-editor-edit-mode.svg';
-import StoreKeys from '@/utils/StoreMutations';
 import { modalNames } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'PageTitle',
@@ -29,15 +29,16 @@ export default {
     EditModeIcon,
   },
   computed: {
+    appStore() { return useAppStore(); },
     isEditMode() {
-      return this.$store.state.editMode;
+      return this.appStore.editMode;
     },
   },
   methods: {
     /* On edit button click, open the edit pageInfo modal */
     editTitle() {
       this.$modal.show(modalNames.EDIT_PAGE_INFO);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
     },
     /* Edit button tooltip */
     tooltip() {

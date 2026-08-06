@@ -33,12 +33,12 @@
 <script>
 import JsYaml from 'js-yaml';
 import Button from '@/components/FormElements/Button';
-import StoreKeys from '@/utils/StoreMutations';
 import { modalNames } from '@/utils/defaults';
 import AccessError from '@/components/Configuration/AccessError';
 import DownloadConfigIcon from '@/assets/interface-icons/config-download-file.svg';
 import CopyConfigIcon from '@/assets/interface-icons/interactive-editor-copy-clipboard.svg';
 import { ErrorHandler, InfoHandler, InfoKeys } from '@/utils/ErrorHandler';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'ExportConfigMenu',
@@ -55,11 +55,12 @@ export default {
   },
   props: {},
   computed: {
+    appStore() { return useAppStore(); },
     config() {
-      return this.$store.state.config;
+      return this.appStore.config;
     },
     allowViewConfig() {
-      return this.$store.getters.permissions.allowViewConfig;
+      return this.appStore.permissions.allowViewConfig;
     },
   },
   methods: {
@@ -90,7 +91,7 @@ export default {
       InfoHandler('Config copied to clipboard', InfoKeys.EDITOR);
     },
     modalClosed() {
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
     },
     tooltip(content) {
       return {

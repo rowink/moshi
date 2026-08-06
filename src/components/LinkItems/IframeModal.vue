@@ -10,9 +10,12 @@
 </template>
 
 <script>
-import Keys from '@/utils/StoreMutations';
+import { useAppStore } from '@/store';
 
 export default {
+  computed: {
+    appStore() { return useAppStore(); },
+  },
   name: 'IframeModal',
   props: {
     name: String,
@@ -24,13 +27,13 @@ export default {
     show(url) {
       this.url = url;
       this.$modal.show(this.name);
-      this.$store.commit(Keys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
     },
     hide() {
       this.$modal.hide(this.name);
     },
     modalClosed() {
-      this.$store.commit(Keys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
     },
   },
 };

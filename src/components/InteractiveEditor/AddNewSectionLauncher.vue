@@ -17,8 +17,8 @@
 <script>
 
 import EditSectionMenu from '@/components/InteractiveEditor/EditSection.vue';
-import StoreKeys from '@/utils/StoreMutations';
 import { modalNames } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'add-section-container',
@@ -29,20 +29,21 @@ export default {
     addNewSectionOpen: false,
   }),
   computed: {
+    appStore() { return useAppStore(); },
     isEditMode() {
-      return this.$store.state.editMode;
+      return this.appStore.editMode;
     },
   },
   methods: {
     openAddNewSectionMenu() {
       this.addNewSectionOpen = true;
       this.$modal.show(modalNames.EDIT_SECTION);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
     },
     closeEditSection() {
       this.addNewSectionOpen = false;
       this.$modal.hide(modalNames.EDIT_SECTION);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
     },
   },
 };

@@ -39,8 +39,8 @@ import Select from '@/components/FormElements/Select';
 import Radio from '@/components/FormElements/Radio';
 import SaveCancelButtons from '@/components/InteractiveEditor/SaveCancelButtons';
 import AccessError from '@/components/Configuration/AccessError';
-import StoreKeys from '@/utils/StoreMutations';
 import { modalNames } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'MoveItemTo',
@@ -71,8 +71,9 @@ export default {
     };
   },
   computed: {
+    appStore() { return useAppStore(); },
     sections() {
-      return this.$store.getters.sections;
+      return this.appStore.sections;
     },
     sectionList() {
       return this.sections.map((section) => section.name);
@@ -87,7 +88,7 @@ export default {
       return sectionName;
     },
     allowViewConfig() {
-      return this.$store.getters.permissions.allowViewConfig;
+      return this.appStore.permissions.allowViewConfig;
     },
   },
   mounted() {
@@ -95,20 +96,20 @@ export default {
   },
   methods: {
     save() {
-      const item = this.$store.getters.getItemById(this.itemId);
+      const item = this.appStore.getItemById(this.itemId);
       // Copy item to new section
       const copyPayload = { item, toSection: this.selectedSection, appendTo: this.appendTo };
-      this.$store.commit(StoreKeys.COPY_ITEM, copyPayload);
+      this.appStore.copyItem(copyPayload);
       // Remove item from previous section
       if (this.operation === 'move') {
         const payload = { itemId: this.itemId, sectionName: this.currentSection };
-        this.$store.commit(StoreKeys.REMOVE_ITEM, payload);
+        this.appStore.removeItem(payload);
       }
       this.close();
     },
     close() {
       this.$modal.hide(this.modalName);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
     },
   },
 };

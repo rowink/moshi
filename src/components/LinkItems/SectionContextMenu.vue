@@ -31,6 +31,7 @@ import EditIcon from '@/assets/interface-icons/config-edit-json.svg';
 import BinIcon from '@/assets/interface-icons/interactive-editor-remove.svg';
 import SameTabOpenIcon from '@/assets/interface-icons/open-current-tab.svg';
 import ExpandCollapseIcon from '@/assets/interface-icons/section-expand-collapse.svg';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'ContextMenu',
@@ -46,11 +47,12 @@ export default {
     show: Boolean, // Should show or hide the menu
   },
   computed: {
+    appStore() { return useAppStore(); },
     isMenuDisabled() {
-      return !!this.$store.getters.appConfig.disableContextMenu;
+      return !!this.appStore.appConfig.disableContextMenu;
     },
     isEditMode() {
-      return this.$store.state.editMode;
+      return this.appStore.editMode;
     },
   },
   methods: {

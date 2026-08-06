@@ -37,6 +37,7 @@ import { localStorageKeys } from '@/utils/defaults';
 import Icon from '@/components/LinkItems/ItemIcon.vue';
 import EditModeIcon from '@/assets/interface-icons/interactive-editor-edit-mode.svg';
 import OpenIcon from '@/assets/interface-icons/config-open-settings.svg';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'CollapsableContainer',
@@ -60,8 +61,9 @@ export default {
     longPress,
   },
   computed: {
+    appStore() { return useAppStore(); },
     isEditMode() {
-      return this.$store.state.editMode;
+      return this.appStore.editMode;
     },
     sectionKey() {
       if (this.isEditMode) return undefined;

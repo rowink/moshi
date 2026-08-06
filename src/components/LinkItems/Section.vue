@@ -98,12 +98,12 @@ import IframeModal from '@/components/LinkItems/IframeModal.vue';
 import EditSection from '@/components/InteractiveEditor/EditSection.vue';
 import ContextMenu from '@/components/LinkItems/SectionContextMenu.vue';
 import ErrorHandler from '@/utils/ErrorHandler';
-import StoreKeys from '@/utils/StoreMutations';
 import {
   sortOrder as defaultSortOrder,
   localStorageKeys,
   modalNames,
 } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'Section',
@@ -136,14 +136,15 @@ export default {
     };
   },
   computed: {
+    appStore() { return useAppStore(); },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     isEditMode() {
-      return this.$store.state.editMode;
+      return this.appStore.editMode;
     },
     itemSize() {
-      return this.displayData.itemSize || this.$store.getters.iconSize;
+      return this.displayData.itemSize || this.appStore.iconSize;
     },
     sortOrder() {
       return this.displayData.sortBy || defaultSortOrder;
@@ -243,14 +244,14 @@ export default {
     openEditSection() {
       this.editMenuOpen = true;
       this.$modal.show(modalNames.EDIT_SECTION);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
       this.closeContextMenu();
     },
     /* Close the section edit menu */
     closeEditSection() {
       this.editMenuOpen = false;
       this.$modal.hide(modalNames.EDIT_SECTION);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
     },
     /* Deletes current section, in local state */
     removeSection() {
@@ -258,7 +259,7 @@ export default {
       const youSure = confirm(confirmMsg); // eslint-disable-line no-alert, no-restricted-globals
       if (youSure) {
         const payload = { sectionIndex: this.index, sectionName: this.title };
-        this.$store.commit(StoreKeys.REMOVE_SECTION, payload);
+        this.appStore.removeSection(payload);
       }
       this.closeContextMenu();
     },

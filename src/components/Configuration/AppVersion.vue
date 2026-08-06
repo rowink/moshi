@@ -33,12 +33,14 @@
 import axios from 'axios';
 import { Progress } from 'rsup-progress';
 import ErrorHandler from '@/utils/ErrorHandler';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'AppInfoModal',
   computed: {
+    appStore() { return useAppStore(); },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
   },
   data() {

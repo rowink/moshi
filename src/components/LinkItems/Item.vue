@@ -63,10 +63,10 @@ import StatusIndicator from '@/components/LinkItems/StatusIndicator';
 import EditItem from '@/components/InteractiveEditor/EditItem';
 import MoveItemTo from '@/components/InteractiveEditor/MoveItemTo';
 import ContextMenu from '@/components/LinkItems/ItemContextMenu';
-import StoreKeys from '@/utils/StoreMutations';
 import ItemMixin from '@/mixins/ItemMixin';
 import EditModeIcon from '@/assets/interface-icons/interactive-editor-edit-mode.svg';
 import { modalNames } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'Item',
@@ -88,9 +88,10 @@ export default {
     EditModeIcon,
   },
   computed: {
+    appStore() { return useAppStore(); },
     /* Returns either item.icon, or appConfig.defaultIcon, or null */
     itemIcon() {
-      return this.item.icon || this.$store.getters.appConfig?.defaultIcon;
+      return this.item.icon || this.appStore.appConfig?.defaultIcon;
     },
     makeColumnCount() {
       if ((this.sectionDisplayData || {}).itemCountX) return this.sectionDisplayData.itemCountX;
@@ -150,25 +151,25 @@ export default {
       this.editMenuOpen = true;
       this.contextMenuOpen = false;
       this.$modal.show(modalNames.EDIT_ITEM);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
     },
     /* Ensure conditional is updated, once menu closed */
     closeEditMenu() {
       this.editMenuOpen = false;
       this.$modal.hide(modalNames.EDIT_ITEM);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
     },
     /* Open the modal for moving/ copying item to other section */
     openMoveItemMenu() {
       this.$modal.show(`${modalNames.MOVE_ITEM_TO}-${this.item.id}`);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
       this.closeContextMenu();
     },
     /* Deletes the current item from the state */
     openDeleteItem() {
-      const parentSection = this.$store.getters.getParentSectionOfItem(this.item.id);
+      const parentSection = this.appStore.getParentSectionOfItem(this.item.id);
       const payload = { itemId: this.item.id, sectionName: parentSection.name };
-      this.$store.commit(StoreKeys.REMOVE_ITEM, payload);
+      this.appStore.removeItem(payload);
       this.closeContextMenu();
     },
   },

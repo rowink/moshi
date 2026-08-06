@@ -4,9 +4,12 @@ import { Progress } from 'rsup-progress';
 
 import ErrorHandler, { InfoHandler } from '@/utils/ErrorHandler';
 import { localStorageKeys, serviceEndpoints } from '@/utils/defaults';
-import StoreKeys from '@/utils/StoreMutations';
+import { useAppStore } from '@/store';
 
 export default {
+  computed: {
+    appStore() { return useAppStore(); },
+  },
   data() {
     return {
       saveSuccess: undefined,
@@ -21,7 +24,7 @@ export default {
         return;
       }
       // 1. Get the config, and strip appConfig if is sub-page
-      const isSubPag = !!this.$store.state.currentConfigInfo;
+      const isSubPag = !!this.appStore.currentConfigInfo;
       const jsonConfig = config;
       if (isSubPag) delete jsonConfig.appConfig;
       // 2. Convert JSON into YAML
@@ -32,7 +35,7 @@ export default {
       const endpoint = `${baseUrl}${serviceEndpoints.save}`;
       const headers = { 'Content-Type': 'text/plain' };
       const filename = isSubPag
-        ? (this.$store.state.currentConfigInfo.confPath || '') : '';
+        ? (this.appStore.currentConfigInfo.confPath || '') : '';
       const body = { config: yaml, timestamp: new Date(), filename };
       const request = axios.post(endpoint, body, headers);
       // 4. Make the request, and handle response
@@ -48,7 +51,7 @@ export default {
         }
         InfoHandler('Config has been written to disk successfully', 'Config Update');
         this.progress.end();
-        this.$store.commit(StoreKeys.SET_EDIT_MODE, false);
+        this.appStore.setEditMode(false);
       })
         .catch((error) => { // fucking hell
           this.saveSuccess = false;
@@ -71,7 +74,7 @@ export default {
       }
       InfoHandler('Config has succesfully been saved in browser storage', 'Config Update');
       this.showToast(this.$t('config-editor.success-msg-local'), true);
-      this.$store.commit(StoreKeys.SET_EDIT_MODE, false);
+      this.appStore.setEditMode(false);
     },
     carefullyClearLocalStorage() {
       localStorage.removeItem(localStorageKeys.PAGE_INFO);

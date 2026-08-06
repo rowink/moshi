@@ -26,11 +26,11 @@
 <script>
 import FormSchema from '@formschema/native';
 import DashySchema from '@/utils/ConfigSchema';
-import StoreKeys from '@/utils/StoreMutations';
 import { modalNames } from '@/utils/defaults';
 import Button from '@/components/FormElements/Button';
 import SaveIcon from '@/assets/interface-icons/save-config.svg';
 import AccessError from '@/components/Configuration/AccessError';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'EditPageInfo',
@@ -51,24 +51,25 @@ export default {
     this.formData = this.pageInfo;
   },
   computed: {
+    appStore() { return useAppStore(); },
     pageInfo() {
-      return this.$store.getters.pageInfo;
+      return this.appStore.pageInfo;
     },
     allowViewConfig() {
-      return this.$store.getters.permissions.allowViewConfig;
+      return this.appStore.permissions.allowViewConfig;
     },
   },
   methods: {
     /* When form submitteed, update VueX store with new pageInfo, and close modal */
     saveToState() {
-      this.$store.commit(StoreKeys.SET_PAGE_INFO, this.formData);
+      this.appStore.setPageInfo(this.formData);
       this.$modal.hide(this.modalName);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
-      this.$store.commit(StoreKeys.SET_EDIT_MODE, true);
+      this.appStore.setModalOpen(false);
+      this.appStore.setEditMode(true);
     },
     /* Called when modal manually closed, updates state to allow searching again */
     modalClosed() {
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
     },
   },
 };

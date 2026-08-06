@@ -28,9 +28,9 @@
 import Button from '@/components/FormElements/Button';
 import SaveConfigIcon from '@/assets/interface-icons/save-config.svg';
 import ErrorHandler from '@/utils/ErrorHandler';
-import Keys from '@/utils/StoreMutations';
 import { languages } from '@/utils/languages';
 import { localStorageKeys, modalNames } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'LanguageSwitcher',
@@ -49,17 +49,18 @@ export default {
     this.language = this.savedLanguage;
   },
   computed: {
+    appStore() { return useAppStore(); },
     /* Get appConfig from store */
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     /* The ISO code for the users language, synced with VueX store */
     savedLanguage: {
       get() {
-        return this.getIsoFromLangObj(this.$store.getters.appConfig.lang);
+        return this.getIsoFromLangObj(this.appStore.appConfig.lang);
       },
       set(newLang) {
-        this.$store.commit(Keys.SET_LANGUAGE, newLang.code);
+        this.appStore.setLanguage(newLang.code);
       },
     },
     /* Return the array of language objects, plus a friends name */

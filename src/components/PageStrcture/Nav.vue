@@ -29,6 +29,7 @@
 <script>
 import IconBurger from '@/assets/interface-icons/burger-menu.svg';
 import { makePageSlug } from '@/utils/ConfigHelpers';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'Nav',
@@ -43,9 +44,10 @@ export default {
     isMobile: false,
   }),
   computed: {
+    appStore() { return useAppStore(); },
     /* Get links to sub-pages, and combine with nav-links */
     allLinks() {
-      const subPages = this.$store.getters.pages.map((subPage) => ({
+      const subPages = this.appStore.pages.map((subPage) => ({
         path: makePageSlug(subPage.name, 'home'),
         title: subPage.name,
       }));

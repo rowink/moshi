@@ -28,6 +28,7 @@ import EmojiUnicodeRegex from '@/utils/EmojiUnicodeRegex';
 import emojiLookup from '@/utils/emojis.json';
 import { asciiHash } from '@/utils/MiscHelpers';
 import { faviconApi as defaultFaviconApi, faviconApiEndpoints, iconCdns } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'Icon',
@@ -40,9 +41,10 @@ export default {
     BrokenImage, // Used when the desired image returns a 404
   },
   computed: {
+    appStore() { return useAppStore(); },
     /* Get appConfig from store */
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     /* Determines the type of icon */
     iconType() {

@@ -3,8 +3,8 @@
   <footer v-if="text && text !== '' && visible" v-html="text"></footer>
   <!-- Default Footer -->
   <footer v-else-if="visible">
-    <span v-if="$store.state.currentConfigInfo" class="path-to-config">
-      Using: {{ $store.state.currentConfigInfo.confPath }}
+    <span v-if="appStore.currentConfigInfo" class="path-to-config">
+      Using: {{ appStore.currentConfigInfo.confPath }}
     </span>
     <span>
       {{ $t('footer.dev-by') }} <a :href="authorUrl">{{authorName}}</a>.
@@ -18,6 +18,7 @@
 <script>
 
 import { shouldBeVisible } from '@/utils/SectionHelpers';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'Footer',
@@ -32,6 +33,7 @@ export default {
     repoUrl: { type: String, default: 'https://github.com/lissy93/dashy' },
   },
   computed: {
+    appStore() { return useAppStore(); },
     visible() {
       return shouldBeVisible(this.$route.name);
     },

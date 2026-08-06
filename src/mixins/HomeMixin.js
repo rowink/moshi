@@ -3,30 +3,31 @@
  */
 
 import Defaults, { localStorageKeys, iconCdns } from '@/utils/defaults';
-import Keys from '@/utils/StoreMutations';
 import { searchTiles } from '@/utils/Search';
 import { checkItemVisibility } from '@/utils/CheckItemVisibility';
 import { GetTheme, ApplyLocalTheme, ApplyCustomVariables } from '@/utils/ThemeHelper';
+import { useAppStore } from '@/store';
 
 const HomeMixin = {
   props: {
     subPageInfo: Object,
   },
   computed: {
+    appStore() { return useAppStore(); },
     sections() {
-      return this.$store.getters.sections;
+      return this.appStore.sections;
     },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     pageInfo() {
-      return this.$store.getters.pageInfo;
+      return this.appStore.pageInfo;
     },
     isEditMode() {
-      return this.$store.state.editMode;
+      return this.appStore.editMode;
     },
     modalOpen() {
-      return this.$store.state.modalOpen;
+      return this.appStore.modalOpen;
     },
     pageId() {
       return (this.subPageInfo && this.subPageInfo.pageId) ? this.subPageInfo.pageId : 'home';
@@ -46,11 +47,11 @@ const HomeMixin = {
   },
   methods: {
     async getConfigForRoute() {
-      this.$store.commit(Keys.SET_CURRENT_SUB_PAGE, this.subPageInfo);
+      this.appStore.setCurrentSubPage(this.subPageInfo);
       if (this.subPageInfo && this.subPageInfo.confPath) { // Get config for sub-page
-        await this.$store.dispatch(Keys.INITIALIZE_MULTI_PAGE_CONFIG, this.subPageInfo.confPath);
+        await this.appStore.initializeMultiPageConfig(this.subPageInfo.confPath);
       } else { // Otherwise, use main config
-        this.$store.commit(Keys.USE_MAIN_CONFIG);
+        this.appStore.useMainConfig();
       }
     },
     /* TEMPORARY: If on sub-page, check if custom theme is set and return it */
@@ -68,7 +69,7 @@ const HomeMixin = {
       ApplyCustomVariables(theme);
     },
     updateModalVisibility(modalState) {
-      this.$store.commit('SET_MODAL_OPEN', modalState);
+      this.appStore.setModalOpen(modalState);
     },
     /* Updates local data with search value, triggered from filter comp */
     searching(searchValue) {

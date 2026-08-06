@@ -1,9 +1,7 @@
 /* eslint-disable no-param-reassign, prefer-destructuring */
-import Vue from 'vue';
-import Vuex from 'vuex';
+import { defineStore } from 'pinia';
 import axios from 'axios';
 import yaml from 'js-yaml';
-import Keys from '@/utils/StoreMutations';
 import ConfigAccumulator from '@/utils/ConfigAccumalator';
 import { componentVisibility } from '@/utils/ConfigHelpers';
 import { applyItemId } from '@/utils/SectionHelpers';
@@ -12,50 +10,16 @@ import ErrorHandler, { InfoHandler, InfoKeys } from '@/utils/ErrorHandler';
 import { isUserAdmin } from '@/utils/Auth';
 import { localStorageKeys } from './utils/defaults';
 
-Vue.use(Vuex);
-
-const {
-  INITIALIZE_CONFIG,
-  INITIALIZE_MULTI_PAGE_CONFIG,
-  SET_CONFIG,
-  SET_REMOTE_CONFIG,
-  SET_CURRENT_SUB_PAGE,
-  SET_MODAL_OPEN,
-  SET_LANGUAGE,
-  SET_ITEM_LAYOUT,
-  SET_ITEM_SIZE,
-  SET_THEME,
-  SET_CUSTOM_COLORS,
-  UPDATE_ITEM,
-  USE_MAIN_CONFIG,
-  SET_EDIT_MODE,
-  SET_PAGE_INFO,
-  SET_APP_CONFIG,
-  SET_SECTIONS,
-  SET_PAGES,
-  UPDATE_SECTION,
-  INSERT_SECTION,
-  REMOVE_SECTION,
-  COPY_ITEM,
-  REMOVE_ITEM,
-  INSERT_ITEM,
-  UPDATE_CUSTOM_CSS,
-  CONF_MENU_INDEX,
-} = Keys;
-
-const store = new Vuex.Store({
-  state: {
+export const useAppStore = defineStore('app', {
+  state: () => ({
     config: {}, // The current config, rendered to the UI
     remoteConfig: {}, // The configuration stored on the server
     editMode: false, // While true, the user can drag and edit items + sections
     modalOpen: false, // KB shortcut functionality will be disabled when modal is open
     currentConfigInfo: undefined, // For multi-page support, will store info about config file
     navigateConfToTab: undefined, // Used to switch active tab in config modal
-  },
+  }),
   getters: {
-    config(state) {
-      return state.config;
-    },
     pageInfo(state) {
       if (!state.config) return {};
       return state.config.pageInfo || {};
@@ -80,15 +44,15 @@ const store = new Vuex.Store({
       }
       return localTheme || state.config.appConfig.theme;
     },
-    webSearch(state, getters) {
-      return getters.appConfig.webSearch || {};
+    webSearch() {
+      return this.appConfig.webSearch || {};
     },
-    visibleComponents(state, getters) {
-      return componentVisibility(getters.appConfig);
+    visibleComponents() {
+      return componentVisibility(this.appConfig);
     },
     /* Make config read/ write permissions object */
-    permissions(state, getters) {
-      const appConfig = getters.appConfig;
+    permissions() {
+      const appConfig = this.appConfig;
       const perms = {
         allowWriteToDisk: true,
         allowSaveLocally: true,
@@ -115,28 +79,31 @@ const store = new Vuex.Store({
       }
       return perms;
     },
-    // eslint-disable-next-line arrow-body-style
-    getSectionByIndex: (state, getters) => (index) => {
-      return getters.sections[index];
+    getSectionByIndex() {
+      return (index) => this.sections[index];
     },
-    getItemById: (state, getters) => (id) => {
-      let item;
-      getters.sections.forEach(sec => {
-        if (sec.items) {
-          const foundItem = sec.items.find((itm) => itm.id === id);
-          if (foundItem) item = foundItem;
-        }
-      });
-      return item;
-    },
-    getParentSectionOfItem: (state, getters) => (itemId) => {
-      let foundSection;
-      getters.sections.forEach((section) => {
-        (section.items || []).forEach((item) => {
-          if (item.id === itemId) foundSection = section;
+    getItemById() {
+      return (id) => {
+        let item;
+        this.sections.forEach(sec => {
+          if (sec.items) {
+            const foundItem = sec.items.find((itm) => itm.id === id);
+            if (foundItem) item = foundItem;
+          }
         });
-      });
-      return foundSection;
+        return item;
+      };
+    },
+    getParentSectionOfItem() {
+      return (itemId) => {
+        let foundSection;
+        this.sections.forEach((section) => {
+          (section.items || []).forEach((item) => {
+            if (item.id === itemId) foundSection = section;
+          });
+        });
+        return foundSection;
+      };
     },
     layout(state) {
       return state.config.appConfig.layout || 'auto';
@@ -145,33 +112,53 @@ const store = new Vuex.Store({
       return state.config.appConfig.iconSize || 'medium';
     },
   },
-  mutations: {
-    [SET_CONFIG](state, config) {
-      if (!config.appConfig) config.appConfig = {};
-      state.config = config;
+  actions: {
+    /* Called when app first loaded. Reads config and sets state */
+    async initializeConfig() {
+      // Get the config file from the server and store it for use by the accumulator
+      this.setRemoteConfig(yaml.load((await axios.get('/conf.yml')).data));
+      const deepCopy = (json) => JSON.parse(JSON.stringify(json));
+      const config = deepCopy(new ConfigAccumulator().config());
+      this.setConfig(config);
     },
-    [SET_REMOTE_CONFIG](state, config) {
+    /* Fetch config for a sub-page (sections and pageInfo only) */
+    async initializeMultiPageConfig(configPath) {
+      axios.get(configPath).then((response) => {
+        const subConfig = yaml.load(response.data);
+        const pageTheme = subConfig.appConfig?.theme;
+        subConfig.appConfig = this.config.appConfig; // Always use parent appConfig
+        if (pageTheme) subConfig.appConfig.theme = pageTheme; // Apply page theme override
+        this.setConfig(subConfig);
+      }).catch((err) => {
+        ErrorHandler(`Unable to load config from '${configPath}'`, err);
+      });
+    },
+    setConfig(config) {
+      if (!config.appConfig) config.appConfig = {};
+      this.config = config;
+    },
+    setRemoteConfig(config) {
       const notNullConfig = config || {};
       if (!notNullConfig.appConfig) notNullConfig.appConfig = {};
-      state.remoteConfig = notNullConfig;
+      this.remoteConfig = notNullConfig;
     },
-    [SET_LANGUAGE](state, lang) {
-      const newConfig = state.config;
+    setLanguage(lang) {
+      const newConfig = this.config;
       newConfig.appConfig.language = lang;
-      state.config = newConfig;
+      this.config = newConfig;
     },
-    [SET_MODAL_OPEN](state, modalOpen) {
-      state.modalOpen = modalOpen;
+    setModalOpen(modalOpen) {
+      this.modalOpen = modalOpen;
     },
-    [SET_EDIT_MODE](state, editMode) {
-      if (editMode !== state.editMode) {
+    setEditMode(editMode) {
+      if (editMode !== this.editMode) {
         InfoHandler(editMode ? 'Edit session started' : 'Edit session ended', InfoKeys.EDITOR);
-        state.editMode = editMode;
+        this.editMode = editMode;
       }
     },
-    [UPDATE_ITEM](state, payload) {
+    updateItem(payload) {
       const { itemId, newItem } = payload;
-      const newConfig = { ...state.config };
+      const newConfig = { ...this.config };
       newConfig.sections.forEach((section, secIndex) => {
         (section.items || []).forEach((item, itemIndex) => {
           if (item.id === itemId) {
@@ -180,58 +167,58 @@ const store = new Vuex.Store({
           }
         });
       });
-      state.config = newConfig;
+      this.config = newConfig;
     },
-    [SET_PAGE_INFO](state, newPageInfo) {
-      const newConfig = state.config;
+    setPageInfo(newPageInfo) {
+      const newConfig = this.config;
       newConfig.pageInfo = newPageInfo;
-      state.config = newConfig;
+      this.config = newConfig;
       InfoHandler('Page info updated', InfoKeys.EDITOR);
     },
-    [SET_APP_CONFIG](state, newAppConfig) {
-      const newConfig = state.config;
+    setAppConfig(newAppConfig) {
+      const newConfig = this.config;
       newConfig.appConfig = newAppConfig;
-      state.config = newConfig;
+      this.config = newConfig;
       InfoHandler('App config updated', InfoKeys.EDITOR);
     },
-    [SET_PAGES](state, multiPages) {
-      const newConfig = state.config;
+    setPages(multiPages) {
+      const newConfig = this.config;
       newConfig.pages = multiPages;
-      state.config = newConfig;
+      this.config = newConfig;
       InfoHandler('Pages updated', InfoKeys.EDITOR);
     },
-    [SET_SECTIONS](state, newSections) {
-      const newConfig = state.config;
+    setSections(newSections) {
+      const newConfig = this.config;
       newConfig.sections = newSections;
-      state.config = newConfig;
+      this.config = newConfig;
       InfoHandler('Sections updated', InfoKeys.EDITOR);
     },
-    [UPDATE_SECTION](state, payload) {
+    updateSection(payload) {
       const { sectionIndex, sectionData } = payload;
-      const newConfig = { ...state.config };
+      const newConfig = { ...this.config };
       newConfig.sections[sectionIndex] = sectionData;
-      state.config = newConfig;
+      this.config = newConfig;
       InfoHandler('Section updated', InfoKeys.EDITOR);
     },
-    [INSERT_SECTION](state, newSection) {
-      const newConfig = { ...state.config };
+    insertSection(newSection) {
+      const newConfig = { ...this.config };
       newSection.items = [];
       newConfig.sections.push(newSection);
-      state.config = newConfig;
+      this.config = newConfig;
       InfoHandler('New section added', InfoKeys.EDITOR);
     },
-    [REMOVE_SECTION](state, payload) {
+    removeSection(payload) {
       const { sectionIndex, sectionName } = payload;
-      const newConfig = { ...state.config };
+      const newConfig = { ...this.config };
       if (newConfig.sections[sectionIndex].name === sectionName) {
         newConfig.sections.splice(sectionIndex, 1);
         InfoHandler('Section removed', InfoKeys.EDITOR);
       }
-      state.config = newConfig;
+      this.config = newConfig;
     },
-    [INSERT_ITEM](state, payload) {
+    insertItem(payload) {
       const { newItem, targetSection } = payload;
-      const config = { ...state.config };
+      const config = { ...this.config };
       config.sections.forEach((section) => {
         if (section.name === targetSection) {
           if (!section.items) section.items = [];
@@ -240,11 +227,11 @@ const store = new Vuex.Store({
         }
       });
       config.sections = applyItemId(config.sections);
-      state.config = config;
+      this.config = config;
     },
-    [COPY_ITEM](state, payload) {
+    copyItem(payload) {
       const { item, toSection, appendTo } = payload;
-      const config = { ...state.config };
+      const config = { ...this.config };
       const newItem = { ...item };
       config.sections.forEach((section) => {
         if (section.name === toSection) {
@@ -258,11 +245,11 @@ const store = new Vuex.Store({
         }
       });
       config.sections = applyItemId(config.sections);
-      state.config = config;
+      this.config = config;
     },
-    [REMOVE_ITEM](state, payload) {
+    removeItem(payload) {
       const { itemId, sectionName } = payload;
-      const config = { ...state.config };
+      const config = { ...this.config };
       config.sections.forEach((section) => {
         if (section.name === sectionName && section.items) {
           section.items.forEach((item, index) => {
@@ -274,77 +261,54 @@ const store = new Vuex.Store({
         }
       });
       config.sections = applyItemId(config.sections);
-      state.config = config;
+      this.config = config;
     },
-    [SET_THEME](state, themOps) {
+    setTheme(themOps) {
       const { theme, pageId } = themOps;
-      const newConfig = { ...state.config };
+      const newConfig = { ...this.config };
       newConfig.appConfig.theme = theme;
-      state.config = newConfig;
+      this.config = newConfig;
       const themeStoreKey = pageId ? `${localStorageKeys.THEME}-${pageId}` : localStorageKeys.THEME;
       localStorage.setItem(themeStoreKey, theme);
       InfoHandler('Theme updated', InfoKeys.VISUAL);
     },
-    [SET_CUSTOM_COLORS](state, customColors) {
-      const newConfig = { ...state.config };
+    setCustomColors(customColors) {
+      const newConfig = { ...this.config };
       newConfig.appConfig.customColors = customColors;
-      state.config = newConfig;
+      this.config = newConfig;
       InfoHandler('Color palette updated', InfoKeys.VISUAL);
     },
-    [SET_ITEM_LAYOUT](state, layout) {
-      state.config.appConfig.layout = layout;
+    setItemLayout(layout) {
+      this.config.appConfig.layout = layout;
       InfoHandler('Layout updated', InfoKeys.VISUAL);
     },
-    [SET_ITEM_SIZE](state, iconSize) {
-      state.config.appConfig.iconSize = iconSize;
+    setItemSize(iconSize) {
+      this.config.appConfig.iconSize = iconSize;
       InfoHandler('Item size updated', InfoKeys.VISUAL);
     },
-    [UPDATE_CUSTOM_CSS](state, customCss) {
-      state.config.appConfig.customCss = customCss;
+    updateCustomCss(customCss) {
+      this.config.appConfig.customCss = customCss;
       InfoHandler('Custom colors updated', InfoKeys.VISUAL);
     },
-    [CONF_MENU_INDEX](state, index) {
-      state.navigateConfToTab = index;
+    setConfMenuIndex(index) {
+      this.navigateConfToTab = index;
     },
-    [SET_CURRENT_SUB_PAGE](state, subPageObject) {
+    setCurrentSubPage(subPageObject) {
       if (!subPageObject) {
         // Set theme back to primary when navigating to index page
         const defaulTheme = localStorage.getItem(localStorageKeys.PRIMARY_THEME);
-        if (defaulTheme) state.config.appConfig.theme = defaulTheme;
+        if (defaulTheme) this.config.appConfig.theme = defaulTheme;
       }
-      state.currentConfigInfo = subPageObject;
+      this.currentConfigInfo = subPageObject;
     },
-    [USE_MAIN_CONFIG](state) {
-      if (state.remoteConfig) {
-        state.config = state.remoteConfig;
+    useMainConfig() {
+      if (this.remoteConfig) {
+        this.config = this.remoteConfig;
       } else {
-        this.dispatch(Keys.INITIALIZE_CONFIG);
+        this.initializeConfig();
       }
     },
   },
-  actions: {
-    /* Called when app first loaded. Reads config and sets state */
-    async [INITIALIZE_CONFIG]({ commit }) {
-      // Get the config file from the server and store it for use by the accumulator
-      commit(SET_REMOTE_CONFIG, yaml.load((await axios.get('/conf.yml')).data));
-      const deepCopy = (json) => JSON.parse(JSON.stringify(json));
-      const config = deepCopy(new ConfigAccumulator().config());
-      commit(SET_CONFIG, config);
-    },
-    /* Fetch config for a sub-page (sections and pageInfo only) */
-    async [INITIALIZE_MULTI_PAGE_CONFIG]({ commit, state }, configPath) {
-      axios.get(configPath).then((response) => {
-        const subConfig = yaml.load(response.data);
-        const pageTheme = subConfig.appConfig?.theme;
-        subConfig.appConfig = state.config.appConfig; // Always use parent appConfig
-        if (pageTheme) subConfig.appConfig.theme = pageTheme; // Apply page theme override
-        commit(SET_CONFIG, subConfig);
-      }).catch((err) => {
-        ErrorHandler(`Unable to load config from '${configPath}'`, err);
-      });
-    },
-  },
-  modules: {},
 });
 
-export default store;
+export default useAppStore;

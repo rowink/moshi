@@ -42,10 +42,10 @@
 <script>
 import FormSchema from '@formschema/native';
 import DashySchema from '@/utils/ConfigSchema';
-import StoreKeys from '@/utils/StoreMutations';
 import { modalNames } from '@/utils/defaults';
 import AccessError from '@/components/Configuration/AccessError';
 import SaveCancelButtons from '@/components/InteractiveEditor/SaveCancelButtons';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'EditAppConfig',
@@ -66,28 +66,29 @@ export default {
     this.formData = this.appConfig;
   },
   computed: {
+    appStore() { return useAppStore(); },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     allowViewConfig() {
-      return this.$store.getters.permissions.allowViewConfig;
+      return this.appStore.permissions.allowViewConfig;
     },
   },
   methods: {
     /* When form submitteed, update VueX store with new appConfig, and close modal */
     saveToState() {
       const processedFormData = this.removeUndefinedValues(this.formData);
-      this.$store.commit(StoreKeys.SET_APP_CONFIG, processedFormData);
+      this.appStore.setAppConfig(processedFormData);
       this.$modal.hide(this.modalName);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
-      this.$store.commit(StoreKeys.SET_EDIT_MODE, true);
+      this.appStore.setModalOpen(false);
+      this.appStore.setEditMode(true);
     },
     cancelEditing() {
       this.$modal.hide(this.modalName);
     },
     /* Called when modal manually closed, updates state to allow searching again */
     modalClosed() {
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
     },
     /* Remove any attribute which has an undefined value before saving */
     removeUndefinedValues(rawAppConfig) {

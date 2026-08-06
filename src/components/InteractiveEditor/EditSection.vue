@@ -25,11 +25,11 @@
 
 <script>
 import FormSchema from '@formschema/native';
-import StoreKeys from '@/utils/StoreMutations';
 import DashySchema from '@/utils/ConfigSchema';
 import { modalNames } from '@/utils/defaults';
 import SaveCancelButtons from '@/components/InteractiveEditor/SaveCancelButtons';
 import AccessError from '@/components/Configuration/AccessError';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'EditSection',
@@ -50,6 +50,7 @@ export default {
     };
   },
   computed: {
+    appStore() { return useAppStore(); },
     /* Make a custom schema object, using fields from ConfigSchema */
     customSchema() {
       const sectionSchema = this.schema;
@@ -75,33 +76,33 @@ export default {
       };
     },
     allowViewConfig() {
-      return this.$store.getters.permissions.allowViewConfig;
+      return this.appStore.permissions.allowViewConfig;
     },
   },
   mounted() {
-    this.sectionData = this.$store.getters.getSectionByIndex(this.sectionIndex);
+    this.sectionData = this.appStore.getSectionByIndex(this.sectionIndex);
     this.$modal.show(modalNames.EDIT_SECTION);
   },
   methods: {
     /* From the current index, return section data */
     getSectionFromState(index) {
       if (this.isAddNew) return {};
-      return this.$store.getters.getSectionByIndex(index);
+      return this.appStore.getSectionByIndex(index);
     },
     /* Clean up work, triggered when modal closed */
     modalClosed() {
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
       this.$emit('closeEditSection');
     },
     /* Either update existing section, or insert new one, then close modal */
     saveSection() {
       const { sectionIndex, sectionData } = this;
       if (this.isAddNew) {
-        this.$store.commit(StoreKeys.INSERT_SECTION, sectionData);
+        this.appStore.insertSection(sectionData);
       } else {
-        this.$store.commit(StoreKeys.UPDATE_SECTION, { sectionIndex, sectionData });
+        this.appStore.updateSection({ sectionIndex, sectionData });
       }
-      this.$store.commit(StoreKeys.SET_EDIT_MODE, true);
+      this.appStore.setEditMode(true);
       this.$emit('closeEditSection');
     },
   },

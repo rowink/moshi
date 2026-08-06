@@ -38,6 +38,7 @@
 import Item from '@/components/LinkItems/Item.vue';
 import SubItemGroup from '@/components/LinkItems/SubItemGroup.vue';
 import IframeModal from '@/components/LinkItems/IframeModal.vue';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'ItemGroup',
@@ -54,8 +55,9 @@ export default {
     showAll: Boolean,
   },
   computed: {
+    appStore() { return useAppStore(); },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
   },
   components: {

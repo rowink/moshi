@@ -6,6 +6,7 @@
 <script>
 import JsYaml from 'js-yaml';
 import AccessError from '@/components/Configuration/AccessError';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'DownloadConfig',
@@ -13,14 +14,15 @@ export default {
     AccessError,
   },
   computed: {
+    appStore() { return useAppStore(); },
     config() {
-      return this.$store.state.config;
+      return this.appStore.config;
     },
     yamlConfig() {
       return JsYaml.dump(this.config);
     },
     allowViewConfig() {
-      return this.$store.getters.permissions.allowViewConfig;
+      return this.appStore.permissions.allowViewConfig;
     },
   },
 };

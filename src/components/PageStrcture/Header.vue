@@ -14,6 +14,7 @@
 import PageTitle from '@/components/PageStrcture/PageTitle.vue';
 import Nav from '@/components/PageStrcture/Nav.vue';
 import { shouldBeVisible } from '@/utils/SectionHelpers';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'Header',
@@ -25,11 +26,12 @@ export default {
     pageInfo: Object,
   },
   computed: {
+    appStore() { return useAppStore(); },
     componentVisible() {
       return shouldBeVisible(this.$route.name);
     },
     visibleComponents() {
-      return this.$store.getters.visibleComponents;
+      return this.appStore.visibleComponents;
     },
     titleVisible() {
       return this.visibleComponents.pageTitle;

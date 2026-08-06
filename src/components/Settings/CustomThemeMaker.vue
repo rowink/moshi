@@ -61,13 +61,16 @@
 <script>
 import VSwatches from 'vue-swatches';
 import 'vue-swatches/dist/vue-swatches.css';
-import StoreKeys from '@/utils/StoreMutations';
 import { localStorageKeys, mainCssVars, swatches } from '@/utils/defaults';
 import Button from '@/components/FormElements/Button';
 import SaveIcon from '@/assets/interface-icons/save-config.svg';
 import CancelIcon from '@/assets/interface-icons/config-cancel.svg';
+import { useAppStore } from '@/store';
 
 export default {
+  computed: {
+    appStore() { return useAppStore(); },
+  },
   name: 'ThemeMaker',
   components: {
     VSwatches,
@@ -99,7 +102,7 @@ export default {
       const priorSettings = JSON.parse(localStorage[localStorageKeys.CUSTOM_COLORS] || '{}');
       priorSettings[this.themeToEdit] = this.customColors;
       localStorage.setItem(localStorageKeys.CUSTOM_COLORS, JSON.stringify(priorSettings));
-      this.$store.commit(StoreKeys.SET_CUSTOM_COLORS, priorSettings);
+      this.appStore.setCustomColors(priorSettings);
       this.$toasted.show(this.$t('theme-maker.saved-toast', { theme: this.themeToEdit }));
       this.$emit('closeThemeConfigurator');
     },

@@ -93,7 +93,6 @@
 <script>
 import ConfigSavingMixin from '@/mixins/ConfigSaving';
 import Button from '@/components/FormElements/Button';
-import StoreKeys from '@/utils/StoreMutations';
 import EditPageInfo from '@/components/InteractiveEditor/EditPageInfo';
 import EditAppConfig from '@/components/InteractiveEditor/EditAppConfig';
 import EditMultiPages from '@/components/InteractiveEditor/EditMultiPages';
@@ -107,6 +106,7 @@ import CancelIcon from '@/assets/interface-icons/interactive-editor-cancel-chang
 import AppConfigIcon from '@/assets/interface-icons/interactive-editor-app-config.svg';
 import PageInfoIcon from '@/assets/interface-icons/interactive-editor-page-info.svg';
 import MultiPagesIcon from '@/assets/interface-icons/config-pages.svg';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'EditModeSaveMenu',
@@ -126,12 +126,13 @@ export default {
     AccessError,
   },
   computed: {
+    appStore() { return useAppStore(); },
     config() {
-      return this.$store.state.config;
+      return this.appStore.config;
     },
     permissions() {
       // Returns: { allowWriteToDisk, allowSaveLocally, allowViewConfig }
-      return this.$store.getters.permissions;
+      return this.appStore.permissions;
     },
     showEditMsg() {
       return this.permissions.allowWriteToDisk || this.permissions.allowSaveLocally;
@@ -139,24 +140,24 @@ export default {
   },
   methods: {
     reset() {
-      this.$store.dispatch(StoreKeys.INITIALIZE_CONFIG);
-      this.$store.commit(StoreKeys.SET_EDIT_MODE, false);
+      this.appStore.initializeConfig();
+      this.appStore.setEditMode(false);
     },
     openExportConfigMenu() {
       this.$modal.show(modalNames.EXPORT_CONFIG_MENU);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
     },
     openEditPageInfo() {
       this.$modal.show(modalNames.EDIT_PAGE_INFO);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
     },
     openEditAppConfig() {
       this.$modal.show(modalNames.EDIT_APP_CONFIG);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
     },
     openEditMultiPages() {
       this.$modal.show(modalNames.EDIT_MULTI_PAGES);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
     },
     tooltip(content) {
       return { content, trigger: 'hover focus', delay: 250 };

@@ -60,6 +60,7 @@ import NewTabOpenIcon from '@/assets/interface-icons/open-new-tab.svg';
 import IframeOpenIcon from '@/assets/interface-icons/open-iframe.svg';
 import WorkspaceOpenIcon from '@/assets/interface-icons/open-workspace.svg';
 import ClipboardOpenIcon from '@/assets/interface-icons/open-clipboard.svg';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'ContextMenu',
@@ -80,15 +81,16 @@ export default {
     disableEdit: Boolean, // Disable editing for certain items
   },
   computed: {
+    appStore() { return useAppStore(); },
     isMenuDisabled() {
-      return !!this.$store.getters.appConfig.disableContextMenu;
+      return !!this.appStore.appConfig.disableContextMenu;
     },
     isEditMode() {
-      return this.$store.state.editMode;
+      return this.appStore.editMode;
     },
     isEditAllowed() {
       if (this.disableEdit) return false;
-      return this.$store.getters.permissions.allowViewConfig;
+      return this.appStore.permissions.allowViewConfig;
     },
   },
   methods: {

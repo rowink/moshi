@@ -9,6 +9,7 @@
 
 <script>
 import SearchBar from '@/components/Settings/SearchBar';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'MinimalSearch',
@@ -24,8 +25,9 @@ export default {
     };
   },
   computed: {
+    appStore() { return useAppStore(); },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     webSearchEnabled() {
       if (this.appConfig && this.appConfig.webSearch) {

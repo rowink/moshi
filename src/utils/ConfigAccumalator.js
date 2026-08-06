@@ -15,15 +15,27 @@ import {
 } from '@/utils/defaults';
 import ErrorHandler from '@/utils/ErrorHandler';
 import { applyItemId } from '@/utils/SectionHelpers';
-import $store from '@/store';
+import { pinia } from '@/pinia';
+import { useAppStore } from '@/store';
 
 import buildConfRaw from '../../public/conf.yml?raw';
 
 const buildConf = yaml.load(buildConfRaw);
 
+/* Read the remote config from the Pinia store.
+ * Falls back to an empty object when the store is not yet initialized
+ * (e.g. when this module is instantiated during app startup). */
+const getRemoteConfig = () => {
+  try {
+    return useAppStore(pinia).remoteConfig;
+  } catch (e) {
+    return {};
+  }
+};
+
 export default class ConfigAccumulator {
   constructor() {
-    this.conf = $store.state.remoteConfig;
+    this.conf = getRemoteConfig();
   }
 
   pages() {

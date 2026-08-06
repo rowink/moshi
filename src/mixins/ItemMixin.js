@@ -9,6 +9,7 @@ import {
   localStorageKeys,
   iconSize as defaultSize,
 } from '@/utils/defaults';
+import { useAppStore } from '@/store';
 
 export default {
   directives: {
@@ -34,16 +35,17 @@ export default {
     };
   },
   computed: {
+    appStore() { return useAppStore(); },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     isEditMode() {
-      return this.$store.state.editMode;
+      return this.appStore.editMode;
     },
     size() {
       const validSizes = ['small', 'medium', 'large'];
       if (this.itemSize && validSizes.includes(this.itemSize)) return this.itemSize;
-      return this.$store.getters.iconSize || defaultSize;
+      return this.appStore.iconSize || defaultSize;
     },
     /* Determines if user has enabled online status checks */
     enableStatusCheck() {

@@ -14,8 +14,8 @@ import Footer from '@/components/PageStrcture/Footer.vue';
 import EditModeTopBanner from '@/components/InteractiveEditor/EditModeTopBanner.vue';
 import LoadingScreen from '@/components/PageStrcture/LoadingScreen.vue';
 import { welcomeMsg } from '@/utils/CoolConsole';
+import { useAppStore } from '@/store';
 import ErrorHandler from '@/utils/ErrorHandler';
-import Keys from '@/utils/StoreMutations';
 import {
   localStorageKeys,
   splashScreenTime,
@@ -46,6 +46,7 @@ export default {
     },
   },
   computed: {
+    appStore() { return useAppStore(); },
     /* If the user has specified custom text for footer - get it */
     footerText() {
       return this.pageInfo && this.pageInfo.footerText ? this.pageInfo.footerText : '';
@@ -55,25 +56,25 @@ export default {
       return (this.appConfig.showSplashScreen);
     },
     config() {
-      return this.$store.state.config;
+      return this.appStore.config;
     },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     pageInfo() {
-      return this.$store.getters.pageInfo;
+      return this.appStore.pageInfo;
     },
     sections() {
-      return this.$store.getters.pageInfo;
+      return this.appStore.pageInfo;
     },
     visibleComponents() {
-      return this.$store.getters.visibleComponents;
+      return this.appStore.visibleComponents;
     },
     isEditMode() {
-      return this.$store.state.editMode;
+      return this.appStore.editMode;
     },
     subPageClassName() {
-      const currentSubPage = this.$store.state.currentConfigInfo;
+      const currentSubPage = this.appStore.currentConfigInfo;
       return (currentSubPage && currentSubPage.pageId) ? currentSubPage.pageId : '';
     },
     topLevelStyleModifications() {
@@ -135,7 +136,7 @@ export default {
     /* Fetch or detect users language, then apply it */
     applyLanguage() {
       const language = this.getLanguage();
-      this.$store.commit(Keys.SET_LANGUAGE, language);
+      this.appStore.setLanguage(language);
       this.$i18n.locale = language;
       document.getElementsByTagName('html')[0].setAttribute('lang', language);
     },
@@ -152,7 +153,7 @@ export default {
   },
   /* Basic initialization tasks on app load */
   async mounted() {
-    await this.$store.dispatch(Keys.INITIALIZE_CONFIG); // Initialize config before moving on
+    await this.appStore.initializeConfig(); // Initialize config before moving on
     this.applyLanguage(); // Apply users local language
     this.hideSplash(); // Hide the splash screen, if visible
     if (this.appConfig.customCss) { // Inject users custom CSS, if present

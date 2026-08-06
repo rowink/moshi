@@ -65,10 +65,10 @@ import Section from '@/components/LinkItems/Section.vue';
 import EditModeSaveMenu from '@/components/InteractiveEditor/EditModeSaveMenu.vue';
 import ExportConfigMenu from '@/components/InteractiveEditor/ExportConfigMenu.vue';
 import AddNewSection from '@/components/InteractiveEditor/AddNewSectionLauncher.vue';
-import StoreKeys from '@/utils/StoreMutations';
 import { localStorageKeys, modalNames } from '@/utils/defaults';
 import ErrorHandler from '@/utils/ErrorHandler';
 import BackIcon from '@/assets/interface-icons/back-arrow.svg';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'home',
@@ -87,8 +87,9 @@ export default {
     addNewSectionOpen: false,
   }),
   computed: {
+    appStore() { return useAppStore(); },
     singleSectionView() {
-      return this.findSingleSection(this.$store.getters.sections, this.$route.params.section);
+      return this.findSingleSection(this.appStore.sections, this.$route.params.section);
     },
     /* Get class for num columns, if specified by user */
     colCount() {
@@ -105,11 +106,11 @@ export default {
     },
     /* Updates layout (when button clicked), and saves in local storage */
     layoutOrientation() {
-      return this.$store.getters.layout;
+      return this.appStore.layout;
     },
     /* Updates icon size (when button clicked), and saves in local storage */
     iconSize() {
-      return this.$store.getters.iconSize;
+      return this.appStore.iconSize;
     },
   },
   watch: {
@@ -134,12 +135,12 @@ export default {
     openAddNewSectionMenu() {
       this.addNewSectionOpen = true;
       this.$modal.show(modalNames.EDIT_SECTION);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, true);
+      this.appStore.setModalOpen(true);
     },
     closeEditSection() {
       this.addNewSectionOpen = false;
       this.$modal.hide(modalNames.EDIT_SECTION);
-      this.$store.commit(StoreKeys.SET_MODAL_OPEN, false);
+      this.appStore.setModalOpen(false);
     },
     /* If on sub-route, and section exists, then return only that section */
     findSingleSection: (allSections, sectionTitle) => {

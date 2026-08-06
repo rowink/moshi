@@ -17,6 +17,7 @@ import WebContent from '@/components/Workspace/WebContent';
 import MultiTaskingWebComtent from '@/components/Workspace/MultiTaskingWebComtent';
 import Defaults from '@/utils/defaults';
 import { GetTheme, ApplyLocalTheme, ApplyCustomVariables } from '@/utils/ThemeHelper';
+import { useAppStore } from '@/store';
 
 export default {
   name: 'Workspace',
@@ -28,11 +29,12 @@ export default {
     ApplyCustomVariables,
   }),
   computed: {
+    appStore() { return useAppStore(); },
     sections() {
-      return this.$store.getters.sections;
+      return this.appStore.sections;
     },
     appConfig() {
-      return this.$store.getters.appConfig;
+      return this.appStore.appConfig;
     },
     isMultiTaskingEnabled() {
       return this.appConfig.enableMultiTasking || false;

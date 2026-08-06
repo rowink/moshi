@@ -25,6 +25,7 @@ import router from '@/router';
 import ArrowKeyNavigation from '@/utils/ArrowKeyNavigation';
 import ErrorHandler from '@/utils/ErrorHandler';
 import { getCustomKeyShortcuts } from '@/utils/ConfigHelpers';
+import { useAppStore } from '@/store';
 import { getSearchEngineFromBang, findUrlForSearchEngine, stripBangs } from '@/utils/Search';
 import {
   searchEngineUrls,
@@ -46,11 +47,12 @@ export default {
     };
   },
   computed: {
+    appStore() { return useAppStore(); },
     active() {
-      return !this.$store.state.modalOpen;
+      return !this.appStore.modalOpen;
     },
     searchPrefs() {
-      return this.$store.getters.webSearch || {};
+      return this.appStore.webSearch || {};
     },
   },
   mounted() {

@@ -32,15 +32,15 @@ importers:
       express:
         specifier: ^4.17.2
         version: 4.22.2
-      frappe-charts:
-        specifier: ^1.6.2
-        version: 1.6.2
       js-yaml:
         specifier: ^4.1.0
         version: 4.3.1
       keycloak-js:
         specifier: ^20.0.3
         version: 20.0.5
+      pinia:
+        specifier: ^2.3.1
+        version: 2.3.1(vue@2.7.16)
       register-service-worker:
         specifier: ^1.7.2
         version: 1.7.2
@@ -89,9 +89,6 @@ importers:
       vue-toasted:
         specifier: ^1.1.28
         version: 1.1.28
-      vuex:
-        specifier: ^3.6.2
-        version: 3.6.2(vue@2.7.16)
     devDependencies:
       '@architect/sandbox':
         specifier: ^4.5.2
@@ -1243,6 +1240,9 @@ packages:
   '@vue/compiler-sfc@2.7.16':
     resolution: {integrity: sha512-KWhJ9k5nXuNtygPU7+t1rX6baZeqOYLEforUPjgNDBnLicfHCoi48H87Q8XyLZOrNNsmhuwKqtpDQWjEFe6Ekg==}
 
+  '@vue/devtools-api@6.6.4':
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
+
   abstract-leveldown@6.2.3:
     resolution: {integrity: sha512-BsLm5vFMRUrrLeCcRc+G0t2qOaTzpoJQLOubq2XM72eNpjF5UdU5o/5NvlNhx95XHcAvcl8OMXr4mlg/fRgUXQ==}
     engines: {node: '>=6'}
@@ -2118,9 +2118,6 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
 
-  frappe-charts@1.6.2:
-    resolution: {integrity: sha512-9TC3/+YVUi84yYoEbxFiSqu+1FQ5If/ydUNj6i8FRpwynd08t6a7RkS+IRJozAk6NfdL8/LVTTE1DUOjjKZZxg==}
-
   fresh@0.5.2:
     resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
     engines: {node: '>= 0.6'}
@@ -2969,6 +2966,15 @@ packages:
     resolution: {integrity: sha512-C3FsVNH1udSEX48gGX1xfvwTWfsYWj5U+8/uK15BGzIGrKoUpghX8hWZwa/OFnakBiiVNmBvemTJR5mcy7iPcg==}
     engines: {node: '>=4'}
 
+  pinia@2.3.1:
+    resolution: {integrity: sha512-khUlZSwt9xXCaTbbxFYBKDc/bWAGWJjOgvxETwkTN7KRm66EeT1ZdZj6i2ceh9sP2Pzqsbc704r2yngBrxBVug==}
+    peerDependencies:
+      typescript: '>=4.4.4'
+      vue: ^2.7.0 || ^3.5.11
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   popper.js@1.16.1:
     resolution: {integrity: sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==}
     deprecated: You can find the new Popper v2 at @popperjs/core, this package is dedicated to the legacy v1
@@ -3701,6 +3707,17 @@ packages:
       yaml:
         optional: true
 
+  vue-demi@0.14.10:
+    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   vue-eslint-parser@7.11.0:
     resolution: {integrity: sha512-qh3VhDLeh773wjgNTl7ss0VejY9bMMa0GoDG2fQVyDzRFdiU3L7fw74tWZDHNQXdZqxO3EveQroa9ct39D2nqg==}
     engines: {node: '>=8.10'}
@@ -3755,11 +3772,6 @@ packages:
   vue@2.7.16:
     resolution: {integrity: sha512-4gCtFXaAA3zYZdTp5s4Hl2sozuySsgz4jy1EnpBHNfpMa9dK1ZCG7viqBPCwXtmgc8nHqUsAu3G4gtmXkkY3Sw==}
     deprecated: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
-
-  vuex@3.6.2:
-    resolution: {integrity: sha512-ETW44IqCgBpVomy520DT5jf8n0zoCac+sxWnn+hMe/CzaSejb/eVw2YToiXYX+Ex/AuHHia28vWTq4goAexFbw==}
-    peerDependencies:
-      vue: ^2.0.0
 
   which-boxed-primitive@1.1.1:
     resolution: {integrity: sha512-TbX3mj8n0odCBFVlY8AxkqcHASw3L60jIuF8jFP78az3C2YhmGvqbHBpAjTRH2/xqYunrJ9g1jSyjCjpoWzIAA==}
@@ -5064,6 +5076,8 @@ snapshots:
     optionalDependencies:
       prettier: 2.8.8
 
+  '@vue/devtools-api@6.6.4': {}
+
   abstract-leveldown@6.2.3:
     dependencies:
       buffer: 5.7.1
@@ -6210,8 +6224,6 @@ snapshots:
 
   forwarded@0.2.0: {}
 
-  frappe-charts@1.6.2: {}
-
   fresh@0.5.2: {}
 
   fs-extra@9.1.0:
@@ -7041,6 +7053,14 @@ snapshots:
   pidtree@0.3.1: {}
 
   pify@3.0.0: {}
+
+  pinia@2.3.1(vue@2.7.16):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 2.7.16
+      vue-demi: 0.14.10(vue@2.7.16)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
 
   popper.js@1.16.1: {}
 
@@ -7874,6 +7894,10 @@ snapshots:
       sass: 1.102.0
       terser: 5.49.2
 
+  vue-demi@0.14.10(vue@2.7.16):
+    dependencies:
+      vue: 2.7.16
+
   vue-eslint-parser@7.11.0(eslint@7.32.0):
     dependencies:
       debug: 4.4.3
@@ -7931,10 +7955,6 @@ snapshots:
     dependencies:
       '@vue/compiler-sfc': 2.7.16
       csstype: 3.2.3
-
-  vuex@3.6.2(vue@2.7.16):
-    dependencies:
-      vue: 2.7.16
 
   which-boxed-primitive@1.1.1:
     dependencies:
