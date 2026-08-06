@@ -2,17 +2,9 @@
   <div class="json-editor-outer" v-if="allowViewConfig">
     <!-- Main JSON editor -->
     <v-jsoneditor v-model="jsonData" :options="options" />
-    <!-- Options raido, and save button -->
-    <Radio class="save-options"
-      v-model="saveMode"
-      :label="$t('config-editor.save-location-label')"
-      :options="saveOptions"
-      :initialOption="initialSaveMode"
-      :disabled="!allowWriteToDisk || !allowSaveLocally"
-      />
     <!-- Save Buttons -->
     <div :class="`btn-container ${!isValid ? 'err' : ''}`">
-      <Button :click="save" :disallow="!allowWriteToDisk && !allowSaveLocally">
+      <Button :click="save" :disallow="!allowSaveLocally">
         {{ $t('config-editor.save-button') }}
       </Button>
       <Button :click="startPreview">
@@ -36,9 +28,6 @@
       {{saveSuccess
         ? $t('config-editor.status-success-msg') : $t('config-editor.status-fail-msg') }}
     </p>
-    <p v-if="!allowWriteToDisk" class="no-permission-note">
-      {{ $t('config-editor.not-admin-note') }}
-    </p>
     <p class="response-output">{{ responseText }}</p>
     <p v-if="saveSuccess" class="response-output">
       {{ $t('config-editor.success-note-l1') }}
@@ -57,7 +46,6 @@ import { InfoHandler, InfoKeys } from '@/utils/ErrorHandler';
 import configSchema from '@/utils/ConfigSchema.json';
 import { modalNames } from '@/utils/defaults';
 import Button from '@/components/FormElements/Button';
-import Radio from '@/components/FormElements/Radio';
 import AccessError from '@/components/Configuration/AccessError';
 import { useAppStore } from '@/store';
 
@@ -67,14 +55,12 @@ export default {
   components: {
     VJsoneditor,
     Button,
-    Radio,
     AccessError,
   },
   data() {
     return {
       jsonData: {},
       errorMessages: [],
-      saveMode: '',
       options: {
         schema: configSchema,
         mode: 'tree',
@@ -82,10 +68,6 @@ export default {
         name: 'config',
         onValidationError: this.validationErrors,
       },
-      saveOptions: [
-        { label: this.$t('config-editor.location-disk-label'), value: 'file' },
-        { label: this.$t('config-editor.location-local-label'), value: 'local' },
-      ],
     };
   },
   computed: {
@@ -100,35 +82,20 @@ export default {
       // Returns: { allowWriteToDisk, allowSaveLocally, allowViewConfig }
       return this.appStore.permissions;
     },
-    allowWriteToDisk() {
-      return this.permissions.allowWriteToDisk;
-    },
     allowSaveLocally() {
       return this.permissions.allowSaveLocally;
     },
     allowViewConfig() {
       return this.permissions.allowViewConfig;
     },
-    initialSaveMode() {
-      if (this.allowWriteToDisk) return 'file';
-      if (this.allowSaveLocally) return 'local';
-      return '';
-    },
   },
   mounted() {
     this.jsonData = this.config;
-    if (!this.allowWriteToDisk) this.saveMode = 'local';
   },
   methods: {
-    /* Calls appropriate save method, based on save-type radio selected */
+    /* Calls the local save method */
     save() {
-      if (this.saveMode === 'local' || !this.allowWriteToDisk) {
-        this.saveLocally();
-      } else if (this.saveMode === 'file') {
-        this.writeToDisk();
-      } else {
-        this.$toasted.show(this.$t('config-editor.error-msg-save-mode'));
-      }
+      this.saveLocally();
     },
     /* Applies changes to the local state, begins edit mode and closes modal */
     startPreview() {
@@ -140,9 +107,6 @@ export default {
       this.appStore.setModalOpen(false);
       this.appStore.setEditMode(true);
       this.$modal.hide(modalNames.CONF_EDITOR);
-    },
-    writeToDisk() {
-      this.writeConfigToDisk(this.config);
     },
     saveLocally() {
       const msg = this.$t('interactive-editor.menu.save-locally-warning');
@@ -238,10 +202,6 @@ p.response-output {
   }
 }
 
-p.no-permission-note {
-  color: var(--warning);
-}
-
 .btn-container {
   display: flex;
   align-items: center;
@@ -267,33 +227,6 @@ p.no-permission-note {
       background: var(--config-settings-background);
       color: var(--config-settings-color);
       border-color: var(--danger);
-    }
-  }
-}
-
-div.save-options.radio-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-  border-top: 2px solid var(--config-settings-background);
-  background: var(--code-editor-background);
-  label.radio-label {
-    font-size: 1rem;
-    flex-grow: revert;
-    flex-basis: revert;
-    color: var(--code-editor-color);
-    padding-left: 1rem;
-  }
-  .radio-wrapper {
-    margin: 0;
-    font-size: 1rem;
-    justify-content: space-around;
-    background: var(--code-editor-background);
-    color: var(--code-editor-color);
-    .radio-option:hover:not(.wrap-disabled) {
-      border: 1px solid var(--code-editor-color);
     }
   }
 }

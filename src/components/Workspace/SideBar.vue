@@ -36,7 +36,6 @@ import SideBarItem from '@/components/Workspace/SideBarItem.vue';
 import SideBarSection from '@/components/Workspace/SideBarSection.vue';
 import IconHome from '@/assets/interface-icons/application-home.svg';
 import IconMinimalView from '@/assets/interface-icons/application-minimal.svg';
-import { checkItemVisibility } from '@/utils/CheckItemVisibility';
 
 export default {
   name: 'SideBar',
@@ -82,7 +81,7 @@ export default {
       if (!allTiles) {
         return [];
       }
-      return allTiles.filter((tile) => checkItemVisibility(tile));
+      return allTiles;
     },
   },
   mounted() {

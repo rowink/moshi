@@ -30,11 +30,6 @@
             {{backupId ? $t('config.edit-cloud-sync-button') : $t('config.cloud-sync-button') }}
             <CloudIcon class="button-icon"/>
           </Button>
-          <!-- Rebuild app button -->
-          <Button class="config-button" :disallow="!enableConfig" :click="openRebuildAppModal">
-            {{ $t('config.rebuild-app-button') }}
-            <RebuildIcon class="button-icon"/>
-          </Button>
           <!-- Reset local changes button -->
           <Button class="config-button" :click="resetLocalSettings">
             {{ $t('config.reset-settings-button') }}
@@ -60,8 +55,6 @@
           <span>{{ $t('config.backup-note') }}</span>
         </div>
       </div>
-      <!-- Rebuild App Modal -->
-      <RebuildApp />
     </TabItem>
     <TabItem :name="$t('config.edit-config-tab')" v-if="enableConfig">
       <JsonEditor />
@@ -83,7 +76,6 @@ import ErrorHandler from '@/utils/ErrorHandler';
 import JsonEditor from '@/components/Configuration/JsonEditor';
 import CustomCssEditor from '@/components/Configuration/CustomCss';
 import CloudBackupRestore from '@/components/Configuration/CloudBackupRestore';
-import RebuildApp from '@/components/Configuration/RebuildApp';
 import AppVersion from '@/components/Configuration/AppVersion';
 import Button from '@/components/FormElements/Button';
 
@@ -92,7 +84,6 @@ import DeleteIcon from '@/assets/interface-icons/config-delete-local.svg';
 import EditIcon from '@/assets/interface-icons/config-edit-json.svg';
 import CustomCssIcon from '@/assets/interface-icons/config-custom-css.svg';
 import CloudIcon from '@/assets/interface-icons/cloud-backup-restore.svg';
-import RebuildIcon from '@/assets/interface-icons/application-rebuild.svg';
 import LanguageIcon from '@/assets/interface-icons/config-language.svg';
 import IconAbout from '@/assets/interface-icons/application-about.svg';
 import { useAppStore } from '@/store';
@@ -123,7 +114,6 @@ export default {
     JsonEditor,
     CustomCssEditor,
     CloudBackupRestore,
-    RebuildApp,
     AppVersion,
     DownloadIcon,
     DeleteIcon,
@@ -131,7 +121,6 @@ export default {
     CloudIcon,
     CustomCssIcon,
     LanguageIcon,
-    RebuildIcon,
     IconAbout,
   },
   methods: {
@@ -139,13 +128,6 @@ export default {
     navigateToTab(tabInxex) {
       const itemToSelect = this.$refs.tabView.navItems[tabInxex];
       this.$refs.tabView.activeTabItem(itemToSelect);
-    },
-    openRebuildAppModal() {
-      if (this.enableConfig) {
-        this.$modal.show(modalNames.REBUILD_APP);
-      } else {
-        this.unauthorized();
-      }
     },
     openAboutModal() {
       this.$modal.show(modalNames.ABOUT_APP);

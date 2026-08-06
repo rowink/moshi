@@ -21,7 +21,6 @@ import { messages } from '@/utils/languages';         // Language texts
 import ErrorReporting from '@/utils/ErrorReporting';  // Error reporting initializer (off)
 import clickOutside from '@/directives/ClickOutside'; // Directive for closing popups, modals, etc
 import { toastedOptions, tooltipOptions, language as defaultLanguage } from '@/utils/defaults';
-import { initKeycloakAuth, isKeycloakEnabled } from '@/utils/KeycloakAuth';
 
 // Initialize global Vue components
 Vue.use(VueI18n);
@@ -60,11 +59,4 @@ const mount = () => new Vue({
   pinia, router, render, i18n,
 }).$mount('#app');
 
-// If Keycloak not enabled, then proceed straight to the app
-if (!isKeycloakEnabled()) {
-  mount();
-} else { // Keycloak is enabled, redirect to KC login page
-  initKeycloakAuth()
-    .then(() => mount())
-    .catch(() => window.location.reload());
-}
+mount();

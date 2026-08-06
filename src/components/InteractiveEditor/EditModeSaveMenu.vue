@@ -27,14 +27,6 @@
         <SaveLocallyIcon />
       </Button>
       <Button
-        :click="writeToDisk"
-        :disallow="!permissions.allowWriteToDisk"
-        v-tooltip="tooltip($t('interactive-editor.menu.save-disk-tooltip'))"
-      >
-        {{ $t('interactive-editor.menu.save-disk-btn') }}
-        <SaveToDiskIcon />
-      </Button>
-      <Button
         :click="openExportConfigMenu"
         :disallow="!permissions.allowViewConfig"
         v-tooltip="tooltip($t('interactive-editor.menu.export-config-tooltip'))"
@@ -100,7 +92,6 @@ import { modalNames } from '@/utils/defaults';
 import AccessError from '@/components/Configuration/AccessError';
 
 import SaveLocallyIcon from '@/assets/interface-icons/interactive-editor-save-locally.svg';
-import SaveToDiskIcon from '@/assets/interface-icons/interactive-editor-save-disk.svg';
 import ExportIcon from '@/assets/interface-icons/interactive-editor-export-changes.svg';
 import CancelIcon from '@/assets/interface-icons/interactive-editor-cancel-changes.svg';
 import AppConfigIcon from '@/assets/interface-icons/interactive-editor-app-config.svg';
@@ -117,7 +108,6 @@ export default {
     EditAppConfig,
     EditMultiPages,
     SaveLocallyIcon,
-    SaveToDiskIcon,
     ExportIcon,
     CancelIcon,
     AppConfigIcon,
@@ -171,9 +161,6 @@ export default {
       if (youSure) {
         this.saveConfigLocally(this.config);
       }
-    },
-    writeToDisk() {
-      this.writeConfigToDisk(this.config);
     },
   },
 };
@@ -236,9 +223,9 @@ div.edit-mode-bottom-banner {
     }
     &.save-buttons-container {
       grid-row-start: span 2;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       p.section-sub-title {
-        grid-column-start: span 2;
+        grid-column-start: span 3;
       }
     }
   }

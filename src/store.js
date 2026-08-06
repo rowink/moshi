@@ -5,9 +5,7 @@ import yaml from 'js-yaml';
 import ConfigAccumulator from '@/utils/ConfigAccumalator';
 import { componentVisibility } from '@/utils/ConfigHelpers';
 import { applyItemId } from '@/utils/SectionHelpers';
-import filterUserSections from '@/utils/CheckSectionVisibility';
 import ErrorHandler, { InfoHandler, InfoKeys } from '@/utils/ErrorHandler';
-import { isUserAdmin } from '@/utils/Auth';
 import { localStorageKeys } from './utils/defaults';
 
 export const useAppStore = defineStore('app', {
@@ -29,7 +27,7 @@ export const useAppStore = defineStore('app', {
       return state.config.appConfig || {};
     },
     sections(state) {
-      return filterUserSections(state.config.sections || []);
+      return state.config.sections || [];
     },
     pages(state) {
       return state.remoteConfig.pages || [];
@@ -63,7 +61,7 @@ export const useAppStore = defineStore('app', {
         perms.allowSaveLocally = false;
       }
       // Disable saving changes to disk, only
-      if (appConfig.preventWriteToDisk || !isUserAdmin()) {
+      if (appConfig.preventWriteToDisk) {
         perms.allowWriteToDisk = false;
       }
       // Legacy Option: Will be removed in V 2.1.0
@@ -71,8 +69,7 @@ export const useAppStore = defineStore('app', {
         perms.allowWriteToDisk = false;
       }
       // Disable everything
-      if (appConfig.disableConfiguration
-        || (appConfig.disableConfigurationForNonAdmin && !isUserAdmin())) {
+      if (appConfig.disableConfiguration) {
         perms.allowWriteToDisk = false;
         perms.allowSaveLocally = false;
         perms.allowViewConfig = false;

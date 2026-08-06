@@ -23,12 +23,6 @@ pages:
 appConfig:
   theme: glow
   language: cn
-  auth:
-    enableGuestAccess: true
-    users:
-      - user: exisi
-        hash: 659c6e8d11873dbc6794b5f37e18be44b0eb3ac993a79caeb740926412e4fd5a
-        type: admin
   statusCheck: true
   statusCheckInterval: 0
   defaultOpeningMethod: modal
@@ -36,7 +30,6 @@ appConfig:
   webSearch:
     disableWebSearch: true
   enableFontAwesome: true
-  disableConfigurationForNonAdmin: true
   
 # Main content - An array of sections, each containing an array of items
 sections:

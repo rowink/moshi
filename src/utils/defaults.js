@@ -37,11 +37,7 @@ const defaults = {
   },
   /* Server Endpoints */
   serviceEndpoints: {
-    statusPing: '/status-ping',
     statusCheck: '/status-check',
-    save: '/config-manager/save',
-    rebuild: '/config-manager/rebuild',
-    corsProxy: '/cors-proxy',
   },
   /* List of built-in themes, to be displayed within the theme-switcher dropdown */
   builtInThemes: [
@@ -122,14 +118,8 @@ const defaults = {
     BACKUP_ID: 'backupId',
     BACKUP_HASH: 'backupHash',
     HIDE_SETTINGS: 'hideSettings',
-    USERNAME: 'username',
     MOST_USED: 'mostUsed',
     LAST_USED: 'lastUsed',
-    KEYCLOAK_INFO: 'keycloakInfo',
-  },
-  /* Key names for cookie identifiers */
-  cookieKeys: {
-    AUTH_TOKEN: 'dashyAuthToken',
   },
   /* Key names for session storage identifiers */
   sessionStorageKeys: {
@@ -139,7 +129,6 @@ const defaults = {
   /* Unique IDs of modals within the app */
   modalNames: {
     CONF_EDITOR: 'CONF_EDITOR',
-    REBUILD_APP: 'REBUILD_APP',
     ABOUT_APP: 'ABOUT_APP',
     LANG_SWITCHER: 'LANG_SWITCHER',
     EDIT_ITEM: 'EDIT_ITEM',
@@ -250,14 +239,6 @@ const defaults = {
   },
   /* Use your own self-hosted Sentry instance. Only used if error reporting is turned on */
   sentryDsn: 'https://3138ea85f15a4fa883a5b27a4dc8ee28@o937511.ingest.sentry.io/5887934',
-  /* A JS enum for indicating the user state, when guest mode + authentication is enabled */
-  userStateEnum: {
-    notConfigured: 0,
-    loggedIn: 1,
-    guestAccess: 2,
-    notLoggedIn: 3,
-    keycloakEnabled: 4,
-  },
   /* Progressive Web App settings, used by Vue Config */
   pwa: {
     name: 'Dashy',
@@ -280,9 +261,9 @@ export const {
   pageInfo, appConfig, language, startingView, iconSize, layout,
   theme, fontAwesomeKey, faviconApi, sortOrder, openingMethod, routePaths,
   serviceEndpoints, builtInThemes, swatches, mainCssVars, visibleComponents,
-  hideFurnitureOn, localStorageKeys, cookieKeys, sessionStorageKeys, modalNames,
+  hideFurnitureOn, localStorageKeys, sessionStorageKeys, modalNames,
   topLevelConfKeys, splashScreenTime, metaTagData, toastedOptions, tooltipOptions,
   backupEndpoint, faviconApiEndpoints, iconCdns,
   searchEngineUrls, defaultSearchEngine, defaultSearchOpeningMethod, searchBangs,
-  sentryDsn, userStateEnum, pwa,
+  sentryDsn, pwa,
 } = defaults;

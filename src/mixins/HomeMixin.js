@@ -4,7 +4,6 @@
 
 import Defaults, { localStorageKeys, iconCdns } from '@/utils/defaults';
 import { searchTiles } from '@/utils/Search';
-import { checkItemVisibility } from '@/utils/CheckItemVisibility';
 import { GetTheme, ApplyLocalTheme, ApplyCustomVariables } from '@/utils/ThemeHelper';
 import { useAppStore } from '@/store';
 
@@ -85,8 +84,7 @@ const HomeMixin = {
       if (!allTiles) {
         return [];
       }
-      const visibleTiles = allTiles.filter((tile) => checkItemVisibility(tile));
-      return searchTiles(visibleTiles, this.searchValue);
+      return searchTiles(allTiles, this.searchValue);
     },
     /* Checks if any sections or items use icons from a given CDN */
     checkIfIconLibraryNeeded(prefix) {

@@ -99,9 +99,6 @@ export default {
       Object.keys(raw).forEach(key => {
         if (isEmpty(raw[key])) delete raw[key];
       });
-      // If KC config empty, delete it
-      const kcConfig = raw.auth.keycloak;
-      if (!kcConfig.clientId && !kcConfig.realm && !kcConfig.serverUrl) delete raw.auth.keycloak;
       return raw;
     },
   },
