@@ -32,7 +32,6 @@ const defaults = {
     minimal: '/minimal',
     workspace: '/workspace',
     about: '/about',
-    login: '/login',
     download: '/download',
     notFound: '/404',
   },
@@ -107,7 +106,7 @@ const defaults = {
     footer: true,
   },
   /* A list of route names that page furniture (header, footer, etc) should be hidden on */
-  hideFurnitureOn: ['minimal', 'login', 'download'],
+  hideFurnitureOn: ['minimal', 'download'],
   /* Key names for local storage identifiers */
   localStorageKeys: {
     LANGUAGE: 'language',

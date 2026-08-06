@@ -14,7 +14,6 @@ import yaml from 'js-yaml';
 import Home from '@/views/Home.vue';
 
 // Import helper functions, config data and defaults
-import { isAuthEnabled, isLoggedIn, isGuestAccessEnabled } from '@/utils/Auth';
 import { makePageSlug, makePageName } from '@/utils/ConfigHelpers';
 import { metaTagData, startingView, routePaths } from '@/utils/defaults';
 import ErrorHandler from '@/utils/ErrorHandler';
@@ -36,14 +35,6 @@ const appConfig = config.appConfig || {};
 
 Vue.use(Router);
 const progress = new Progress({ color: 'var(--progress-bar)' });
-
-/* Returns true if user is already authenticated, or if auth is not enabled */
-const isAuthenticated = () => {
-  const authEnabled = isAuthEnabled();
-  const userLoggedIn = isLoggedIn();
-  const guestEnabled = isGuestAccessEnabled();
-  return (!authEnabled || userLoggedIn || guestEnabled);
-};
 
 /* Get the users chosen starting view from app config, or return default */
 const getStartingView = () => appConfig.startingView || startingView;
@@ -154,16 +145,6 @@ const router = new Router({
       component: () => import('./views/Minimal.vue'),
       meta: makeMetaTags('Start Page'),
     },
-    { // The login page
-      path: routePaths.login,
-      name: 'login',
-      component: () => import('./views/Login.vue'),
-      beforeEnter: (to, from, next) => {
-        // If the user already logged in + guest mode not enabled, then redirect home
-        if (isAuthenticated() && !isGuestAccessEnabled()) router.push({ path: '/' });
-        next();
-      },
-    },
     { // The about app page
       path: routePaths.about,
       name: 'about', // We lazy load the About page so as to not slow down the app
@@ -195,15 +176,9 @@ const router = new Router({
   ],
 });
 
-/**
- * Before loading a route, check if the user has authentication enabled
- * if so, then ensure that they are correctly logged in as a valid user
- * If not logged in, prevent all access and redirect them to login page
- * */
 router.beforeEach((to, from, next) => {
   progress.start();
-  if (to.name !== 'login' && !isAuthenticated()) next({ name: 'login' });
-  else next();
+  next();
 });
 
 /* If title is missing, then apply default page title */
