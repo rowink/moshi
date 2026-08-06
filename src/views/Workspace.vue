@@ -3,12 +3,10 @@
     <SideBar
       :sections="sections"
       @launch-app="launchApp"
-      @launch-widget="launchWidget"
       :initUrl="getInitialUrl()"
     />
     <WebContent :url="url" v-if="!isMultiTaskingEnabled" />
     <MultiTaskingWebComtent :url="url" v-else />
-    <WidgetView :widgets="widgets" v-if="widgets" />
   </div>
 </template>
 
@@ -16,7 +14,6 @@
 import HomeMixin from '@/mixins/HomeMixin';
 import SideBar from '@/components/Workspace/SideBar';
 import WebContent from '@/components/Workspace/WebContent';
-import WidgetView from '@/components/Workspace/WidgetView';
 import MultiTaskingWebComtent from '@/components/Workspace/MultiTaskingWebComtent';
 import Defaults from '@/utils/defaults';
 import { GetTheme, ApplyLocalTheme, ApplyCustomVariables } from '@/utils/ThemeHelper';
@@ -26,7 +23,6 @@ export default {
   mixins: [HomeMixin],
   data: () => ({
     url: '',
-    widgets: null,
     GetTheme,
     ApplyLocalTheme,
     ApplyCustomVariables,
@@ -45,7 +41,6 @@ export default {
   components: {
     SideBar,
     WebContent,
-    WidgetView,
     MultiTaskingWebComtent,
   },
   methods: {
@@ -55,11 +50,6 @@ export default {
       } else {
         this.url = options.url;
       }
-      this.widgets = null;
-    },
-    launchWidget(widgets) {
-      this.url = '';
-      this.widgets = widgets;
     },
     initiateFontAwesome() {
       const fontAwesomeScript = document.createElement('script');

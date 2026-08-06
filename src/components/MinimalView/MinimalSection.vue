@@ -23,16 +23,7 @@
         />
       </template>
     </div>
-    <div v-if="widgets && (selected && !showAll)" class="minimal-widget-wrap">
-      <WidgetBase
-        v-for="(widget, widgetIndx) in widgets"
-        :key="widgetIndx"
-        :widget="widget"
-        :index="widgetIndx"
-        @navigateToSection="navigateToSection"
-      />
-    </div>
-    <div v-if="selected && !showAll && !widgets && items.length < 1" class="empty-section">
+    <div v-if="selected && !showAll && items.length < 1" class="empty-section">
       <p>{{ $t('home.no-items-section') }}</p>
     </div>
     <IframeModal
@@ -44,9 +35,7 @@
 </template>
 
 <script>
-import router from '@/router';
 import Item from '@/components/LinkItems/Item.vue';
-import WidgetBase from '@/components/Widgets/WidgetBase';
 import SubItemGroup from '@/components/LinkItems/SubItemGroup.vue';
 import IframeModal from '@/components/LinkItems/IframeModal.vue';
 
@@ -58,7 +47,6 @@ export default {
     icon: String,
     displayData: Object,
     items: Array,
-    widgets: Array,
     itemSize: String,
     modalOpen: Boolean,
     index: Number,
@@ -72,7 +60,6 @@ export default {
   },
   components: {
     Item,
-    WidgetBase,
     SubItemGroup,
     IframeModal,
   },
@@ -100,12 +87,6 @@ export default {
       if (interval < 1) interval = 0;
       return interval;
     },
-    /* Navigate to the section's single-section view page */
-    navigateToSection() {
-      const parse = (section) => section.replace(' ', '-').toLowerCase().trim();
-      const sectionIdentifier = parse(this.title);
-      router.push({ path: `/home/${sectionIdentifier}` });
-    },
   },
 };
 </script>
@@ -130,9 +111,6 @@ export default {
     @include big-screen { --minimal-col-count: 5; }
     @include big-screen-up { --minimal-col-count: 6; }
     grid-template-columns: repeat(var(--minimal-col-count, 1), minmax(0, 1fr));
-  }
-  .minimal-widget-wrap {
-    padding: 1rem;
   }
   .empty-section {
     padding: 1rem;

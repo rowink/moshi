@@ -254,55 +254,5 @@
       "download-file-tooltip": "Изтегляне на всички конфигурации на приложението в YAML файл",
       "view-title": "Преглед конфигурация"
     }
-  },
-  "widgets": {
-    "general": {
-      "loading": "Зареждане...",
-      "show-more": "Повече детайли",
-      "show-less": "Покажи по-малко",
-      "open-link": "Отваряне на линка"
-    },
-    "pi-hole": {
-      "status-heading": "Статус"
-    },
-    "stat-ping": {
-      "up": "Онлайн",
-      "down": "Офлайн"
-    },
-    "net-data": {
-      "cpu-chart-title": "История процесорно натоварване",
-      "mem-chart-title": "Изпозлвана памет",
-      "mem-breakdown-title": "Memory Breakdown",
-      "load-chart-title": "Системно Натоварване"
-    },
-    "glances": {
-      "disk-space-free": "Свободно пространство",
-      "disk-space-used": "Изпозлвано пространство",
-      "disk-mount-point": "Място на монтиране",
-      "disk-file-system": "Файлове система",
-      "disk-io-read": "Четене",
-      "disk-io-write": "Запис",
-      "system-load-desc": "Брой процеси, чакащи в опашката за изпълнение, осреднено за всички ядра"
-    },
-    "system-info": {
-      "uptime": "Време на работа"
-    },
-    "flight-data": {
-      "arrivals": "Заминаващи",
-      "departures": "Пристигащи"
-    },
-    "tfl-status": {
-      "good-service-all": "Добра работа по всички линии",
-      "good-service-rest": "Добра работа на всички други линии"
-    },
-    "synology-download": {
-      "download": "Теглене",
-      "upload": "Качване",
-      "downloaded": "Изтеглено",
-      "uploaded": "Качено",
-      "remaining": "Оставащо",
-      "up": "Нагоре",
-      "down": "Надолу"
-    }
   }
 }

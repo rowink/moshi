@@ -250,55 +250,5 @@
       "download-file-tooltip": "Baixa todas as configurações do aplicativo para o seu dispositivo, no formato YAML.",
       "view-title": "Ver configuração"
     }
-  },
-  "widgets": {
-    "general": {
-      "loading": "Carregando...",
-      "show-more": "Mostrar mais",
-      "show-less": "Mostrar menos",
-      "open-link": "Continuar leitura"
-    },
-    "pi-hole": {
-      "status-heading": "Status"
-    },
-    "stat-ping": {
-      "up": "Online",
-      "down": "Offline"
-    },
-    "net-data": {
-      "cpu-chart-title": "Histórico da CPU",
-      "mem-chart-title": "Uso de memória",
-      "mem-breakdown-title": "Detalhes da Memória",
-      "load-chart-title": "Carga do sistema"
-    },
-    "glances": {
-      "disk-space-free": "Livre",
-      "disk-space-used": "Usado",
-      "disk-mount-point": "Ponto de Montagem",
-      "disk-file-system": "Sistema de arquivo",
-      "disk-io-read": "Leitura",
-      "disk-io-write": "Escrita",
-      "system-load-desc": "Número de processos aguardando em fila; Média de todos os núcleos"
-    },
-    "system-info": {
-      "uptime": "Uptime"
-    },
-    "flight-data": {
-      "arrivals": "Chegadas",
-      "departures": "Partidas"
-    },
-    "tfl-status": {
-      "good-service-all": "Bom serviço em todas as linhas",
-      "good-service-rest": "Bom serviço em todas as outras linhas."
-    },
-    "synology-download": {
-      "download": "Baixar",
-      "upload": "Carregar",
-      "downloaded": "Baixado",
-      "uploaded": "Carregado",
-      "remaining": "Restante",
-      "up": "Up",
-      "down": "Down"
-    }
   }
 }

@@ -31,11 +31,6 @@ export const applyItemId = (inputSections) => {
         sections[secIdx].items[itemIdx].id = makeItemId(sec.name, item.title, itemIdx);
       });
     }
-    if (sec.widgets) {
-      sec.widgets.forEach((widget, widgetIdx) => {
-        sections[secIdx].widgets[widgetIdx].id = makeItemId(sec.name, widget.type, widgetIdx);
-      });
-    }
   });
   return sections;
 };

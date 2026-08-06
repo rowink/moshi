@@ -248,37 +248,5 @@
       "download-file-tooltip":"Ladda ner alla appkonfigurationer till din enhet som en YAML-fil",
       "view-title":"Visa konfiguration"
     }
-  },
-  "widgets":{
-    "general":{
-      "loading":"Laddar...",
-      "show-more":"Visa mer info",
-      "show-less":"Visa mindre",
-      "open-link":"Läs mer"
-    },
-    "pi-hole":{
-      "status-heading":"Status"
-    },
-    "stat-ping":{
-      "up":"Online",
-      "down":"Offline"
-    },
-    "net-data":{
-      "cpu-chart-title":"CPU History",
-      "mem-chart-title":"Memory Usage",
-      "mem-breakdown-title":"Memory Breakdown",
-      "load-chart-title":"System Load"
-    },
-    "system-info":{
-      "uptime":"Uptime"
-    },
-    "flight-data":{
-      "arrivals":"Ankomster",
-      "departures":"Avgångar"
-    },
-    "tfl-status":{
-      "good-service-all":"God service på alla linjer",
-      "good-service-rest":"God Service på övriga linjer"
-    }
   }
 }

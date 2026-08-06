@@ -250,46 +250,5 @@
       "download-file-tooltip": "Salva la configurazione dell'app in un file YAML",
       "view-title": "View Config"
     }
-  },
-  "widgets": {
-    "general": {
-      "loading": "Caricamento...",
-      "show-more": "Dettagli",
-      "show-less": "Minori dettagli",
-      "open-link": "Continua Lettura"
-    },
-    "pi-hole": {
-      "status-heading": "Stato"
-    },
-    "stat-ping": {
-      "up": "Online",
-      "down": "Offline"
-    },
-    "net-data": {
-      "cpu-chart-title": "Utilizzo CPU",
-      "mem-chart-title": "Utilizzo Memoria",
-      "mem-breakdown-title": "Dettaglio Utilizzo Memoria",
-      "load-chart-title": "Carico del Sistema"
-    },
-    "glances": {
-      "disk-space-free": "Utilizzabile",
-      "disk-space-used": "Utilizzato",
-      "disk-mount-point": "Mount Point",
-      "disk-file-system": "File System",
-      "disk-io-read": "Lettura",
-      "disk-io-write": "Scrittura",
-      "system-load-desc": "Numero di processi in attesa nella coda di esecuzione, calcolati sulla media di tutti i core"
-    },
-    "system-info": {
-      "uptime": "Uptime"
-    },
-    "flight-data": {
-      "arrivals": "Arrivi",
-      "departures": "Partenze"
-    },
-    "tfl-status": {
-      "good-service-all": "Buon servizio su tutte le Linee",
-      "good-service-rest": "Buon servizio su tutte le altre Linee"
-    }
   }
 }		

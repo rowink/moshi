@@ -249,12 +249,6 @@
           "default": false,
           "description": "If set to true, will keep apps opened in the workspace open in the background. Useful for switching between sites, but comes at the cost of performance"
         },
-        "widgetsAlwaysUseProxy": {
-          "title": "Widgets always use proxy",
-          "type": "boolean",
-          "default": false,
-          "description": "If set to true, the useProxy option for widgets will always be applied without having to specify it for each widget"
-        },
         "webSearch": {
           "title": "Web Search",
           "type": "object",
@@ -963,42 +957,6 @@
                     "type": "object",
                     "properties": {}
                   }
-                }
-              }
-            }
-          },
-          "widgets": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": [
-                "type"
-              ],
-              "properties": {
-                "type": {
-                  "title": "Widget Type",
-                  "type": "string",
-                  "description": "The type of widget to use, see docs for supported options"
-                },
-                "updateInterval": {
-                  "title": "Update Interval",
-                  "type": "number",
-                  "description": "Specified in seconds. If set, widget data will be re-retched at this interval to display up-to-date data"
-                },
-                "timeout": {
-                  "title": "Timeout",
-                  "type": "number",
-                  "description": "Specified in milliseconds. If set, request will timeout after the specified interval. Defaults to 500/ half a sec"
-                },
-                "useProxy": {
-                  "title": "Use Proxy?",
-                  "type": "boolean",
-                  "description": "If set to true, request will be proxied through the backend. Requires the Node server to be running"
-                },
-                "options": {
-                  "title": "Widget Options",
-                  "type": "object",
-                  "description": "Configuration options for widget. Varies depending on widget type, see docs for all options"
                 }
               }
             }

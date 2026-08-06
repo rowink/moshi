@@ -311,56 +311,5 @@
       "download-file-tooltip": "Κατεβάστε όλες τις ρυθμίσεις της εφαρμογής στη συσκευή σας, σε ένα αρχείο YAML",
       "view-title": "Προβολή Διαμόρφωσης"
     }
-  },
-  "widgets": {
-    "general": {
-      "loading": "Γίνεται φόρτωση...",
-      "show-more": "Ανάπτυξη Λεπτομερειών",
-      "show-less": "Εμφάνιση Λιγότερων",
-      "open-link": "Συνέχιση Ανάγνωσης"
-    },
-    "pi-hole": {
-      "status-heading": "Κατάσταση"
-    },
-    "stat-ping": {
-      "up": "Σε σύνδεση",
-      "down": "Εκτός σύνδεσης"
-    },
-    "net-data": {
-      "cpu-chart-title": "Ιστορικό χρήσης CPU",
-      "mem-chart-title": "Χρήση Μνήμης",
-      "mem-breakdown-title": "Κατάρρευση Μνήμης",
-      "load-chart-title": "Φόρτος Συστήματος"
-    },
-    "glances": {
-      "disk-space-free": "Ελεύθερο",
-      "disk-space-used": "Χρησιμοποιείται",
-      "disk-mount-point": "Σημείο Προσάρτησης",
-      "disk-file-system": "Σύστημα Αρχείων",
-      "disk-io-read": "Ανάγνωση",
-      "disk-io-write": "Εγγραφή",
-      "system-load-desc": "Αριθμός διεργασιών που εκκρεμούν στην ουρά εκτέλεσης, κατά μέσο όρο, σε όλους τους πυρήνες"
-    },
-    "system-info": {
-      "uptime": "Χρόνος λειτουργίας"
-    },
-    "flight-data": {
-      "arrivals": "Αφίξεις",
-      "departures": "Αναχωρήσεις"
-    },
-    "tfl-status": {
-      "good-service-all": "Καλή Εξυπηρέτηση σε όλες τις Γραμμές",
-      "good-service-rest": "Καλή Εξυπηρέτηση σε όλες τις άλλες Γραμμές"
-    },
-    "gluetun-status": {
-      "vpn-ip": "VPN IP",
-      "country": "Χώρα",
-      "region": "Περιοχή",
-      "city": "Πόλη",
-      "post-code": "Ταχυδρομικός Κώδικας",
-      "location": "Τοποθεσία",
-      "timezone": "Ζώνη ώρας",
-      "organization": "Οργανισμός"
-    }
   }
 }

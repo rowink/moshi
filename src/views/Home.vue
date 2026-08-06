@@ -36,12 +36,10 @@
           :displayData="getDisplayData(section)"
           :groupId="`${pageId}-section-${index}`"
           :items="filterTiles(section.items, searchValue)"
-          :widgets="section.widgets"
           :searchTerm="searchValue"
           :itemSize="itemSizeBound"
           @itemClicked="finishedSearching()"
           @change-modal-visibility="updateModalVisibility"
-          :isWide="!!singleSectionView || layoutOrientation === 'horizontal'"
           :class="
           (searchValue && filterTiles(section.items, searchValue).length === 0) ? 'no-results' : ''"
         />

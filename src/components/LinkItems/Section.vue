@@ -61,17 +61,6 @@
         :itemSize="itemSize"
       />
     </div>
-    <div
-      v-if="hasWidgets"
-      :class="`widget-list ${isWide? 'wide' : ''}`">
-      <WidgetBase
-        v-for="(widget, widgetIndx) in widgets"
-        :key="widgetIndx"
-        :widget="widget"
-        :index="index"
-        @navigateToSection="navigateToSection"
-      />
-    </div>
     <!-- Modal for opening in modal view -->
     <IframeModal
       :ref="`iframeModal-${groupId}`"
@@ -104,7 +93,6 @@
 import router from '@/router';
 import Item from '@/components/LinkItems/Item.vue';
 import SubItemGroup from '@/components/LinkItems/SubItemGroup.vue';
-import WidgetBase from '@/components/Widgets/WidgetBase';
 import Collapsable from '@/components/LinkItems/Collapsable.vue';
 import IframeModal from '@/components/LinkItems/IframeModal.vue';
 import EditSection from '@/components/InteractiveEditor/EditSection.vue';
@@ -125,16 +113,13 @@ export default {
     icon: String,
     displayData: Object,
     items: Array,
-    widgets: Array,
     index: Number,
-    isWide: Boolean,
   },
   components: {
     Collapsable,
     ContextMenu,
     Item,
     SubItemGroup,
-    WidgetBase,
     IframeModal,
     EditSection,
   },
@@ -167,11 +152,8 @@ export default {
       if (this.isEditMode) return true;
       return this.items && this.items.length > 0;
     },
-    hasWidgets() {
-      return this.widgets && this.widgets.length > 0;
-    },
     isEmpty() {
-      return !this.hasItems && !this.hasWidgets;
+      return !this.hasItems;
     },
     sectionRef() {
       return `section-outer-${this.groupId}`;
@@ -379,20 +361,6 @@ export default {
   display: flex;
   a {
     border-style: dashed;
-  }
-}
-
-.widget-list {
-  &.wide {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-around;
-    .widget-base  {
-      min-width: 10rem;
-      width: stretch;
-      width: -webkit-fill-available;
-      width: -moz-available;
-    }
   }
 }
 

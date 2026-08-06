@@ -36,7 +36,6 @@
         :icon="section.icon || undefined"
         :groupId="`section-${index}`"
         :items="filterTiles(section.items)"
-        :widgets="section.widgets"
         :selected="selectedSection === index"
         :showAll="!tabbedView"
         itemSize="small"
@@ -104,7 +103,7 @@ export default {
       else {
         let itemsFound = true;
         this.sections.forEach((section) => {
-          if (section.widgets || this.filterTiles(section.items).length > 0) {
+          if (this.filterTiles(section.items).length > 0) {
             itemsFound = false;
           }
         });

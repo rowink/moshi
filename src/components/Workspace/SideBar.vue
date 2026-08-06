@@ -59,7 +59,6 @@ export default {
     /* Toggles the section clicked, and closes all other sections */
     openSection(index) {
       this.isOpen = this.isOpen.map((val, ind) => (ind !== index ? false : !val));
-      if (this.sections[index].widgets) this.$emit('launch-widget', this.sections[index].widgets);
     },
     /* When item clicked, emit a launch event */
     launchApp(options) {
