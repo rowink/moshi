@@ -246,12 +246,6 @@ Styleguides:
 │  │  ├── EditSiteMeta.vue        # Form where the user can edit site meta data
 │  │  ├── JsonEditor.vue          # JSON editor, where the user can modify the main config file
 │  │  ╰── RebuildApp.vue          # A component allowing user to trigger a rebuild through the UI
-│  ├── FormElements               # Basic form elements used throughout the app
-│  │  ├── Button.vue              # Standard button component
-│  │  ├── Radio.vue               # Standard radio button input
-│  │  ├── Select.vue              # Standard dropdown input selector
-│  │  ├── Input.vue               # Standard text field input component
-│  │  ╰── Toggle.vue              # Standard on / off toggle switch
 │  ├── InteractiveEditor          # Components for the interactive UI config editor
 │  │  ├── AddNewSectionLauncher   # Button that launches the EditSection form, used for adding new section
 │  │  ├── EditAppConfig.vue       # Form for editing appConfig
