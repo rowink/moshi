@@ -27,5 +27,16 @@ module.exports = {
         'no-console': 'off',
       },
     },
+    {
+      files: ['**/*.ts'],
+      parser: '@typescript-eslint/parser',
+      plugins: ['@typescript-eslint'],
+      rules: {
+        'import/no-unresolved': 'off',
+        'import/extensions': 'off',
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      },
+    },
   ],
 };
