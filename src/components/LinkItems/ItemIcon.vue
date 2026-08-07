@@ -2,8 +2,6 @@
   <div v-if="icon" :class="`item-icon wrapper-${size}`">
     <!-- Font-Awesome Icon -->
     <i v-if="iconType === 'font-awesome'" :class="`${icon} ${size}`" ></i>
-    <!-- Emoji Icon -->
-    <i v-else-if="iconType === 'emoji'" :class="`emoji-icon ${size}`" >{{getEmoji(iconPath)}}</i>
     <!-- Material Design Icon -->
     <span v-else-if="iconType === 'mdi'" :class=" `mdi ${icon} ${size}`"></span>
     <!-- Simple-Icons -->
@@ -24,8 +22,6 @@
 import simpleIcons from 'simple-icons';
 import BrokenImage from '@/assets/interface-icons/broken-icon.svg';
 import ErrorHandler from '@/utils/ErrorHandler';
-import EmojiUnicodeRegex from '@/utils/EmojiUnicodeRegex';
-import emojiLookup from '@/utils/emojis.json';
 import { asciiHash } from '@/utils/MiscHelpers';
 import { faviconApi as defaultFaviconApi, faviconApiEndpoints, iconCdns } from '@/utils/defaults';
 import { useAppStore } from '@/store';
@@ -76,7 +72,6 @@ export default {
       else if (img.includes('favicon-')) imgType = 'custom-favicon';
       else if (img === 'favicon') imgType = 'favicon';
       else if (img === 'generative') imgType = 'generative';
-      else if (this.isEmoji(img).isEmoji) imgType = 'emoji';
       else imgType = 'none';
       return imgType;
     },
@@ -92,7 +87,6 @@ export default {
         case 'simple-icons': return this.getSimpleIcon(img);
         case 'home-lab-icons': return this.getHomeLabIcon(img);
         case 'svg': return img; // Local SVG icon
-        case 'emoji': return img; // Emoji/ unicode
         default: return '';
       }
     },
@@ -108,39 +102,6 @@ export default {
       const splitPath = fileExtRegex.exec(img);
       if (splitPath.length >= 1) return validImgExtensions.includes(splitPath[1]);
       return false;
-    },
-    /* Determines if a given string is an emoji, and if so what type it is */
-    isEmoji(img) {
-      if (EmojiUnicodeRegex.test(img) && img.match(/./gu).length) { // Is a unicode emoji
-        return { isEmoji: true, emojiType: 'glyph' };
-      } else if (new RegExp(/^:.*:$/).test(img)) { // Is a shortcode emoji
-        return { isEmoji: true, emojiType: 'shortcode' };
-      } else if (img.substring(0, 2) === 'U+' && img.length === 7) {
-        return { isEmoji: true, emojiType: 'unicode' };
-      }
-      return { isEmoji: false, emojiType: '' };
-    },
-    /* Returns the corresponding emoji for a shortcode, or shows error if not found */
-    getShortCodeEmoji(emojiCode) {
-      if (emojiLookup[emojiCode]) {
-        return emojiLookup[emojiCode];
-      } else {
-        // this.imageNotFound(`No emoji found with name '${emojiCode}'`);
-        return null;
-      }
-    },
-    /* Formats and gets emoji from either unicode, shortcode or glyph */
-    getEmoji(emojiCode) {
-      const { emojiType } = this.isEmoji(emojiCode);
-      if (emojiType === 'shortcode') { // Short code emoji
-        return this.getShortCodeEmoji(emojiCode);
-      } else if (emojiType === 'unicode') { // Unicode emoji
-        return String.fromCodePoint(parseInt(emojiCode.substr(2), 16));
-      } else if (emojiType === 'glyph') { // Emoji is a glyph
-        return emojiCode;
-      }
-      this.imageNotFound(`Unrecognized emoji: '${emojiCode}'`);
-      return null;
     },
     /* Get favicon URL, for items which use the favicon as their icon */
     getFavicon(fullUrl, specificApi) {
@@ -309,18 +270,6 @@ export default {
 
   .item-icon .simple-icons path {
     fill: currentColor;
-  }
-  /* Emoji Icons */
-  i.emoji-icon {
-    font-style: normal;
-    font-size: 2rem;
-    margin: 0.2rem;
-    &.small {
-      font-size: 1.5rem;
-    }
-    &.large {
-      font-size: 2.5rem;
-    }
   }
   /* Icon Not Found */
   .missing-image {

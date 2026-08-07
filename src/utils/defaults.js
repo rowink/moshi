@@ -144,8 +144,6 @@ const defaults = {
     defaultDelay: { show: 380, hide: 0 },
     // delay: { show: 380, hide: 0 },
   },
-  /* Server location of the Backup & Sync cloud function */
-  backupEndpoint: 'https://dashy-sync-service.as93.net',
   /* Available services for fetching favicon icon for user apps */
   faviconApiEndpoints: {
     allesedv: 'https://f1.allesedv.com/128/$URL',
@@ -239,7 +237,7 @@ export const {
   serviceEndpoints, builtInThemes, swatches, mainCssVars, visibleComponents,
   hideFurnitureOn, localStorageKeys, sessionStorageKeys,
   splashScreenTime, metaTagData, toastedOptions, tooltipOptions,
-  backupEndpoint, faviconApiEndpoints, iconCdns,
+  faviconApiEndpoints, iconCdns,
   searchEngineUrls, defaultSearchEngine, defaultSearchOpeningMethod, searchBangs,
   sentryDsn, pwa,
 } = defaults;
