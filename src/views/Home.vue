@@ -7,6 +7,8 @@
       ref="filterComp"
       @user-is-searchin="searching"
     />
+    <!-- Layout options: orientation, item size and view switcher -->
+    <LayoutOptions />
     <!-- Show back button, when on single-section view -->
     <div v-if="singleSectionView">
       <router-link to="/home" class="back-to-all-link">
@@ -50,6 +52,7 @@
 <script>
 import HomeMixin from '@/mixins/HomeMixin';
 import SearchBar from '@/components/SearchBar.vue';
+import LayoutOptions from '@/components/LayoutOptions/LayoutOptions.vue';
 import Section from '@/components/LinkItems/Section.vue';
 import { localStorageKeys } from '@/utils/defaults';
 import ErrorHandler from '@/utils/ErrorHandler';
@@ -61,6 +64,7 @@ export default {
   mixins: [HomeMixin],
   components: {
     SearchBar,
+    LayoutOptions,
     Section,
     BackIcon,
   },

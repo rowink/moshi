@@ -4,7 +4,7 @@ import axios from 'axios';
 import yaml from 'js-yaml';
 import ConfigAccumulator from '@/utils/ConfigAccumalator';
 import { componentVisibility } from '@/utils/ConfigHelpers';
-import ErrorHandler from '@/utils/ErrorHandler';
+import ErrorHandler, { InfoHandler, InfoKeys } from '@/utils/ErrorHandler';
 import { localStorageKeys } from './utils/defaults';
 
 export const useAppStore = defineStore('app', {
@@ -115,6 +115,14 @@ export const useAppStore = defineStore('app', {
     },
     setModalOpen(modalOpen) {
       this.modalOpen = modalOpen;
+    },
+    setItemLayout(layout) {
+      this.config.appConfig.layout = layout;
+      InfoHandler('Layout updated', InfoKeys.VISUAL);
+    },
+    setItemSize(iconSize) {
+      this.config.appConfig.iconSize = iconSize;
+      InfoHandler('Item size updated', InfoKeys.VISUAL);
     },
     setCurrentSubPage(subPageObject) {
       if (!subPageObject) {
