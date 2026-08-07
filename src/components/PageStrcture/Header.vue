@@ -10,20 +10,24 @@
     </header>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from 'vue';
 import PageTitle from '@/components/PageStrcture/PageTitle.vue';
 import Nav from '@/components/PageStrcture/Nav.vue';
 import { shouldBeVisible } from '@/utils/SectionHelpers';
 import { useAppStore } from '@/store';
 
-export default {
+export default defineComponent({
   name: 'Header',
   components: {
     PageTitle,
     Nav,
   },
   props: {
-    pageInfo: Object,
+    pageInfo: {
+      type: Object as PropType<Record<string, any>>,
+      default: () => ({}),
+    },
   },
   computed: {
     appStore() { return useAppStore(); },
@@ -40,7 +44,7 @@ export default {
       return this.visibleComponents.navigation;
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

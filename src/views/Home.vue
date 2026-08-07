@@ -23,7 +23,7 @@
         + `orientation-${layout} `
         + `item-size-${itemSizeBound} `
         + (singleSectionView ? 'single-section-view ' : '')
-        + (this.colCount ? `col-count-${this.colCount} ` : '')"
+        + (colCount ? `col-count-${colCount} ` : '')"
       >
       <template v-for="(section, index) in filteredTiles">
         <Section
@@ -50,7 +50,8 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import HomeMixin from '@/mixins/HomeMixin';
 import SearchBar from '@/components/SearchBar.vue';
 import LayoutOptions from '@/components/LayoutOptions/LayoutOptions.vue';
@@ -59,8 +60,9 @@ import { localStorageKeys } from '@/utils/defaults';
 import ErrorHandler from '@/utils/ErrorHandler';
 import BackIcon from '@/assets/interface-icons/back-arrow.svg';
 import { useAppStore } from '@/store';
+import { Item, Section as SectionType } from '@/types';
 
-export default {
+export default defineComponent({
   name: 'home',
   mixins: [HomeMixin],
   components: {
@@ -83,7 +85,7 @@ export default {
       return this.findSingleSection(this.appStore.sections, this.$route.params.section);
     },
     /* Get class for num columns, if specified by user */
-    colCount() {
+    colCount(): number | null {
       let { colCount } = this.appConfig;
       if (!colCount) return null;
       if (colCount < 1) colCount = 1;
@@ -93,7 +95,7 @@ export default {
     /* Return all sections, that match users search term */
     filteredTiles() {
       const sections = this.singleSectionView || this.sections;
-      return sections.filter((section) => this.filterTiles(section.items, this.searchValue));
+      return sections.filter((section: SectionType) => this.filterTiles(section.items, this.searchValue));
     },
     /* Updates layout (when button clicked), and saves in local storage */
     layoutOrientation() {
@@ -120,14 +122,14 @@ export default {
       if (this.$refs.filterComp) this.$refs.filterComp.clearFilterInput();
     },
     /* Returns optional section display preferences if available */
-    getDisplayData(section) {
+    getDisplayData(section: SectionType) {
       return !section.displayData ? {} : section.displayData;
     },
     /* If on sub-route, and section exists, then return only that section */
-    findSingleSection: (allSections, sectionTitle) => {
+    findSingleSection: (allSections: SectionType[], sectionTitle: string): SectionType[] | undefined => {
       if (!sectionTitle) return undefined;
-      let sectionToReturn;
-      const parse = (section) => section.replaceAll(' ', '-').toLowerCase().trim();
+      let sectionToReturn: SectionType[] | undefined;
+      const parse = (section: string) => section.replaceAll(' ', '-').toLowerCase().trim();
       allSections.forEach((section) => {
         if (parse(sectionTitle) === parse(section.name || '')) {
           sectionToReturn = [section];
@@ -143,7 +145,7 @@ export default {
     this.layout = this.layoutOrientation;
     this.itemSizeBound = this.iconSize;
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

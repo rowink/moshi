@@ -8,9 +8,10 @@ import {
 } from '@/utils/defaults';
 import ErrorHandler from '@/utils/ErrorHandler';
 import ConfigSchema from '@/utils/ConfigSchema.json';
+import type { Language } from '@/utils/languages';
 
 /* Given a page name, converts to lowercase, removes special characters and extension */
-export const makePageName = (pageName) => {
+export const makePageName = (pageName?: string): string => {
   if (!pageName) return 'unnamed-page';
   return pageName
     .toLowerCase()
@@ -20,7 +21,7 @@ export const makePageName = (pageName) => {
 };
 
 /* For a given sub-page, and page type, return the URL */
-export const makePageSlug = (pageName, pageType) => {
+export const makePageSlug = (pageName: string, pageType: string): string => {
   const formattedName = makePageName(pageName);
   return `/${pageType}/${formattedName}`;
 };
@@ -43,14 +44,14 @@ export const config = (() => {
  * components should be hidden. This enables the user to hide
  * parts of the page and disable functionality that they don't need/ want
  * All options fallback on the values defined in the defaults
- * @param {object} appConfig The full app config
- * @returns {object} result
+ * @param appConfig The full app config
+ * @returns result
  */
-export const componentVisibility = (appConfig) => {
+export const componentVisibility = (appConfig: Record<string, any>) => {
   // Get users choice from app config
   const usersChoice = appConfig.hideComponents || {};
   // Checks if value is defined, and is a boolean
-  const isThere = (userValue) => typeof userValue === 'boolean';
+  const isThere = (userValue: unknown) => typeof userValue === 'boolean';
   // For each option, return users choice (if specified), else use the default
   return {
     pageTitle: isThere(usersChoice.hideHeading)
@@ -67,9 +68,9 @@ export const componentVisibility = (appConfig) => {
 /**
  * Gets the users saved theme, first looks for local storage theme,
  * then looks at user's appConfig, and finally checks the defaults
- * @returns {string} Name of theme to apply
+ * @returns Name of theme to apply
  */
-export const getTheme = () => {
+export const getTheme = (): string => {
   const localTheme = localStorage[localStorageKeys.THEME];
   const appConfigTheme = config.appConfig.theme;
   return localTheme || appConfigTheme || defaultTheme;
@@ -77,9 +78,9 @@ export const getTheme = () => {
 
 /**
  * Gets any custom styles the user has applied, wither from local storage, or from the config
- * @returns {object} An array of objects, one for each theme, containing kvps for variables
+ * @returns An array of objects, one for each theme, containing kvps for variables
  */
-export const getCustomColors = () => {
+export const getCustomColors = (): Record<string, any> => {
   const localColors = JSON.parse(localStorage[localStorageKeys.CUSTOM_COLORS] || '{}');
   const configColors = config.appConfig.customColors || {};
   return Object.assign(configColors, localColors);
@@ -90,20 +91,20 @@ export const getCustomColors = () => {
  * So that when the hotkey is pressed, the app/ service can be launched
  */
 export const getCustomKeyShortcuts = () => {
-  const results = [];
+  const results: { hotkey: string | number; url: string }[][] = [];
   const sections = config.sections || [];
   sections.forEach((section) => {
-    const itemsWithHotKeys = section.items.filter(item => item.hotkey);
-    results.push(itemsWithHotKeys.map(item => ({ hotkey: item.hotkey, url: item.url })));
+    const itemsWithHotKeys = section.items.filter((item: { hotkey: string | number }) => item.hotkey);
+    results.push(itemsWithHotKeys.map((item: { hotkey: string | number; url: string }) => ({ hotkey: item.hotkey, url: item.url })));
   });
   return results.flat();
 };
 
 /**
  * Gets the users chosen language. Defaults to English.
- * @returns {object} Language, including code, name and flag
+ * @returns Language, including code, name and flag
  */
-export const getUsersLanguage = () => {
+export const getUsersLanguage = (): Language | undefined => {
   const langCode = localStorage[localStorageKeys.LANGUAGE]
     || config.appConfig.language
     || defaultLanguage;
@@ -111,15 +112,33 @@ export const getUsersLanguage = () => {
   return langObj;
 };
 
+type TargetSchema = {
+  properties: {
+    sections: {
+      items: {
+        properties: {
+          items: {
+            items: {
+              properties: {
+                target: { enum: string[] };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+};
+
 /**
  * validator for item target attribute
  * Uses enum values from config schema, and shows warning if invalid
- * @param {String} target
- * @returns {Boolean} isValid
+ * @param target
+ * @returns isValid
  */
-export const targetValidator = (target) => {
-  const acceptedTargets = ConfigSchema.properties.sections.items
-    .properties.items.items.properties.target.enum;
+export const targetValidator = (target: string): boolean => {
+  const schema = ConfigSchema as TargetSchema;
+  const acceptedTargets = schema.properties.sections.items.properties.items.items.properties.target.enum;
   const isTargetValid = acceptedTargets.indexOf(target) !== -1;
   if (!isTargetValid) ErrorHandler(`Unknown target value: ${target}`);
   return isTargetValid;

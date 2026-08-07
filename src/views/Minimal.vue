@@ -6,7 +6,7 @@
         <h1>{{ pageInfo.title }}</h1>
       </router-link>
       <MinimalSearch
-        @user-is-searchin="(s) => { this.searchValue = s; }"
+        @user-is-searchin="handleSearchInput"
         :active="!modalOpen" ref="filterComp" />
     </div>
     <div v-if="checkTheresData(sections)"
@@ -47,14 +47,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import HomeMixin from '@/mixins/HomeMixin';
 import MinimalSection from '@/components/MinimalView/MinimalSection.vue';
 import MinimalHeading from '@/components/MinimalView/MinimalHeading.vue';
 import MinimalSearch from '@/components/MinimalView/MinimalSearch.vue';
 import { localStorageKeys } from '@/utils/defaults';
+import { Section as SectionType } from '@/types';
 
-export default {
+export default defineComponent({
   name: 'home',
   mixins: [HomeMixin],
   components: {
@@ -73,11 +75,14 @@ export default {
     },
   },
   methods: {
-    sectionSelected(index) {
+    handleSearchInput(s: string) {
+      this.searchValue = s;
+    },
+    sectionSelected(index: number) {
       this.selectedSection = index;
     },
     /* Returns sections from local storage if available, otherwise uses the conf.yml */
-    getSections(sections) {
+    getSections(sections: SectionType[]) {
       // If the user has stored sections in local storage, return those
       const localSections = localStorage[localStorageKeys.CONF_SECTIONS];
       if (localSections) {
@@ -96,7 +101,7 @@ export default {
       if (!this.sections) return false;
       else {
         let itemsFound = true;
-        this.sections.forEach((section) => {
+        this.sections.forEach((section: SectionType) => {
           if (this.filterTiles(section.items).length > 0) {
             itemsFound = false;
           }
@@ -121,7 +126,7 @@ export default {
     this.initiateMaterialDesignIcons();
     this.setTheme();
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

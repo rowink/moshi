@@ -15,12 +15,12 @@
   </footer>
 </template>
 
-<script>
-
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { shouldBeVisible } from '@/utils/SectionHelpers';
 import { useAppStore } from '@/store';
 
-export default {
+export default defineComponent({
   name: 'Footer',
   props: {
     text: String,
@@ -38,7 +38,7 @@ export default {
       return shouldBeVisible(this.$route.name);
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

@@ -11,9 +11,10 @@
   </main>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'not-found',
   methods: {
     setTheme() {
@@ -23,7 +24,7 @@ export default {
   mounted() {
     this.setTheme();
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

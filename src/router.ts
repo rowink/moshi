@@ -6,7 +6,7 @@
 
 // Import Vue.js and vue router
 import Vue from 'vue';
-import Router from 'vue-router';
+import Router, { RouteConfig } from 'vue-router';
 import { Progress } from 'rsup-progress';
 
 // Import views, that are not lazy-loaded
@@ -21,7 +21,7 @@ import ErrorHandler from '@/utils/ErrorHandler';
 // Import data from users conf file. Note that rebuild is required for this to update.
 import confRaw from '../public/conf.yml?raw';
 
-const conf = yaml.load(confRaw);
+const conf = yaml.load(confRaw) as Record<string, any> | null;
 
 if (!conf) {
   ErrorHandler('You\'ve not got any data in your config file yet.');
@@ -53,22 +53,22 @@ const getStartingComponent = () => {
 };
 
 /* Returns the meta tags for each route */
-const makeMetaTags = (defaultTitle) => ({
+const makeMetaTags = (defaultTitle: string) => ({
   title: pageInfo.title || defaultTitle,
   metaTags: metaTagData,
 });
 
-const makeSubConfigPath = (rawPath) => {
+const makeSubConfigPath = (rawPath: string) => {
   if (!rawPath) return '';
   if (rawPath.startsWith('/') || rawPath.startsWith('http')) return rawPath;
   else return `/${rawPath}`;
 };
 
 /* For each additional config file, create routes for home, minimal and workspace views */
-const makeMultiPageRoutes = (userPages) => {
+const makeMultiPageRoutes = (userPages: Record<string, any>[]): RouteConfig[] => {
   // If no multi pages specified, or is not array, then return nothing
   if (!userPages || !Array.isArray(userPages)) return [];
-  const multiPageRoutes = [];
+  const multiPageRoutes: RouteConfig[] = [];
   // For each user page, create an additional route
   userPages.forEach((page) => {
     if (!page.name || !page.path) { // Sumin not right, show warning
@@ -179,7 +179,7 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
   progress.end();
   Vue.nextTick(() => {
-    document.title = to.meta.title || 'Dashy';
+    document.title = to.meta?.title || 'Dashy';
   });
 });
 

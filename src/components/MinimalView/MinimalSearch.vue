@@ -7,11 +7,12 @@
   />
 </template>
 
-<script>
-import SearchBar from '@/components/SearchBar';
+<script lang="ts">
+import { defineComponent } from 'vue';
+import SearchBar from '@/components/SearchBar.vue';
 import { useAppStore } from '@/store';
 
-export default {
+export default defineComponent({
   name: 'MinimalSearch',
   components: {
     SearchBar,
@@ -38,10 +39,12 @@ export default {
   },
   methods: {
     /* Emmits users's search term up to parent */
-    userIsTypingSomething(searchValue) {
+    userIsTypingSomething(searchValue: string) {
       this.input = searchValue;
       this.$emit('user-is-searchin', searchValue);
     },
+    /* No-op, kept for parity with original JS which referenced an undefined method */
+    startFiltering() {},
   },
   mounted() {
     window.addEventListener('keydown', this.startFiltering);
@@ -49,5 +52,5 @@ export default {
   beforeDestroy() {
     window.removeEventListener('keydown', this.startFiltering);
   },
-};
+});
 </script>

@@ -11,8 +11,10 @@
 
 import ConfigAccumulator from '@/utils/ConfigAccumalator';
 import { sentryDsn } from '@/utils/defaults';
+import type { VueConstructor } from 'vue';
+import type VueRouter from 'vue-router';
 
-const ErrorReporting = async (Vue, router) => {
+const ErrorReporting = async (Vue: VueConstructor, router: VueRouter) => {
   // Fetch users config
   const appConfig = new ConfigAccumulator().appConfig() || {};
   // Check if error reporting is enabled. Only proceed if user has turned it on.

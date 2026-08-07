@@ -82,8 +82,9 @@
   </article>
 </template>
 
-<script>
+<script lang="ts">
 document.getElementsByTagName('html')[0].setAttribute('data-theme', 'callisto');
+export default {};
 </script>
 
 <style scoped lang="scss">

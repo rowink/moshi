@@ -29,14 +29,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import longPress from '@/directives/LongPress';
 import { localStorageKeys } from '@/utils/defaults';
 import Icon from '@/components/LinkItems/ItemIcon.vue';
 import OpenIcon from '@/assets/interface-icons/config-open-settings.svg';
 import { useAppStore } from '@/store';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'CollapsableContainer',
   props: {
     uniqueKey: String, // Generated unique ID
@@ -77,14 +78,14 @@ export default {
       get() {
         if (this.collapsed !== undefined) return !this.collapsed;
         const collapseStateObject = this.locallyStoredCollapseStates();
-        if (collapseStateObject[this.uniqueKey] !== undefined) {
-          return collapseStateObject[this.uniqueKey];
+        if (collapseStateObject[this.uniqueKey as string] !== undefined) {
+          return collapseStateObject[this.uniqueKey as string];
         }
         return true;
       },
-      set(newState) {
+      set(newState: boolean) {
         const collapseState = this.locallyStoredCollapseStates();
-        collapseState[this.uniqueKey] = newState;
+        collapseState[this.uniqueKey as string] = newState;
         localStorage.setItem(localStorageKeys.COLLAPSE_STATE, JSON.stringify(collapseState));
       },
     },
@@ -96,7 +97,7 @@ export default {
     this.checkboxState = this.isExpanded;
   },
   watch: {
-    checkboxState(newState) {
+    checkboxState(newState: boolean) {
       this.isExpanded = newState;
     },
     uniqueKey() {
@@ -109,14 +110,14 @@ export default {
       this.checkboxState = !this.checkboxState;
     },
     /* Check that row & column span is valid, and not over the max */
-    checkSpanNum(span, classPrefix) {
+    checkSpanNum(span: string | number | undefined, classPrefix: string) {
       const maxSpan = 6;
-      let numSpan = /^\d*$/.test(span) ? parseInt(span, 10) : 1;
+      let numSpan = /^\d*$/.test(String(span)) ? parseInt(String(span), 10) : 1;
       numSpan = (numSpan > maxSpan) ? maxSpan : numSpan;
       return `${classPrefix}-${numSpan}`;
     },
     /* Removes all special characters, except those allowed in valid CSS */
-    sanitizeCustomStyles(userCss) {
+    sanitizeCustomStyles(userCss: string | undefined) {
       return userCss ? userCss.replace(/[^a-zA-Z0-9- :;.]/g, '') : '';
     },
     /* Returns local storage collapse state data, and if not yet set then initialized is */
@@ -129,11 +130,11 @@ export default {
       // Otherwise, return value of local storage
       return JSON.parse(localStorage[localStorageKeys.COLLAPSE_STATE]);
     },
-    openContextMenu(e) {
+    openContextMenu(e: MouseEvent) {
       this.$emit('openContextMenu', e);
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

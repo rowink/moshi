@@ -1,7 +1,7 @@
 /* eslint-disable no-multi-spaces */
 // Import core framework and essential utils
-import Vue from 'vue';
-import VueI18n from 'vue-i18n'; // i18n for localization
+import Vue, { CreateElement } from 'vue';
+import VueI18n, { LocaleMessages } from 'vue-i18n'; // i18n for localization
 
 // Import component Vue plugins, used throughout the app
 import VTooltip from 'v-tooltip';       // A Vue directive for Popper.js, tooltip component
@@ -42,7 +42,7 @@ Vue.config.productionTip = isDevMode;
 const i18n = new VueI18n({
   locale: defaultLanguage,
   fallbackLocale: defaultLanguage,
-  messages,
+  messages: messages as unknown as LocaleMessages,
 });
 
 // Checks if service worker not disable, and if so will registers it
@@ -52,7 +52,7 @@ serviceWorker();
 ErrorReporting(Vue, router);
 
 // Render function
-const render = (awesome) => awesome(Dashy);
+const render = (awesome: CreateElement) => awesome(Dashy);
 
 // Mount the app, with router, pinia i18n and render func
 const mount = () => new Vue({

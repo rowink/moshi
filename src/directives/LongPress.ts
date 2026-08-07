@@ -4,21 +4,22 @@
  * Inspired by: FeliciousX/vue-directive-long-press
  * Dashy: Licensed under MIT - (C) Alicia Sykes 2022
  */
+import { DirectiveOptions } from 'vue';
 
 const LONG_PRESS_DEFAULT_DELAY = 750;
 const longPressEvent = new CustomEvent('long-press');
 
-let startTime = null;
+let startTime: number | null = null;
 
-export default {
+const LongPress: DirectiveOptions = {
   bind(element, binding, vnode) {
     const el = element;
-    el.dataset.longPressTimeout = null;
+    el.dataset.longPressTimeout = String(null);
 
-    const swallowClick = (e) => {
+    const swallowClick = (e: MouseEvent) => {
       el.removeEventListener('click', swallowClick);
       if (!el.dataset.elapsed) return true;
-      const totalTime = Date.now() - startTime;
+      const totalTime = Date.now() - (startTime ?? 0);
       // If was long press, then cancel original action
       if (totalTime > LONG_PRESS_DEFAULT_DELAY) {
         e.preventDefault();
@@ -31,15 +32,15 @@ export default {
     const triggerEvent = () => {
       if (vnode.componentInstance) vnode.componentInstance.$emit('long-press');
       else el.dispatchEvent(longPressEvent);
-      el.dataset.elapsed = true;
+      el.dataset.elapsed = String(true);
     };
 
     const onPointerUp = () => {
-      clearTimeout(parseInt(el.dataset.longPressTimeout, 10));
+      clearTimeout(parseInt(el.dataset.longPressTimeout || '', 10));
       document.removeEventListener('pointerup', onPointerUp);
     };
 
-    const onPointerDown = (e) => {
+    const onPointerDown = (e: PointerEvent) => {
       // If event was right-click, then immediately trigger
       if (e.button === 2) return;
       startTime = Date.now();
@@ -47,16 +48,18 @@ export default {
       el.addEventListener('click', swallowClick);
       const timeoutDuration = LONG_PRESS_DEFAULT_DELAY;
       const timeout = setTimeout(triggerEvent, timeoutDuration);
-      el.dataset.elapsed = false;
-      el.dataset.longPressTimeout = timeout;
+      el.dataset.elapsed = String(false);
+      el.dataset.longPressTimeout = String(timeout);
       e.preventDefault();
     };
-    el.$longPressHandler = onPointerDown;
+    el.$longPressHandler = onPointerDown as EventListener;
     el.addEventListener('pointerdown', onPointerDown);
   },
   unbind(el) {
     startTime = null;
-    clearTimeout(parseInt(el.dataset.longPressTimeout, 10));
-    el.removeEventListener('pointerdown', el.$longPressHandler);
+    clearTimeout(parseInt(el.dataset.longPressTimeout || '', 10));
+    el.removeEventListener('pointerdown', el.$longPressHandler!);
   },
 };
+
+export default LongPress;

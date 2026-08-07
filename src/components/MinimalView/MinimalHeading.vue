@@ -7,10 +7,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Icon from '@/components/LinkItems/ItemIcon.vue';
 
-export default {
+export default defineComponent({
   name: 'MinimalHeadings',
   components: { Icon },
   props: {
@@ -21,7 +22,7 @@ export default {
     hideTitleText: Boolean,
   },
   methods: {
-    selectSection(index) {
+    selectSection(index: number | undefined) {
       this.$emit('sectionSelected', index);
     },
     tooltip() {
@@ -29,7 +30,7 @@ export default {
         ? { content: this.title, trigger: 'hover focus', delay: 250 } : null;
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

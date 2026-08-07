@@ -20,7 +20,7 @@
   </form>
 </template>
 
-<script>
+<script lang="ts">
 import router from '@/router';
 import ArrowKeyNavigation from '@/utils/ArrowKeyNavigation';
 import ErrorHandler from '@/utils/ErrorHandler';
@@ -33,8 +33,9 @@ import {
   defaultSearchOpeningMethod,
   searchBangs as defaultSearchBangs,
 } from '@/utils/defaults';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'FilterTile',
   props: {
     minimalSearch: Boolean, // If true, then keep it simple
@@ -63,8 +64,8 @@ export default {
   },
   methods: {
     /* Call correct function dependending on which key is pressed */
-    handleKeyPress(event) {
-      const currentElem = document.activeElement.id;
+    handleKeyPress(event: KeyboardEvent) {
+      const currentElem = document.activeElement ? document.activeElement.id : '';
       const { key, keyCode } = event;
       const notAlreadySearching = currentElem !== 'filter-tiles';
       // If a modal is open, then do nothing
@@ -92,20 +93,20 @@ export default {
     clearFilterInput() {
       this.input = ''; // Clear input model
       this.userIsTypingSomething(); // Emmit new empty value
-      document.activeElement.blur(); // Remove focus
+      (document.activeElement as HTMLElement)?.blur(); // Remove focus
       this.akn.resetIndex(); // Reset current element index
     },
     /* If configured, launch specific app when hotkey pressed */
-    handleHotKey(key) {
+    handleHotKey(key: string) {
       const usersHotKeys = this.getCustomKeyShortcuts();
-      usersHotKeys.forEach((hotkey) => {
+      usersHotKeys.forEach((hotkey: Record<string, any>) => {
         if (hotkey.hotkey === parseInt(key, 10)) {
           if (hotkey.url) window.open(hotkey.url, '_blank');
         }
       });
     },
     /* Launch search results, with users desired opening method */
-    launchWebSearch(url, method) {
+    launchWebSearch(url: string, method: string) {
       switch (method) {
         case 'newtab':
           window.open(url, '_blank');
@@ -145,7 +146,7 @@ export default {
       }
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

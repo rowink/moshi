@@ -15,8 +15,10 @@
   </transition>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'LoadingScreen',
   props: {
     isLoading: { type: Boolean, default: false },
@@ -24,7 +26,7 @@ export default {
   data: () => ({
     c: '',
   }),
-};
+});
 </script>
 
 <style scoped lang="scss">

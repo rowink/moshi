@@ -46,23 +46,25 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from 'vue';
 import Icon from '@/components/LinkItems/ItemIcon.vue';
-import ItemOpenMethodIcon from '@/components/LinkItems/ItemOpenMethodIcon';
-import StatusIndicator from '@/components/LinkItems/StatusIndicator';
-import ContextMenu from '@/components/LinkItems/ItemContextMenu';
-import ItemMixin from '@/mixins/ItemMixin';
+import ItemOpenMethodIcon from '@/components/LinkItems/ItemOpenMethodIcon.vue';
+import StatusIndicator from '@/components/LinkItems/StatusIndicator.vue';
+import ContextMenu from '@/components/LinkItems/ItemContextMenu.vue';
+import ItemMixin, { ItemMixinItem } from '@/mixins/ItemMixin';
 import { useAppStore } from '@/store';
 
-export default {
+export default defineComponent({
   name: 'Item',
   mixins: [ItemMixin],
   props: {
+    item: { type: Object as PropType<ItemMixinItem>, default: (): ItemMixinItem => ({}) },
     itemSize: String,
     parentSectionTitle: String, // Title of parent section (for add new)
     isAddNew: Boolean, // Only set if 'fake' item used as Add New button
     sectionWidth: Number, // Width of parent section
-    sectionDisplayData: Object,
+    sectionDisplayData: { type: Object as PropType<Record<string, any>>, default: () => ({}) },
   },
   components: {
     Icon,
@@ -78,11 +80,11 @@ export default {
     },
     makeColumnCount() {
       if ((this.sectionDisplayData || {}).itemCountX) return this.sectionDisplayData.itemCountX;
-      if (this.sectionWidth < 380) return 1;
-      if (this.sectionWidth < 520) return 2;
-      if (this.sectionWidth < 730) return 3;
-      if (this.sectionWidth < 1000) return 4;
-      if (this.sectionWidth < 1300) return 5;
+      if (this.sectionWidth! < 380) return 1;
+      if (this.sectionWidth! < 520) return 2;
+      if (this.sectionWidth! < 730) return 3;
+      if (this.sectionWidth! < 1000) return 4;
+      if (this.sectionWidth! < 1300) return 5;
       return 0;
     },
     /* Based on item props, adjust class names */
@@ -131,7 +133,7 @@ export default {
       this.checkWebsiteStatus();
       // If continious status checking is enabled, then start ever-lasting loop
       if (this.statusCheckInterval > 0) {
-        this.intervalId = setInterval(this.checkWebsiteStatus, this.statusCheckInterval * 1000);
+        this.intervalId = window.setInterval(this.checkWebsiteStatus, this.statusCheckInterval * 1000);
       }
     }
   },
@@ -139,7 +141,7 @@ export default {
     // Stop periodic status-check when item is destroyed (e.g. navigating in multi-page setup)
     if (this.intervalId) clearInterval(this.intervalId);
   },
-};
+});
 </script>
 
 <style lang="scss">

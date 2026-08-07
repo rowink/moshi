@@ -10,16 +10,17 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import HomeMixin from '@/mixins/HomeMixin';
-import SideBar from '@/components/Workspace/SideBar';
-import WebContent from '@/components/Workspace/WebContent';
-import MultiTaskingWebComtent from '@/components/Workspace/MultiTaskingWebComtent';
+import SideBar from '@/components/Workspace/SideBar.vue';
+import WebContent from '@/components/Workspace/WebContent.vue';
+import MultiTaskingWebComtent from '@/components/Workspace/MultiTaskingWebComtent.vue';
 import Defaults from '@/utils/defaults';
 import { GetTheme, ApplyLocalTheme, ApplyCustomVariables } from '@/utils/ThemeHelper';
 import { useAppStore } from '@/store';
 
-export default {
+export default defineComponent({
   name: 'Workspace',
   mixins: [HomeMixin],
   data: () => ({
@@ -46,7 +47,7 @@ export default {
     MultiTaskingWebComtent,
   },
   methods: {
-    launchApp(options) {
+    launchApp(options: Record<string, any>) {
       if (options.target === 'newtab') {
         window.open(options.url, '_blank');
       } else {
@@ -75,7 +76,7 @@ export default {
     this.initiateFontAwesome();
     this.url = this.getInitialUrl();
   },
-};
+});
 
 </script>
 

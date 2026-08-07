@@ -32,7 +32,7 @@
   </transition>
 </template>
 
-<script>
+<script lang="ts">
 // Import icons for each element
 import SameTabOpenIcon from '@/assets/interface-icons/open-current-tab.svg';
 import NewTabOpenIcon from '@/assets/interface-icons/open-new-tab.svg';
@@ -40,8 +40,9 @@ import IframeOpenIcon from '@/assets/interface-icons/open-iframe.svg';
 import WorkspaceOpenIcon from '@/assets/interface-icons/open-workspace.svg';
 import ClipboardOpenIcon from '@/assets/interface-icons/open-clipboard.svg';
 import { useAppStore } from '@/store';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'ContextMenu',
   components: {
     SameTabOpenIcon,
@@ -64,11 +65,11 @@ export default {
   methods: {
     /* Called on item click, emits an event up to Item */
     /* in order to launch the current app to a given target */
-    launch(target) {
+    launch(target: string) {
       this.$emit('launchItem', target);
     },
   },
-};
+});
 </script>
 
 <style lang="scss">

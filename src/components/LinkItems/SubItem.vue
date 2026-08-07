@@ -29,18 +29,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from 'vue';
 import Icon from '@/components/LinkItems/ItemIcon.vue';
-import ContextMenu from '@/components/LinkItems/ItemContextMenu';
+import ContextMenu from '@/components/LinkItems/ItemContextMenu.vue';
 import ItemMixin from '@/mixins/ItemMixin';
+import { SubItem } from '@/types';
 // import { targetValidator } from '@/utils/ConfigHelpers';
 
-export default {
+export default defineComponent({
   name: 'Item',
   mixins: [ItemMixin],
   props: {
     id: String, // The unique ID of a tile (e.g. 001)
-    item: Object,
+    item: { type: Object as PropType<SubItem>, default: (): SubItem => ({}) },
   },
   components: {
     Icon,
@@ -55,7 +57,7 @@ export default {
     return {};
   },
   methods: {},
-};
+});
 </script>
 
 <style lang="scss">

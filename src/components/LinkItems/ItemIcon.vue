@@ -18,15 +18,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import simpleIcons from 'simple-icons';
 import BrokenImage from '@/assets/interface-icons/broken-icon.svg';
 import ErrorHandler from '@/utils/ErrorHandler';
 import { asciiHash } from '@/utils/MiscHelpers';
 import { faviconApi as defaultFaviconApi, faviconApiEndpoints, iconCdns } from '@/utils/defaults';
 import { useAppStore } from '@/store';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'Icon',
   props: {
     icon: String, // Path to icon asset
@@ -60,7 +61,7 @@ export default {
   },
   methods: {
     /* Determine icon type, e.g. local or remote asset, SVG, favicon, font-awesome, etc */
-    determineImageType(img) {
+    determineImageType(img: string | undefined) {
       let imgType = '';
       if (!img) imgType = 'none';
       else if (this.isUrl(img)) imgType = 'url';
@@ -76,12 +77,12 @@ export default {
       return imgType;
     },
     /* Return the path to icon asset, depending on icon type */
-    getIconPath(img, url) {
+    getIconPath(img: string | undefined, url: string | undefined) {
       switch (this.determineImageType(img)) {
         case 'url': return img;
-        case 'img': return this.getLocalImagePath(img);
+        case 'img': return this.getLocalImagePath(img!);
         case 'favicon': return this.getFavicon(url);
-        case 'custom-favicon': return this.getCustomFavicon(url, img);
+        case 'custom-favicon': return this.getCustomFavicon(url, img!);
         case 'generative': return this.getGenerativeIcon(url);
         case 'mdi': return img; // Material design icons
         case 'simple-icons': return this.getSimpleIcon(img);
@@ -91,20 +92,20 @@ export default {
       }
     },
     /* Check if a string is in a URL format. Used to identify tile icon source */
-    isUrl(str) {
+    isUrl(str: string) {
       const pattern = new RegExp(/(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-/]))?/);
       return pattern.test(str);
     },
     /* Returns true if the input is a path to an image file */
-    isImage(img) {
+    isImage(img: string) {
       const fileExtRegex = /(?:\.([^.]+))?$/;
       const validImgExtensions = ['svg', 'png', 'jpg'];
-      const splitPath = fileExtRegex.exec(img);
+      const splitPath = fileExtRegex.exec(img) || [];
       if (splitPath.length >= 1) return validImgExtensions.includes(splitPath[1]);
       return false;
     },
     /* Get favicon URL, for items which use the favicon as their icon */
-    getFavicon(fullUrl, specificApi) {
+    getFavicon(fullUrl: string | undefined, specificApi?: string) {
       const fullUrlTrue = fullUrl || '';
       const faviconApi = specificApi || this.appConfig.faviconApi || defaultFaviconApi;
       if (this.shouldUseDefaultFavicon(fullUrlTrue) || faviconApi === 'local') { // Check if we should use local icon
@@ -112,13 +113,13 @@ export default {
         if (urlParts.length >= 2) return `${urlParts[0]}/${urlParts[1]}/${urlParts[2]}/${iconCdns.faviconName}`;
       } else if (fullUrlTrue.includes('http')) { // Service is running publicly
         const host = this.getHostName(fullUrlTrue);
-        const endpoint = faviconApiEndpoints[faviconApi];
+        const endpoint = faviconApiEndpoints[faviconApi as keyof typeof faviconApiEndpoints];
         return endpoint.replace('$URL', host);
       }
       return '';
     },
     /* Get the URL for a favicon, but using the non-default favicon API */
-    getCustomFavicon(fullUrl, faviconIdentifier) {
+    getCustomFavicon(fullUrl: string | undefined, faviconIdentifier: string) {
       let errorMsg = '';
       const faviconApi = faviconIdentifier.split('favicon-')[1];
       if (!faviconApi) {
@@ -134,36 +135,36 @@ export default {
     },
     /* If using favicon for icon, and if service is running locally (determined by local IP) */
     /* or if user prefers local favicon, then return true */
-    shouldUseDefaultFavicon(fullUrl) {
+    shouldUseDefaultFavicon(fullUrl: string) {
       const isLocalIP = /(127\.)|(192\.168\.)|(10\.)|(172\.1[6-9]\.)|(172\.2[0-9]\.)|(172\.3[0-1]\.)|(::1$)|([fF][cCdD])|(localhost)/;
       return (isLocalIP.test(fullUrl) || this.appConfig.faviconApi === 'local');
     },
     /* Fetches the path of local images, from Docker container */
-    getLocalImagePath(img) {
+    getLocalImagePath(img: string) {
       return `/${iconCdns.localPath}/${img}`;
     },
     /* Formats the URL for fetching the generative icons */
-    getGenerativeIcon(url, cdn) {
-      const host = encodeURI(url) || Math.random().toString();
+    getGenerativeIcon(url: string | undefined, cdn?: string) {
+      const host = encodeURI(url as string) || Math.random().toString();
       return (cdn || iconCdns.generative).replace('{icon}', asciiHash(host));
     },
     /* Returns the SVG path content  */
-    getSimpleIcon(img) {
-      const imageName = img.replace('si-', '');
+    getSimpleIcon(img: string | undefined) {
+      const imageName = img!.replace('si-', '');
       const icon = simpleIcons.Get(imageName);
       if (!icon) {
         this.imageNotFound(`No icon was found for '${imageName}' in Simple Icons`);
-        return null;
+        return undefined;
       }
       return icon.path;
     },
     /* Gets home-lab icon from GitHub */
-    getHomeLabIcon(img, cdn) {
-      const imageName = img.replace('hl-', '').toLocaleLowerCase();
+    getHomeLabIcon(img: string | undefined, cdn?: string) {
+      const imageName = img!.replace('hl-', '').toLocaleLowerCase();
       return (cdn || iconCdns.homeLabIcons).replace('{icon}', imageName);
     },
     /* For a given URL, return the hostname only. Used for favicon and generative icons */
-    getHostName(url) {
+    getHostName(url: string) {
       try {
         return new URL(url).hostname;
       } catch (e) {
@@ -172,7 +173,7 @@ export default {
       }
     },
     /* Called when the path to the image cannot be resolved */
-    imageNotFound(errorMsg) {
+    imageNotFound(errorMsg: unknown) {
       let outputMessage = '';
       if (errorMsg && typeof errorMsg === 'string') {
         outputMessage = errorMsg;
@@ -202,7 +203,7 @@ export default {
       return undefined;
     },
   },
-};
+});
 </script>
 
 <style lang="scss">

@@ -26,18 +26,23 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from 'vue';
 import IconBurger from '@/assets/interface-icons/burger-menu.svg';
 import { makePageSlug } from '@/utils/ConfigHelpers';
 import { useAppStore } from '@/store';
+import { NavLink as NavLinkType } from '@/types';
 
-export default {
+export default defineComponent({
   name: 'Nav',
   components: {
     IconBurger,
   },
   props: {
-    links: Array,
+    links: {
+      type: Array as PropType<NavLinkType[]>,
+      default: () => [],
+    },
   },
   data: () => ({
     navVisible: true,
@@ -47,7 +52,7 @@ export default {
     appStore() { return useAppStore(); },
     /* Get links to sub-pages, and combine with nav-links */
     allLinks() {
-      const subPages = this.appStore.pages.map((subPage) => ({
+      const subPages = this.appStore.pages.map((subPage: Record<string, any>) => ({
         path: makePageSlug(subPage.name, 'home'),
         title: subPage.name,
       }));
@@ -62,10 +67,10 @@ export default {
   methods: {
     detectMobile() {
       const screenWidth = document.body.clientWidth;
-      return screenWidth && screenWidth < 600;
+      return !!(screenWidth && screenWidth < 600);
     },
-    isUrl: (str) => new RegExp(/(http|https):\/\/(\S+)(:[0-9]+)?/).test(str),
-    determineTarget(link) {
+    isUrl: (str: string | undefined) => new RegExp(/(http|https):\/\/(\S+)(:[0-9]+)?/).test(str as string),
+    determineTarget(link: NavLinkType) {
       if (!link.target) return '_blank';
       switch (link.target) {
         case 'sametab': return '_self';
@@ -76,7 +81,7 @@ export default {
       }
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

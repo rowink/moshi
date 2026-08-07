@@ -12,14 +12,15 @@
   </section>
 </template>
 
-<script>
+<script lang="ts">
 import LayoutSelector from '@/components/LayoutOptions/LayoutSelector.vue';
 import IconSizeSelector from '@/components/LayoutOptions/IconSizeSelector.vue';
 import ViewSwitcher from '@/components/LayoutOptions/ViewSwitcher.vue';
 import IconViewMode from '@/assets/interface-icons/application-change-view.svg';
 import { useAppStore } from '@/store';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'LayoutOptions',
   components: {
     LayoutSelector,
@@ -44,11 +45,11 @@ export default {
     closeViewSwitcher() {
       this.viewSwitcherOpen = false;
     },
-    tooltip(content) {
+    tooltip(content: string) {
       return { content, trigger: 'hover focus', delay: 250 };
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

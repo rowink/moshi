@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 /* This component displays a small icon, indicating opening method */
 
 // Import Icons
@@ -28,8 +28,9 @@ import ParentOpenIcon from '@/assets/interface-icons/open-parent.svg';
 import TopOpenIcon from '@/assets/interface-icons/open-top.svg';
 import ClipboardOpenIcon from '@/assets/interface-icons/open-clipboard.svg';
 import UnknownIcon from '@/assets/interface-icons/unknown-icon.svg';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'ItemOpenMethodIcon',
   props: {
     openingMethod: String, // newtab | sametab | parent | top | modal | workspace
@@ -57,7 +58,7 @@ export default {
     ClipboardOpenIcon,
     UnknownIcon,
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

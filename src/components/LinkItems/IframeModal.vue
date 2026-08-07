@@ -9,10 +9,11 @@
   </modal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { useAppStore } from '@/store';
 
-export default {
+export default defineComponent({
   computed: {
     appStore() { return useAppStore(); },
   },
@@ -24,7 +25,7 @@ export default {
     url: '#',
   }),
   methods: {
-    show(url) {
+    show(url: string) {
       this.url = url;
       this.$modal.show(this.name);
       this.appStore.setModalOpen(true);
@@ -35,8 +36,12 @@ export default {
     modalClosed() {
       this.appStore.setModalOpen(false);
     },
+    /* Closes the modal, called on Esc key within iframe */
+    close() {
+      this.hide();
+    },
   },
-};
+});
 </script>
 
 <style lang="scss">

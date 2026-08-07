@@ -7,7 +7,7 @@ const defaults = {
     footerText: '',
   },
   /* Default appConfig to be used, if user does not specify their own */
-  appConfig: {},
+  appConfig: {} as Record<string, any>,
   /* Default language code */
   language: 'en',
   /* The page to use as the starting homepage */

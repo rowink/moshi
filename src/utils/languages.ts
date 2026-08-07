@@ -26,9 +26,16 @@ import zhCN from '@/assets/locales/zh-CN.json';
 import zhTW from '@/assets/locales/zh-TW.json';
 import pirate from '@/assets/locales/zz-pirate.json';
 
+export interface Language {
+  name: string;
+  code: string;
+  locale: Record<string, unknown>;
+  flag: string;
+}
+
 // Language data - Next register your language by adding it to this list
 // Sorted alphabetically by code (except English which is first, and specials at the end)
-export const languages = [
+export const languages: Language[] = [
   {
     name: 'English',
     code: 'en',
@@ -187,19 +194,8 @@ export const languages = [
   },
 ];
 
-/**
- * Include the following info:
- * name - Human readable name for your language (e.g German)
- * code - ISO language code (e.g. de)
- * locale - The file that you imported above
- * flag - A nice emoji flag (optional, e.g. 🇩🇪)
- */
-
-// All done :)
-// You can also add your language to /README.md and credit yourself if you like
-
 // Prepare each language for export
-const i18nMessages = {};
+const i18nMessages: Record<string, Record<string, unknown>> = {};
 languages.forEach((lang) => {
   i18nMessages[lang.code] = lang.locale;
 });

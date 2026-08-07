@@ -24,13 +24,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import IconDeafault from '@/assets/interface-icons/layout-default.svg';
 import IconHorizontal from '@/assets/interface-icons/layout-horizontal.svg';
 import IconVertical from '@/assets/interface-icons/layout-vertical.svg';
 import { useAppStore } from '@/store';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   computed: {
     appStore() { return useAppStore(); },
   },
@@ -44,14 +45,14 @@ export default {
     IconVertical,
   },
   methods: {
-    updateDisplayLayout(layout) {
+    updateDisplayLayout(layout: string) {
       this.appStore.setItemLayout(layout);
     },
-    tooltip(content) {
+    tooltip(content: string) {
       return { content, trigger: 'hover focus', delay: 250 };
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

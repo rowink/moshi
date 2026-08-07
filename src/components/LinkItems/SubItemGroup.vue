@@ -11,13 +11,18 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SubItem from '@/components/LinkItems/SubItem.vue';
+import { PropType, defineComponent } from 'vue';
+import { SubItem as SubItemType } from '@/types';
 
-export default {
+export default defineComponent({
   props: {
     itemId: String,
-    subItems: Array,
+    subItems: {
+      type: Array as PropType<SubItemType[]>,
+      default: () => [],
+    },
     title: String,
     subItemGridSize: Number,
   },
@@ -38,11 +43,11 @@ export default {
   },
   methods: {
     /* Pass open modal emit event up */
-    triggerModal(url) {
+    triggerModal(url: string) {
       this.$emit('triggerModal', url);
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

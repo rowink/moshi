@@ -6,11 +6,11 @@
   </div>
 </template>
 
-<script>
-
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Icon from '@/components/LinkItems/ItemIcon.vue';
 
-export default {
+export default defineComponent({
   name: 'SideBarItem',
   props: {
     icon: String,
@@ -37,7 +37,7 @@ export default {
       },
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

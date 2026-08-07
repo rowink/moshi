@@ -11,9 +11,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'StatusIndicator',
   props: {
     statusText: String,
@@ -23,7 +24,7 @@ export default {
     /* Returns a color, based on success status */
     color() {
       switch (this.statusSuccess) {
-        case undefined: return ((new Date() - this.startTime) > 2000) ? 'grey' : 'yellow';
+        case undefined: return ((new Date().getTime() - this.startTime.getTime()) > 2000) ? 'grey' : 'yellow';
         case true: return 'green'; // Success!
         default: return 'red'; // Not success, therefore failure
       }
@@ -40,7 +41,7 @@ export default {
       if (!this.statusText) this.otherStatusText = 'Request timed out';
     }, 2000);
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

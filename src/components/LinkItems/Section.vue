@@ -64,7 +64,8 @@
   </Collapsable>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from 'vue';
 import router from '@/router';
 import Item from '@/components/LinkItems/Item.vue';
 import SubItemGroup from '@/components/LinkItems/SubItemGroup.vue';
@@ -77,16 +78,18 @@ import {
   localStorageKeys,
 } from '@/utils/defaults';
 import { useAppStore } from '@/store';
+import { Item as ItemType } from '@/types';
 
-export default {
+export default defineComponent({
   name: 'Section',
   props: {
     groupId: String,
     title: String,
     icon: String,
-    displayData: Object,
-    items: Array,
+    displayData: { type: Object as PropType<Record<string, any>>, default: () => ({}) },
+    items: { type: Array as PropType<ItemType[]>, default: () => [] },
     index: Number,
+    searchTerm: String,
   },
   components: {
     Collapsable,
@@ -99,11 +102,11 @@ export default {
     return {
       contextMenuOpen: false,
       contextPos: {
-        posX: undefined,
-        posY: undefined,
+        posX: undefined as number | undefined,
+        posY: undefined as number | undefined,
       },
       sectionWidth: 0,
-      resizeObserver: null,
+      resizeObserver: undefined as ResizeObserver | undefined,
     };
   },
   computed: {
@@ -162,29 +165,29 @@ export default {
   },
   methods: {
     /* Opens the iframe modal */
-    triggerModal(url) {
+    triggerModal(url: string) {
       this.$refs[`iframeModal-${this.groupId}`].show(url);
     },
     /* Sorts items alphabetically using the title attribute */
-    sortAlphabetically(items) {
-      return items.sort((a, b) => (a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1));
+    sortAlphabetically(items: ItemType[]) {
+      return items.sort((a, b) => ((a.title || '').toLowerCase() > (b.title || '').toLowerCase() ? 1 : -1));
     },
     /* Sorts items by most used to least used, based on click-count */
-    sortByMostUsed(items) {
+    sortByMostUsed(items: ItemType[]) {
       const usageCount = JSON.parse(localStorage.getItem(localStorageKeys.MOST_USED) || '{}');
-      const gmu = (item) => usageCount[item.id] || 0;
+      const gmu = (item: ItemType) => usageCount[item.id || ''] || 0;
       items.reverse().sort((a, b) => (gmu(a) < gmu(b) ? 1 : -1));
       return items;
     },
     /* Sorts items by most recently used */
-    sortByLastUsed(items) {
+    sortByLastUsed(items: ItemType[]) {
       const usageCount = JSON.parse(localStorage.getItem(localStorageKeys.LAST_USED) || '{}');
-      const glu = (item) => usageCount[item.id] || 0;
+      const glu = (item: ItemType) => usageCount[item.id || ''] || 0;
       items.reverse().sort((a, b) => (glu(a) < glu(b) ? 1 : -1));
       return items;
     },
     /* Sorts items randomly */
-    sortRandomly(items) {
+    sortRandomly(items: ItemType[]) {
       return items
         .map((value) => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
@@ -196,7 +199,7 @@ export default {
         ErrorHandler('Cannot open section without a valid name');
         return;
       }
-      const parse = (section) => section.replace(' ', '-').toLowerCase().trim();
+      const parse = (section: string) => section.replace(' ', '-').toLowerCase().trim();
       const sectionIdentifier = parse(this.title);
       router.push({ path: `/home/${sectionIdentifier}` });
       this.closeContextMenu();
@@ -208,11 +211,11 @@ export default {
       this.closeContextMenu();
     },
     /* Open custom context menu, and set position */
-    openContextMenu(e) {
+    openContextMenu(e: MouseEvent) {
       this.contextMenuOpen = true; // Open context menu
       // If mouse position not set, use section coordinates
       const sectionOuterId = `section-outer-${this.groupId}`;
-      const sectionPosition = document.getElementById(sectionOuterId).getBoundingClientRect();
+      const sectionPosition = document.getElementById(sectionOuterId)!.getBoundingClientRect();
       this.contextPos = {
         posX: (e.clientX || sectionPosition.right - 10) + window.pageXOffset,
         posY: (e.clientY || sectionPosition.top + 30) + window.pageYOffset,
@@ -232,7 +235,7 @@ export default {
     // Set the section width, and recalculate when section resized
     if (this.$refs[this.sectionRef]) {
       this.resizeObserver = new ResizeObserver(this.calculateSectionWidth)
-        .observe(this.$refs[this.sectionRef].$el);
+        .observe(this.$refs[this.sectionRef].$el) as unknown as ResizeObserver;
     }
   },
   beforeDestroy() {
@@ -241,7 +244,7 @@ export default {
       this.resizeObserver.unobserve(this.$refs[this.sectionRef].$el);
     }
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

@@ -1,15 +1,23 @@
 /**
  * Mixin for all homepages (default home, minimal home, workspace, etc)
  */
-
+import { defineComponent, PropType } from 'vue';
 import Defaults, { localStorageKeys, iconCdns } from '@/utils/defaults';
 import { searchTiles } from '@/utils/Search';
 import { GetTheme, ApplyLocalTheme, ApplyCustomVariables } from '@/utils/ThemeHelper';
 import { useAppStore } from '@/store';
+import { Item, Section } from '@/types';
 
-const HomeMixin = {
+interface SubPageInfo {
+  pageId?: string;
+  confPath?: string;
+}
+
+const HomeMixin = defineComponent({
   props: {
-    subPageInfo: Object,
+    subPageInfo: {
+      type: Object as PropType<SubPageInfo>,
+    },
   },
   computed: {
     appStore() { return useAppStore(); },
@@ -45,14 +53,15 @@ const HomeMixin = {
   methods: {
     async getConfigForRoute() {
       this.appStore.setCurrentSubPage(this.subPageInfo);
-      if (this.subPageInfo && this.subPageInfo.confPath) { // Get config for sub-page
-        await this.appStore.initializeMultiPageConfig(this.subPageInfo.confPath);
+      const confPath = this.subPageInfo && this.subPageInfo.confPath;
+      if (confPath) { // Get config for sub-page
+        await this.appStore.initializeMultiPageConfig(confPath);
       } else { // Otherwise, use main config
         this.appStore.useMainConfig();
       }
     },
     /* TEMPORARY: If on sub-page, check if custom theme is set and return it */
-    getSubPageTheme() {
+    getSubPageTheme(): string | null {
       if (!this.pageId || this.pageId === 'home') {
         return null;
       } else {
@@ -65,33 +74,33 @@ const HomeMixin = {
       ApplyLocalTheme(theme);
       ApplyCustomVariables(theme);
     },
-    updateModalVisibility(modalState) {
+    updateModalVisibility(modalState: boolean) {
       this.appStore.setModalOpen(modalState);
     },
     /* Updates local data with search value, triggered from filter comp */
-    searching(searchValue) {
+    searching(searchValue: string) {
       this.searchValue = searchValue || '';
     },
     /* Returns true if there is one or more sections in the config */
-    checkTheresData(sections) {
+    checkTheresData(sections: Section[] | undefined) {
       const localSections = localStorage[localStorageKeys.CONF_SECTIONS];
       return (sections && sections.length >= 1) || (localSections && localSections.length >= 1);
     },
     /* Returns only the tiles that match the users search query */
-    filterTiles(allTiles) {
+    filterTiles(allTiles: Item[] | undefined, _searchTerm?: string): Item[] {
       if (!allTiles) {
         return [];
       }
       return searchTiles(allTiles, this.searchValue);
     },
     /* Checks if any sections or items use icons from a given CDN */
-    checkIfIconLibraryNeeded(prefix) {
+    checkIfIconLibraryNeeded(prefix: string): boolean {
       if (!this.sections) return false;
       let isNeeded = false; // Will be set to true if prefix found in icon name
-      this.sections.forEach((section) => {
+      this.sections.forEach((section: Section) => {
         if (section && section.icon && section.icon.includes(prefix)) isNeeded = true;
         if (section && section.items) {
-          section.items.forEach((item) => {
+          section.items.forEach((item: Item) => {
             if (item.icon && item.icon.includes(prefix)) isNeeded = true;
           });
         }
@@ -136,7 +145,7 @@ const HomeMixin = {
       if (!this.sections) return false;
       else {
         let itemsFound = true;
-        this.sections.forEach((section) => {
+        this.sections.forEach((section: Section) => {
           if (this.filterTiles(section.items, this.searchValue).length > 0) itemsFound = false;
         });
         return itemsFound;
@@ -150,13 +159,13 @@ const HomeMixin = {
       return '';
     },
     /* Extracts the site name from domain, used for the searching functionality */
-    getDomainFromUrl(url) {
+    getDomainFromUrl(url: string) {
       if (!url) return '';
       const urlPattern = /^(?:https?:\/\/)?(?:w{3}\.)?([a-z\d.-]+)\.(?:[a-z.]{2,10})(?:[/\w.-]*)*/;
       const domainPattern = url.match(urlPattern);
       return domainPattern ? domainPattern[1] : '';
     },
   },
-};
+});
 
 export default HomeMixin;

@@ -20,12 +20,13 @@
 </div>
 </template>
 
-<script>
+<script lang="ts">
 import IconHome from '@/assets/interface-icons/application-home.svg';
 import IconWorkspaceView from '@/assets/interface-icons/open-workspace.svg';
 import IconMinimalView from '@/assets/interface-icons/application-minimal.svg';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   components: {
     IconHome,
     IconWorkspaceView,
@@ -36,7 +37,7 @@ export default {
       return this.$route.path.split('/').pop() || '';
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

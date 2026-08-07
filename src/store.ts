@@ -6,13 +6,19 @@ import ConfigAccumulator from '@/utils/ConfigAccumalator';
 import { componentVisibility } from '@/utils/ConfigHelpers';
 import ErrorHandler, { InfoHandler, InfoKeys } from '@/utils/ErrorHandler';
 import { localStorageKeys } from './utils/defaults';
+import { Item, Section } from '@/types';
+
+interface SubPageInfo {
+  pageId?: string;
+  confPath?: string;
+}
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    config: {}, // The current config, rendered to the UI
-    remoteConfig: {}, // The configuration stored on the server
+    config: {} as Record<string, any>, // The current config, rendered to the UI
+    remoteConfig: {} as Record<string, any>, // The configuration stored on the server
     modalOpen: false, // KB shortcut functionality will be disabled when modal is open
-    currentConfigInfo: undefined, // For multi-page support, will store info about config file
+    currentConfigInfo: undefined as SubPageInfo | undefined, // For multi-page support, will store info about config file
   }),
   getters: {
     pageInfo(state) {
@@ -39,19 +45,19 @@ export const useAppStore = defineStore('app', {
       }
       return localTheme || state.config.appConfig.theme;
     },
-    webSearch() {
-      return this.appConfig.webSearch || {};
+    webSearch(state) {
+      return state.config.appConfig?.webSearch || {};
     },
-    visibleComponents() {
-      return componentVisibility(this.appConfig);
+    visibleComponents(state) {
+      return componentVisibility(state.config.appConfig || {});
     },
     getSectionByIndex() {
-      return (index) => this.sections[index];
+      return (index: number) => this.sections[index];
     },
     getItemById() {
-      return (id) => {
-        let item;
-        this.sections.forEach(sec => {
+      return (id: string): Item | undefined => {
+        let item: Item | undefined;
+        this.sections.forEach((sec: Section) => {
           if (sec.items) {
             const foundItem = sec.items.find((itm) => itm.id === id);
             if (foundItem) item = foundItem;
@@ -61,9 +67,9 @@ export const useAppStore = defineStore('app', {
       };
     },
     getParentSectionOfItem() {
-      return (itemId) => {
-        let foundSection;
-        this.sections.forEach((section) => {
+      return (itemId: string): Section | undefined => {
+        let foundSection: Section | undefined;
+        this.sections.forEach((section: Section) => {
           (section.items || []).forEach((item) => {
             if (item.id === itemId) foundSection = section;
           });
@@ -82,49 +88,49 @@ export const useAppStore = defineStore('app', {
     /* Called when app first loaded. Reads config and sets state */
     async initializeConfig() {
       // Get the config file from the server and store it for use by the accumulator
-      this.setRemoteConfig(yaml.load((await axios.get('/conf.yml')).data));
-      const deepCopy = (json) => JSON.parse(JSON.stringify(json));
+      this.setRemoteConfig(yaml.load((await axios.get('/conf.yml')).data) as Record<string, any>);
+      const deepCopy = (json: unknown) => JSON.parse(JSON.stringify(json));
       const config = deepCopy(new ConfigAccumulator().config());
       this.setConfig(config);
     },
     /* Fetch config for a sub-page (sections and pageInfo only) */
-    async initializeMultiPageConfig(configPath) {
+    async initializeMultiPageConfig(configPath: string) {
       axios.get(configPath).then((response) => {
-        const subConfig = yaml.load(response.data);
+        const subConfig = yaml.load(response.data) as Record<string, any>;
         const pageTheme = subConfig.appConfig?.theme;
         subConfig.appConfig = this.config.appConfig; // Always use parent appConfig
         if (pageTheme) subConfig.appConfig.theme = pageTheme; // Apply page theme override
         this.setConfig(subConfig);
-      }).catch((err) => {
+      }).catch((err: unknown) => {
         ErrorHandler(`Unable to load config from '${configPath}'`, err);
       });
     },
-    setConfig(config) {
+    setConfig(config: Record<string, any>) {
       if (!config.appConfig) config.appConfig = {};
       this.config = config;
     },
-    setRemoteConfig(config) {
+    setRemoteConfig(config: Record<string, any>) {
       const notNullConfig = config || {};
       if (!notNullConfig.appConfig) notNullConfig.appConfig = {};
       this.remoteConfig = notNullConfig;
     },
-    setLanguage(lang) {
+    setLanguage(lang: string) {
       const newConfig = this.config;
       newConfig.appConfig.language = lang;
       this.config = newConfig;
     },
-    setModalOpen(modalOpen) {
+    setModalOpen(modalOpen: boolean) {
       this.modalOpen = modalOpen;
     },
-    setItemLayout(layout) {
+    setItemLayout(layout: string) {
       this.config.appConfig.layout = layout;
       InfoHandler('Layout updated', InfoKeys.VISUAL);
     },
-    setItemSize(iconSize) {
+    setItemSize(iconSize: string) {
       this.config.appConfig.iconSize = iconSize;
       InfoHandler('Item size updated', InfoKeys.VISUAL);
     },
-    setCurrentSubPage(subPageObject) {
+    setCurrentSubPage(subPageObject: SubPageInfo | undefined) {
       if (!subPageObject) {
         // Set theme back to primary when navigating to index page
         const defaulTheme = localStorage.getItem(localStorageKeys.PRIMARY_THEME);

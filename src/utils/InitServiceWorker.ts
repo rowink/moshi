@@ -5,7 +5,7 @@ import { sessionStorageKeys } from '@/utils/defaults';
 import { statusMsg, statusErrorMsg } from '@/utils/CoolConsole';
 
 /* Sets a local storage item with the state from the SW lifecycle */
-const setSwStatus = (swStateToSet) => {
+const setSwStatus = (swStateToSet: Record<string, boolean>) => {
   const initialSwState = {
     ready: false,
     registered: false,
@@ -32,8 +32,8 @@ const setSwStatus = (swStateToSet) => {
  * Disable if not running in production
  * Or disable if user specified to disable
  */
-const shouldEnableServiceWorker = async () => {
-  const conf = yaml.load((await axios.get('/conf.yml')).data);
+const shouldEnableServiceWorker = async (): Promise<boolean> => {
+  const conf = yaml.load((await axios.get('/conf.yml')).data) as Record<string, any> | null;
   if (conf && conf.appConfig && conf.appConfig.enableServiceWorker) {
     setSwStatus({ disabledByUser: false });
     return true;
@@ -46,7 +46,7 @@ const shouldEnableServiceWorker = async () => {
 };
 
 /* Calls to the print status function */
-const printSwStatus = (msg) => {
+const printSwStatus = (msg: string) => {
   statusMsg('Service Worker Status', msg);
 };
 
@@ -83,7 +83,7 @@ const registerServiceWorker = async () => {
         setSwStatus({ offline: true });
         printSwStatus('No internet connection found. Dashy is running in offline mode.');
       },
-      error(error) {
+      error(error: Error) {
         setSwStatus({ error: true });
         statusErrorMsg('Service Worker Status', 'Error during SW registration', error);
       },

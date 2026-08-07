@@ -6,8 +6,8 @@
     <Footer :text="footerText" v-if="visibleComponents.footer && !isFetching" />
   </div>
 </template>
-<script>
-
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Header from '@/components/PageStrcture/Header.vue';
 import Footer from '@/components/PageStrcture/Footer.vue';
 import LoadingScreen from '@/components/PageStrcture/LoadingScreen.vue';
@@ -20,7 +20,7 @@ import {
   language as defaultLanguage,
 } from '@/utils/defaults';
 
-export default {
+export default defineComponent({
   name: 'app',
   components: {
     Header,
@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     /* Injects the users custom CSS as a style tag */
-    injectCustomStyles(usersCss) {
+    injectCustomStyles(usersCss: string) {
       const style = document.createElement('style');
       style.textContent = usersCss;
       document.head.append(style);
@@ -96,8 +96,8 @@ export default {
     },
 
     /* Auto-detects users language from browser/ os, when not specified */
-    autoDetectLanguage(availibleLocales) {
-      const isLangSupported = (languageList, userLang) => languageList
+    autoDetectLanguage(availibleLocales: string[]) {
+      const isLangSupported = (languageList: string[], userLang: string) => languageList
         .map(lang => lang.toLowerCase()).find((lang) => lang === userLang.toLowerCase());
 
       const usersBorwserLang1 = window.navigator.language || ''; // e.g. en-GB or or ''
@@ -148,7 +148,7 @@ export default {
     this.hideLoader(); // If initial placeholder still visible, hide it
     welcomeMsg(); // Show message in console
   },
-};
+});
 </script>
 
 <style lang="scss">

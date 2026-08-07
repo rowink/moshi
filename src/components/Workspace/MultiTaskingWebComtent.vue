@@ -2,17 +2,18 @@
   <div class="multi-taking-view" ref="container"></div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Vue from 'vue';
-import WebContent from '@/components/Workspace/WebContent';
+import WebContent from '@/components/Workspace/WebContent.vue';
 
-export default {
+export default defineComponent({
   name: 'WebContent',
   props: {
     url: String, // The URL of currently visible app
   },
   data: () => ({
-    openApps: [], // List of all currently open apps
+    openApps: [] as string[], // List of all currently open apps
   }),
   watch: {
     /* Update the currently open app, when URL changes */
@@ -21,10 +22,10 @@ export default {
   methods: {
     /* Check if app already open or not, and call appropriate opener */
     launchApp() {
-      if (this.openApps.includes(this.url)) {
+      if (this.openApps.includes(this.url as string)) {
         this.openExistingApp();
       } else {
-        this.openApps.push(this.url);
+        this.openApps.push(this.url as string);
         this.appendNewApp();
       }
     },
@@ -32,7 +33,7 @@ export default {
     appendNewApp() {
       const ComponentClass = Vue.extend(WebContent);
       const instance = new ComponentClass({
-        propsData: { url: this.url, id: btoa(this.url) },
+        propsData: { url: this.url, id: btoa(this.url as string) },
       });
       instance.$mount(); // pass nothing
       this.$refs.container.appendChild(instance.$el);
@@ -42,10 +43,10 @@ export default {
       Array.from(document.getElementsByClassName('web-content')).forEach((frame) => {
         frame.classList.add('hide');
       });
-      document.getElementById(btoa(this.url)).classList.remove('hide');
+      document.getElementById(btoa(this.url as string))!.classList.remove('hide');
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

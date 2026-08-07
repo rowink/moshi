@@ -1,4 +1,5 @@
 /** Reusable mixin for items */
+import { defineComponent, PropType } from 'vue';
 import axios from 'axios';
 import router from '@/router';
 import longPress from '@/directives/LongPress';
@@ -10,27 +11,52 @@ import {
   iconSize as defaultSize,
 } from '@/utils/defaults';
 import { useAppStore } from '@/store';
+import { Item, ItemTarget } from '@/types';
 
-export default {
+/* Extend the Item interface with optional fields only used by this mixin */
+export interface ItemMixinItem extends Item {
+  backgroundColor?: string;
+  statusCheckInterval?: number;
+  unicodeOpeningIcon?: string;
+}
+
+interface StatusResponse {
+  statusText?: string;
+  statusSuccess?: boolean;
+  message?: string;
+  successStatus?: boolean;
+}
+
+export default defineComponent({
   directives: {
     longPress,
   },
   props: {
-    item: Object,
+    item: {
+      type: Object as PropType<ItemMixinItem>,
+    },
     isAddNew: Boolean,
+    itemSize: {
+      type: String as PropType<string>,
+      default: undefined,
+    },
+    url: {
+      type: String as PropType<string>,
+      default: undefined,
+    },
   },
   data() {
     return {
-      statusResponse: undefined,
+      statusResponse: undefined as StatusResponse | undefined,
       contextMenuOpen: false,
-      intervalId: undefined, // status-check setInterval() id
+      intervalId: undefined as number | undefined, // status-check setInterval() id
       contextPos: {
-        posX: undefined,
-        posY: undefined,
+        posX: undefined as number | undefined,
+        posY: undefined as number | undefined,
       },
       customStyles: {
-        color: this.item.color,
-        background: this.item.backgroundColor,
+        color: this.item!.color,
+        background: this.item!.backgroundColor,
       },
     };
   },
@@ -47,19 +73,19 @@ export default {
     /* Determines if user has enabled online status checks */
     enableStatusCheck() {
       const globalPref = this.appConfig.statusCheck || false;
-      const itemPref = this.item.statusCheck;
+      const itemPref = this.item!.statusCheck;
       return typeof itemPref === 'boolean' ? itemPref : globalPref;
     },
     /* Determine how often to re-fire status checks */
     statusCheckInterval() {
-      let interval = this.item.statusCheckInterval || this.appConfig.statusCheckInterval;
+      let interval = this.item!.statusCheckInterval || this.appConfig.statusCheckInterval;
       if (!interval) return 0;
       if (interval > 60) interval = 60;
       if (interval < 1) interval = 0;
       return interval;
     },
-    accumulatedTarget() {
-      return this.item.target || this.appConfig.defaultOpeningMethod || defaultOpeningMethod;
+    accumulatedTarget(): ItemTarget {
+      return this.item!.target || this.appConfig.defaultOpeningMethod || defaultOpeningMethod;
     },
     /* Convert config target value, into HTML anchor target attribute */
     anchorTarget() {
@@ -75,7 +101,7 @@ export default {
     /* Get href for anchor, if not opening in modal/ workspace */
     hyperLinkHref() {
       const nothing = '#';
-      const url = this.url || this.item.url || nothing;
+      const url = this.url || this.item!.url || nothing;
       const noAnchorNeeded = ['modal', 'workspace', 'clipboard'];
       return noAnchorNeeded.includes(this.accumulatedTarget) ? nothing : url;
     },
@@ -88,13 +114,13 @@ export default {
         statusCheckAllowInsecure,
         statusCheckAcceptCodes,
         statusCheckMaxRedirects,
-      } = this.item;
-      const encode = (str) => encodeURIComponent(str);
+      } = this.item!;
+      const encode = (str: string) => encodeURIComponent(str);
       this.statusResponse = undefined;
       // Find base URL, where the API is hosted
       const baseUrl = process.env.VUE_APP_DOMAIN || window.location.origin;
       // Find correct URL to check, and encode
-      const urlToCheck = `?&url=${encode(statusCheckUrl || url)}`;
+      const urlToCheck = `?&url=${encode(String(statusCheckUrl || url))}`;
       // Get, stringify and encode any headers
       const headers = statusCheckHeaders
         ? `&headers=${encode(JSON.stringify(statusCheckHeaders))}` : '';
@@ -108,8 +134,11 @@ export default {
     },
     customStyle() {
       return `--open-icon:${this.unicodeOpeningIcon};`
-        + `color:${this.item.color};`
-        + `background:${this.item.backgroundColor}`;
+        + `color:${this.item!.color};`
+        + `background:${this.item!.backgroundColor}`;
+    },
+    unicodeOpeningIcon() {
+      return this.item!.unicodeOpeningIcon;
     },
   },
   methods: {
@@ -128,8 +157,8 @@ export default {
         });
     },
     /* Called when an item is clicked, manages the opening of modal & resets the search field */
-    itemClicked(e) {
-      const url = this.url || this.item.url;
+    itemClicked(e: MouseEvent) {
+      const url = this.url || this.item!.url;
       // For certain opening methods, prevent default and manually navigate
       if (e.ctrlKey) {
         e.preventDefault();
@@ -139,7 +168,7 @@ export default {
         this.$emit('triggerModal', url);
       } else if (this.accumulatedTarget === 'workspace') {
         e.preventDefault();
-        router.push({ name: 'workspace', query: { url } });
+        router.push({ name: 'workspace', query: { url: url as string } });
       } else if (this.accumulatedTarget === 'clipboard') {
         e.preventDefault();
         this.copyToClipboard(url);
@@ -148,13 +177,13 @@ export default {
       this.$emit('itemClicked');
       // Update the most/ last used ledger, for smart-sorting
       if (!this.appConfig.disableSmartSort) {
-        this.incrementMostUsedCount(this.item.id);
-        this.incrementLastUsedCount(this.item.id);
+        this.incrementMostUsedCount(this.item!.id);
+        this.incrementLastUsedCount(this.item!.id);
       }
     },
     /* Open item, using specified method */
-    launchItem(method, link) {
-      const url = link || this.item.url;
+    launchItem(method: string, link?: string) {
+      const url = link || this.item!.url;
       this.contextMenuOpen = false;
       switch (method) {
         case 'newtab':
@@ -167,7 +196,7 @@ export default {
           this.$emit('triggerModal', url);
           break;
         case 'workspace':
-          router.push({ name: 'workspace', query: { url } });
+          router.push({ name: 'workspace', query: { url: url as string } });
           break;
         case 'clipboard':
           this.copyToClipboard(url);
@@ -176,7 +205,7 @@ export default {
       }
     },
     /* Open custom context menu, and set position */
-    openContextMenu(e) {
+    openContextMenu(e?: MouseEvent) {
       this.contextMenuOpen = !this.contextMenuOpen;
       if (e && window) {
         // Calculate placement based on cursor and scroll position
@@ -191,9 +220,9 @@ export default {
       this.contextMenuOpen = false;
     },
     /* Copies a string to the users clipboard / shows error if not possible  */
-    copyToClipboard(content) {
+    copyToClipboard(content: string | undefined) {
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(content);
+        navigator.clipboard.writeText(String(content));
         this.$toasted.show(
           this.$t('context-menus.item.copied-toast'),
           { className: 'toast-success' },
@@ -204,18 +233,18 @@ export default {
       }
     },
     /* Used for smart-sort when sorting items by most used apps */
-    incrementMostUsedCount(itemId) {
+    incrementMostUsedCount(itemId: string | undefined) {
       const mostUsed = JSON.parse(localStorage.getItem(localStorageKeys.MOST_USED) || '{}');
-      let counter = mostUsed[itemId] || 0;
+      let counter = mostUsed[itemId as string] || 0;
       counter += 1;
-      mostUsed[itemId] = counter;
+      mostUsed[itemId as string] = counter;
       localStorage.setItem(localStorageKeys.MOST_USED, JSON.stringify(mostUsed));
     },
     /* Used for smart-sort when sorting by last used apps */
-    incrementLastUsedCount(itemId) {
+    incrementLastUsedCount(itemId: string | undefined) {
       const lastUsed = JSON.parse(localStorage.getItem(localStorageKeys.LAST_USED) || '{}');
-      lastUsed[itemId] = new Date().getTime();
+      lastUsed[itemId as string] = new Date().getTime();
       localStorage.setItem(localStorageKeys.LAST_USED, JSON.stringify(lastUsed));
     },
   },
-};
+});

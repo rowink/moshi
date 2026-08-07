@@ -17,13 +17,14 @@
   </transition>
 </template>
 
-<script>
+<script lang="ts">
 // Import icons for each element
 import SameTabOpenIcon from '@/assets/interface-icons/open-current-tab.svg';
 import ExpandCollapseIcon from '@/assets/interface-icons/section-expand-collapse.svg';
 import { useAppStore } from '@/store';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'ContextMenu',
   components: {
     SameTabOpenIcon,
@@ -50,14 +51,14 @@ export default {
       this.$emit('expandCollapseSection');
     },
     calcPosition() {
-      const bounds = this.$parent.$el.getBoundingClientRect();
-      const left = this.posX < (bounds.right + bounds.left) / 2;
+      const bounds = this.$parent!.$el.getBoundingClientRect();
+      const left = (this.posX as number) < (bounds.right + bounds.left) / 2;
       const position = `top:${this.posY}px;${left ? 'left' : 'right'}:\
-        ${left ? this.posX : document.documentElement.clientWidth - this.posX}px;`;
+        ${left ? this.posX : document.documentElement.clientWidth - (this.posX as number)}px;`;
       return position;
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

@@ -34,20 +34,28 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from 'vue';
 import Item from '@/components/LinkItems/Item.vue';
 import SubItemGroup from '@/components/LinkItems/SubItemGroup.vue';
 import IframeModal from '@/components/LinkItems/IframeModal.vue';
 import { useAppStore } from '@/store';
+import { Item as ItemType } from '@/types';
 
-export default {
+export default defineComponent({
   name: 'ItemGroup',
   props: {
     groupId: String,
     title: String,
     icon: String,
-    displayData: Object,
-    items: Array,
+    displayData: {
+      type: Object as PropType<Record<string, any>>,
+      default: () => ({}),
+    },
+    items: {
+      type: Array as PropType<ItemType[]>,
+      default: () => [],
+    },
     itemSize: String,
     modalOpen: Boolean,
     index: Number,
@@ -66,19 +74,19 @@ export default {
     IframeModal,
   },
   methods: {
-    selectSection(index) {
+    selectSection(index: number) {
       this.$emit('sectionSelected', index);
     },
     /* Returns a unique lowercase string, based on name, for section ID */
-    makeId(str) {
+    makeId(str: string) {
       if (!str) return 'unnamed-item';
       return str.replace(/\s+/g, '-').replace(/[^a-zA-Z ]/g, '').toLowerCase();
     },
     /* Opens the iframe modal */
-    triggerModal(url) {
+    triggerModal(url: string) {
       this.$refs[`iframeModal-${this.groupId}`].show(url);
     },
-    shouldEnableStatusCheck(itemPreference) {
+    shouldEnableStatusCheck(itemPreference: boolean | undefined) {
       const globalPreference = this.appConfig.statusCheck || false;
       return itemPreference !== undefined ? itemPreference : globalPreference;
     },
@@ -90,7 +98,7 @@ export default {
       return interval;
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

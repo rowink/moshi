@@ -2,13 +2,14 @@
 
 /* Tile filtering utility */
 import ErrorHandler from '@/utils/ErrorHandler';
+import type { Item } from '@/types';
 
 /**
  * Extracts the site name from domain
- * @param {string} url The URL to process
- * @returns {string} The hostname from URL
+ * @param url The URL to process
+ * @returns The hostname from URL
  */
-const getDomainFromUrl = (url) => {
+const getDomainFromUrl = (url?: string): string => {
   if (!url) return '';
   const urlPattern = /^(?:https?:\/\/)?(?:w{3}\.)?([a-z\d.-]+)\.(?:[a-z.]{2,10})(?:[/\w.-]*)*/;
   const domainPattern = urlPattern.exec(url);
@@ -18,13 +19,13 @@ const getDomainFromUrl = (url) => {
 /**
  * Compares search term to a given data attribute
  * Ignores case, special characters and order
- * @param {string or other} compareStr The value to compare to
- * @param {string} searchStr The users search term
- * @returns {boolean} true if a match, otherwise false
+ * @param compareStr The value to compare to
+ * @param searchStr The users search term
+ * @returns true if a match, otherwise false
  */
-const filterHelper = (compareStr, searchStr) => {
+const filterHelper = (compareStr: unknown, searchStr: string): boolean => {
   if (!compareStr) return false;
-  const process = (input) => input?.toString().toLowerCase().replace(/[^\w\s]/gi, '');
+  const process = (input: unknown) => (input ? input.toString().toLowerCase().replace(/[^\w\s]/gi, '') : '');
   return process(searchStr).split(/\s/).every(word => process(compareStr).includes(word));
 };
 
@@ -32,11 +33,11 @@ const filterHelper = (compareStr, searchStr) => {
  * Filter tiles based on users search term, and returns a filtered list
  * Will match based on title, description, provider, hostname from url and tags
  * Ignores case, special characters and other irrelevant things
- * @param {array} allTiles An array of tiles
- * @param {string} searchTerm The users search term
+ * @param allTiles An array of tiles
+ * @param searchTerm The users search term
  * @returns A filtered array of tiles
  */
-export const searchTiles = (allTiles, searchTerm) => {
+export const searchTiles = (allTiles: Item[], searchTerm: string): Item[] => {
   if (!searchTerm) return allTiles; // If no search term, then return all
   if (!allTiles) return []; // If no data, then skip
   return allTiles.filter((tile) => {
@@ -52,14 +53,17 @@ export const searchTiles = (allTiles, searchTerm) => {
 };
 
 /* From a list of search bangs, return the URL associated with it */
-export const getSearchEngineFromBang = (searchQuery, bangList) => {
+export const getSearchEngineFromBang = (searchQuery: string, bangList: Record<string, string>): string | undefined => {
   const bangNames = Object.keys(bangList);
   const foundBang = bangNames.find((bang) => searchQuery.includes(bang));
-  return bangList[foundBang];
+  return foundBang ? bangList[foundBang] : undefined;
 };
 
 /* For a given search engine key, return the corresponding URL, or throw error */
-export const findUrlForSearchEngine = (searchEngine, availableSearchEngines) => {
+export const findUrlForSearchEngine = (
+  searchEngine: string,
+  availableSearchEngines: Record<string, string>,
+): string | undefined => {
   // If missing search engine, report error return false
   if (!searchEngine) { ErrorHandler('No search engine specified'); return undefined; }
   // If search engine is already a URL, then return it
@@ -72,7 +76,7 @@ export const findUrlForSearchEngine = (searchEngine, availableSearchEngines) => 
 };
 
 /* Removes all known bangs from a search query */
-export const stripBangs = (searchQuery, bangList) => {
+export const stripBangs = (searchQuery: string, bangList?: Record<string, string>): string => {
   const bangNames = Object.keys(bangList || {});
   let q = searchQuery;
   bangNames.forEach((bang) => { q = q.replace(bang, ''); });

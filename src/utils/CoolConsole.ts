@@ -7,7 +7,7 @@ export const welcomeMsg = () => {
 };
 
 /* Prints warning message, usually when there is a configuration error */
-export const warningMsg = (message, stack) => {
+export const warningMsg = (message: string, stack?: unknown) => {
   console.info(
     `\n%c⚠️ Warning ⚠️%c \n${message} \n\n%cThis is likely not an issue with Dashy, but rather your configuration. If you think it is a bug, please open a ticket on GitHub: https://git.io/JukXk`,
     "color:#ceb73f; background: #ceb73f33; font-size:1.5rem; padding:0.15rem; margin: 1rem auto; font-family: Rockwell, Tahoma, 'Trebuchet MS', Helvetica; border: 2px solid #ceb73f; border-radius: 4px; font-weight: bold; text-shadow: 1px 1px 1px #000000bf;",
@@ -20,7 +20,7 @@ export const warningMsg = (message, stack) => {
 };
 
 /* Prints status message */
-export const statusMsg = (title, msg) => {
+export const statusMsg = (title?: string, msg?: string) => {
   console.log(
     `%c${title || ''}\n%c${msg}`,
     'font-weight: bold; color: #0dd8d8; text-decoration: underline;',
@@ -29,7 +29,7 @@ export const statusMsg = (title, msg) => {
 };
 
 /* Prints status message, with a stack trace */
-export const statusErrorMsg = (title, msg, errorLog) => {
+export const statusErrorMsg = (title?: string, msg?: string, errorLog?: unknown) => {
   console.log(
     `%c${title || ''}\n%c${msg} \n%c${errorLog || ''}`,
     'font-weight: bold; color: #0dd8d8; text-decoration: underline;',

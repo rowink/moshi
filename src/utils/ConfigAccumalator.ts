@@ -20,12 +20,12 @@ import { useAppStore } from '@/store';
 
 import buildConfRaw from '../../public/conf.yml?raw';
 
-const buildConf = yaml.load(buildConfRaw);
+const buildConf = yaml.load(buildConfRaw) as Record<string, any> | null;
 
 /* Read the remote config from the Pinia store.
  * Falls back to an empty object when the store is not yet initialized
  * (e.g. when this module is instantiated during app startup). */
-const getRemoteConfig = () => {
+const getRemoteConfig = (): Record<string, any> => {
   try {
     return useAppStore(pinia).remoteConfig;
   } catch (e) {
@@ -34,6 +34,8 @@ const getRemoteConfig = () => {
 };
 
 export default class ConfigAccumulator {
+  conf: Record<string, any>;
+
   constructor() {
     this.conf = getRemoteConfig();
   }
@@ -43,8 +45,8 @@ export default class ConfigAccumulator {
   }
 
   /* App Config */
-  appConfig() {
-    let appConfigFile = {};
+  appConfig(): Record<string, any> {
+    let appConfigFile: Record<string, any> = {};
     // Set app config from file
     if (this.conf && this.conf.appConfig) {
       appConfigFile = this.conf.appConfig;
@@ -72,7 +74,7 @@ export default class ConfigAccumulator {
   }
 
   /* Page Info */
-  pageInfo() {
+  pageInfo(): Record<string, any> {
     let localPageInfo = {};
     if (localStorage[localStorageKeys.PAGE_INFO]) {
       // eslint-disable-next-line brace-style
@@ -84,8 +86,8 @@ export default class ConfigAccumulator {
   }
 
   /* Sections */
-  sections() {
-    let sections = [];
+  sections(): Record<string, any>[] {
+    let sections: Record<string, any>[] = [];
     // If the user has stored sections in local storage, return those
     const localSections = localStorage[localStorageKeys.CONF_SECTIONS];
     if (localSections) {
@@ -106,7 +108,7 @@ export default class ConfigAccumulator {
   }
 
   /* Complete config */
-  config() {
+  config(): Record<string, any> {
     return {
       appConfig: this.appConfig(),
       pageInfo: this.pageInfo(),
