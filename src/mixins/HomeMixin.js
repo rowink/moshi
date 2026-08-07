@@ -34,6 +34,7 @@ const HomeMixin = {
   }),
   async mounted() {
     await this.getConfigForRoute();
+    this.setTheme();
   },
   watch: {
     async $route() {
