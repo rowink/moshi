@@ -59,10 +59,8 @@ export default {
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0;
   position: relative;
-  max-width: 90%;
-  margin: 0 auto;
 
   .view-switch-button {
     width: 1rem;

@@ -157,7 +157,6 @@ export default {
     align-items: center;
     border-radius: 0 0 var(--curve-factor-navbar) 0;
     padding: 0 0.2rem 0.2rem 0;
-    background: var(--search-container-background);
     .search-wrap {
       display: flex;
       flex-direction: column;

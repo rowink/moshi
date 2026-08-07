@@ -1,14 +1,15 @@
 <!-- Main homepage for default view -->
 <template>
   <div class="home" :style="getBackgroundImage()">
-    <!-- Search bar -->
-    <SearchBar
-      v-if="searchVisible"
-      ref="filterComp"
-      @user-is-searchin="searching"
-    />
-    <!-- Layout options: orientation, item size and view switcher -->
-    <LayoutOptions />
+    <!-- Search bar + layout options, on the same row -->
+    <div class="home-toolbar">
+      <SearchBar
+        v-if="searchVisible"
+        ref="filterComp"
+        @user-is-searchin="searching"
+      />
+      <LayoutOptions />
+    </div>
     <!-- Show back button, when on single-section view -->
     <div v-if="singleSectionView">
       <router-link to="/home" class="back-to-all-link">
@@ -163,6 +164,19 @@ export default {
   @extend .svg-button;
   svg { margin-right: 0.5rem; }
   text-decoration: none;
+}
+
+/* Toolbar row containing search bar and layout options */
+.home-toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  max-width: 90%;
+  margin: 0 auto;
 }
 
 /* Outside container wrapping the item groups*/
