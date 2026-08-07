@@ -39,9 +39,6 @@ export default {
     appConfig() {
       return this.appStore.appConfig;
     },
-    isEditMode() {
-      return this.appStore.editMode;
-    },
     size() {
       const validSizes = ['small', 'medium', 'large'];
       if (this.itemSize && validSizes.includes(this.itemSize)) return this.itemSize;
@@ -66,7 +63,6 @@ export default {
     },
     /* Convert config target value, into HTML anchor target attribute */
     anchorTarget() {
-      if (this.isEditMode) return '_self';
       const target = this.accumulatedTarget;
       switch (target) {
         case 'sametab': return '_self';
@@ -76,11 +72,10 @@ export default {
         default: return undefined;
       }
     },
-    /* Get href for anchor, if not in edit mode, or opening in modal/ workspace */
+    /* Get href for anchor, if not opening in modal/ workspace */
     hyperLinkHref() {
       const nothing = '#';
       const url = this.url || this.item.url || nothing;
-      if (this.isEditMode) return nothing;
       const noAnchorNeeded = ['modal', 'workspace', 'clipboard'];
       return noAnchorNeeded.includes(this.accumulatedTarget) ? nothing : url;
     },
@@ -135,12 +130,6 @@ export default {
     /* Called when an item is clicked, manages the opening of modal & resets the search field */
     itemClicked(e) {
       const url = this.url || this.item.url;
-      if (this.isEditMode) {
-        // If in edit mode, open settings, and don't launch app
-        e.preventDefault();
-        this.openItemSettings();
-        return;
-      }
       // For certain opening methods, prevent default and manually navigate
       if (e.ctrlKey) {
         e.preventDefault();

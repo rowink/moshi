@@ -151,12 +151,6 @@ const router = new Router({
       component: () => import('./views/About.vue'),
       meta: makeMetaTags('About Dashy'),
     },
-    { // The export config page
-      path: routePaths.download,
-      name: 'download',
-      component: () => import('./views/DownloadConfig.vue'),
-      meta: makeMetaTags('Download Config'),
-    },
     { // Page not found, any non-defined routes will land here
       path: routePaths.notFound,
       name: '404',

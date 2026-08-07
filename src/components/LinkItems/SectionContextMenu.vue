@@ -8,17 +8,9 @@
           <SameTabOpenIcon />
           <span>{{ $t('context-menus.section.open-section') }}</span>
         </li>
-        <li @click="openEditSectionMenu">
-          <EditIcon />
-          <span>{{ $t('context-menus.section.edit-section') }}</span>
-        </li>
         <li @click="expandCollapseSection">
           <ExpandCollapseIcon />
           <span>{{ $t('context-menus.section.expand-collapse') }}</span>
-        </li>
-        <li v-if="isEditMode" @click="removeSection">
-          <BinIcon />
-          <span>{{ $t('context-menus.section.remove-section') }}</span>
         </li>
       </ul>
     </div>
@@ -27,8 +19,6 @@
 
 <script>
 // Import icons for each element
-import EditIcon from '@/assets/interface-icons/config-edit-json.svg';
-import BinIcon from '@/assets/interface-icons/interactive-editor-remove.svg';
 import SameTabOpenIcon from '@/assets/interface-icons/open-current-tab.svg';
 import ExpandCollapseIcon from '@/assets/interface-icons/section-expand-collapse.svg';
 import { useAppStore } from '@/store';
@@ -36,8 +26,6 @@ import { useAppStore } from '@/store';
 export default {
   name: 'ContextMenu',
   components: {
-    EditIcon,
-    BinIcon,
     SameTabOpenIcon,
     ExpandCollapseIcon,
   },
@@ -51,9 +39,6 @@ export default {
     isMenuDisabled() {
       return !!this.appStore.appConfig.disableContextMenu;
     },
-    isEditMode() {
-      return this.appStore.editMode;
-    },
   },
   methods: {
     /* Called on item click, emits an event up to Item */
@@ -61,14 +46,8 @@ export default {
     openSection() {
       this.$emit('navigateToSection');
     },
-    openEditSectionMenu() {
-      this.$emit('openEditSection');
-    },
     expandCollapseSection() {
       this.$emit('expandCollapseSection');
-    },
-    removeSection() {
-      this.$emit('removeSection');
     },
     calcPosition() {
       const bounds = this.$parent.$el.getBoundingClientRect();

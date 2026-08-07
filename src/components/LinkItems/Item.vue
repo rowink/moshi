@@ -33,8 +33,6 @@
         :statusSuccess="statusResponse ? statusResponse.successStatus : undefined"
         :statusText="statusResponse ? statusResponse.message : undefined"
       />
-      <!-- Edit icon (displayed only when in edit mode) -->
-      <EditModeIcon v-if="isEditMode" class="edit-mode-item" @click="openItemSettings()" />
     </a>
     <!-- Right-click context menu -->
     <ContextMenu
@@ -44,15 +42,7 @@
       :posY="contextPos.posY"
       :id="`context-menu-${item.id}`"
       @launchItem="launchItem"
-      @openItemSettings="openItemSettings"
-      @openMoveItemMenu="openMoveItemMenu"
-      @openDeleteItem="openDeleteItem"
     />
-    <!-- Edit and move item menu modals -->
-    <MoveItemTo v-if="isEditMode" :itemId="item.id" />
-    <EditItem v-if="editMenuOpen" :itemId="item.id"
-      @closeEditMenu="closeEditMenu"
-      :isNew="isAddNew" :parentSectionTitle="parentSectionTitle" />
   </div>
 </template>
 
@@ -60,12 +50,8 @@
 import Icon from '@/components/LinkItems/ItemIcon.vue';
 import ItemOpenMethodIcon from '@/components/LinkItems/ItemOpenMethodIcon';
 import StatusIndicator from '@/components/LinkItems/StatusIndicator';
-import EditItem from '@/components/InteractiveEditor/EditItem';
-import MoveItemTo from '@/components/InteractiveEditor/MoveItemTo';
 import ContextMenu from '@/components/LinkItems/ItemContextMenu';
 import ItemMixin from '@/mixins/ItemMixin';
-import EditModeIcon from '@/assets/interface-icons/interactive-editor-edit-mode.svg';
-import { modalNames } from '@/utils/defaults';
 import { useAppStore } from '@/store';
 
 export default {
@@ -83,9 +69,6 @@ export default {
     ItemOpenMethodIcon,
     StatusIndicator,
     ContextMenu,
-    MoveItemTo,
-    EditItem,
-    EditModeIcon,
   },
   computed: {
     appStore() { return useAppStore(); },
@@ -104,9 +87,9 @@ export default {
     },
     /* Based on item props, adjust class names */
     makeClassList() {
-      const { isAddNew, isEditMode, size } = this;
+      const { isAddNew, size } = this;
       return `size-${size} ${!this.itemIcon ? 'short' : ''} `
-        + `${isAddNew ? 'add-new' : ''} ${isEditMode ? 'is-edit-mode' : ''}`;
+        + `${isAddNew ? 'add-new' : ''}`;
     },
     /* Used by certain themes (material), to show animated CSS icon */
     unicodeOpeningIcon() {
@@ -122,11 +105,6 @@ export default {
       }
     },
   },
-  data() {
-    return {
-      editMenuOpen: false,
-    };
-  },
   methods: {
     /* Returns configuration object for the tooltip */
     getTooltipOptions() {
@@ -136,9 +114,8 @@ export default {
       const lb1 = description && providerText ? '<br>' : '';
       const hotkeyText = this.item.hotkey ? `<br>Press '${this.item.hotkey}' to launch` : '';
       const tooltipText = providerText + lb1 + description + hotkeyText;
-      const editText = this.$t('interactive-editor.edit-section.edit-tooltip');
       return {
-        content: (this.isEditMode ? editText : tooltipText),
+        content: tooltipText,
         trigger: 'hover focus',
         hideOnTargetClick: true,
         html: true,
@@ -146,31 +123,6 @@ export default {
         delay: { show: 600, hide: 200 },
         classes: `item-description-tooltip tooltip-is-${this.size}`,
       };
-    },
-    openItemSettings() {
-      this.editMenuOpen = true;
-      this.contextMenuOpen = false;
-      this.$modal.show(modalNames.EDIT_ITEM);
-      this.appStore.setModalOpen(true);
-    },
-    /* Ensure conditional is updated, once menu closed */
-    closeEditMenu() {
-      this.editMenuOpen = false;
-      this.$modal.hide(modalNames.EDIT_ITEM);
-      this.appStore.setModalOpen(false);
-    },
-    /* Open the modal for moving/ copying item to other section */
-    openMoveItemMenu() {
-      this.$modal.show(`${modalNames.MOVE_ITEM_TO}-${this.item.id}`);
-      this.appStore.setModalOpen(true);
-      this.closeContextMenu();
-    },
-    /* Deletes the current item from the state */
-    openDeleteItem() {
-      const parentSection = this.appStore.getParentSectionOfItem(this.item.id);
-      const payload = { itemId: this.item.id, sectionName: parentSection.name };
-      this.appStore.removeItem(payload);
-      this.closeContextMenu();
     },
   },
   mounted() {
@@ -296,14 +248,6 @@ export default {
 }
 
 /* Edit icon, visible in edit mode */
-.item .edit-mode-item {
-  width: 1rem;
-  height: 1rem;
-  position: absolute;
-  top: 0.2rem;
-  right: 0.2rem;
-}
-
 p.description {
   display: none; // By default, we don't show the description
 }
@@ -394,13 +338,6 @@ p.description {
     font-family: FontAwesome;
     content: var(--open-icon, "\f054") !important;
   }
-}
-
-/* Adjust positioning of status indicator, when in edit mode */
-a.item.is-edit-mode {
-  &.size-medium .status-indicator { top: 1rem; }
-  &.size-small .status-indicator { right: 1rem; }
-  &.size-large .status-indicator { top: 1.5rem; }
 }
 
 </style>

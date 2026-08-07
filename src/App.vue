@@ -1,6 +1,5 @@
 <template>
   <div id="dashy" :style="topLevelStyleModifications" :class="subPageClassName">
-    <EditModeTopBanner v-if="isEditMode" />
     <LoadingScreen :isLoading="isLoading" v-if="shouldShowSplash" />
     <Header :pageInfo="pageInfo" />
     <router-view v-if="!isFetching" />
@@ -11,7 +10,6 @@
 
 import Header from '@/components/PageStrcture/Header.vue';
 import Footer from '@/components/PageStrcture/Footer.vue';
-import EditModeTopBanner from '@/components/InteractiveEditor/EditModeTopBanner.vue';
 import LoadingScreen from '@/components/PageStrcture/LoadingScreen.vue';
 import { welcomeMsg } from '@/utils/CoolConsole';
 import { useAppStore } from '@/store';
@@ -28,7 +26,6 @@ export default {
     Header,
     Footer,
     LoadingScreen,
-    EditModeTopBanner,
   },
   data() {
     return {
@@ -37,10 +34,6 @@ export default {
     };
   },
   watch: {
-    isEditMode(isEditMode) {
-      // When in edit mode, show confirmation dialog on page exit
-      window.onbeforeunload = isEditMode ? this.confirmExit : null;
-    },
     config() {
       this.isFetching = false;
     },
@@ -69,9 +62,6 @@ export default {
     },
     visibleComponents() {
       return this.appStore.visibleComponents;
-    },
-    isEditMode() {
-      return this.appStore.editMode;
     },
     subPageClassName() {
       const currentSubPage = this.appStore.currentConfigInfo;
@@ -144,11 +134,6 @@ export default {
     hideLoader() {
       const loader = document.getElementById('loader');
       if (loader) loader.style.display = 'none';
-    },
-    /* Called when in edit mode and navigating away from page */
-    confirmExit(e) {
-      e.preventDefault();
-      return 'You may have unsaved edits. Are you sure you want to exit the page?';
     },
   },
   /* Basic initialization tasks on app load */

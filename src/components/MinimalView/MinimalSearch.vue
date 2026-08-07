@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import SearchBar from '@/components/Settings/SearchBar';
+import SearchBar from '@/components/SearchBar';
 import { useAppStore } from '@/store';
 
 export default {

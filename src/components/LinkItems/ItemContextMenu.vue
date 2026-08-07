@@ -28,33 +28,12 @@
           <span>{{ $t('context-menus.item.clipboard') }}</span>
         </li>
       </ul>
-      <!-- Edit Options -->
-      <ul class="menu-section" v-bind:class="{ disabled: !isEditAllowed }">
-        <li class="section-title">
-          {{ $t('context-menus.item.options-section-title') }}
-        </li>
-        <li @click="openSettings()">
-          <EditIcon />
-          <span>{{ $t('context-menus.item.edit-item') }}</span>
-        </li>
-        <li v-if="isEditMode" @click="openMoveMenu()">
-          <MoveIcon />
-          <span>{{ $t('context-menus.item.move-item') }}</span>
-        </li>
-        <li v-if="isEditMode" @click="openDeleteItem()">
-          <BinIcon />
-          <span>{{ $t('context-menus.item.remove-item') }}</span>
-        </li>
-      </ul>
     </div>
   </transition>
 </template>
 
 <script>
 // Import icons for each element
-import EditIcon from '@/assets/interface-icons/config-edit-json.svg';
-import BinIcon from '@/assets/interface-icons/interactive-editor-remove.svg';
-import MoveIcon from '@/assets/interface-icons/interactive-editor-move-to.svg';
 import SameTabOpenIcon from '@/assets/interface-icons/open-current-tab.svg';
 import NewTabOpenIcon from '@/assets/interface-icons/open-new-tab.svg';
 import IframeOpenIcon from '@/assets/interface-icons/open-iframe.svg';
@@ -65,9 +44,6 @@ import { useAppStore } from '@/store';
 export default {
   name: 'ContextMenu',
   components: {
-    EditIcon,
-    MoveIcon,
-    BinIcon,
     SameTabOpenIcon,
     NewTabOpenIcon,
     IframeOpenIcon,
@@ -78,19 +54,11 @@ export default {
     posX: Number, // The X coordinate for positioning
     posY: Number, // The Y coordinate for positioning
     show: Boolean, // Should show or hide the menu
-    disableEdit: Boolean, // Disable editing for certain items
   },
   computed: {
     appStore() { return useAppStore(); },
     isMenuDisabled() {
       return !!this.appStore.appConfig.disableContextMenu;
-    },
-    isEditMode() {
-      return this.appStore.editMode;
-    },
-    isEditAllowed() {
-      if (this.disableEdit) return false;
-      return this.appStore.permissions.allowViewConfig;
     },
   },
   methods: {
@@ -98,21 +66,6 @@ export default {
     /* in order to launch the current app to a given target */
     launch(target) {
       this.$emit('launchItem', target);
-    },
-    openSettings() {
-      if (this.isEditAllowed) {
-        this.$emit('openItemSettings');
-      }
-    },
-    openMoveMenu() {
-      if (this.isEditAllowed) {
-        this.$emit('openMoveItemMenu');
-      }
-    },
-    openDeleteItem() {
-      if (this.isEditAllowed) {
-        this.$emit('openDeleteItem');
-      }
     },
   },
 };

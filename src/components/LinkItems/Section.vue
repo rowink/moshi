@@ -9,7 +9,6 @@
     :color="displayData.color"
     :customStyles="displayData.customStyles"
     :cutToHeight="displayData.cutToHeight"
-    @openEditSection="openEditSection"
     @openContextMenu="openContextMenu"
     :id="sectionRef"
     :ref="sectionRef"
@@ -45,34 +44,12 @@
           :sectionDisplayData="displayData"
         />
       </template>
-      <!-- When in edit mode, show additional item, for Add New item -->
-      <Item v-if="isEditMode"
-        :item="{
-          icon: ':heavy_plus_sign:',
-          title: 'Add New Item',
-          description: 'Click to add new item',
-          id: 'add-new',
-        }"
-        :isAddNew="true"
-        :parentSectionTitle="title"
-        key="add-new"
-        class="add-new-item"
-        :sectionWidth="sectionWidth"
-        :itemSize="itemSize"
-      />
     </div>
     <!-- Modal for opening in modal view -->
     <IframeModal
       :ref="`iframeModal-${groupId}`"
       :name="`iframeModal-${groupId}`"
       @closed="$emit('itemClicked')"
-    />
-    <!-- Edit item menu -->
-    <EditSection
-      v-if="editMenuOpen"
-      @closeEditSection="closeEditSection"
-      :sectionIndex="index"
-      :isAddNew="false"
     />
     <!-- Right-click item options context menu -->
     <ContextMenu
@@ -81,10 +58,8 @@
       :posY="contextPos.posY"
       :id="`context-menu-${groupId}`"
       v-click-outside="closeContextMenu"
-      @openEditSection="openEditSection"
       @navigateToSection="navigateToSection"
       @expandCollapseSection="expandCollapseSection"
-      @removeSection="removeSection"
     />
   </Collapsable>
 </template>
@@ -95,13 +70,11 @@ import Item from '@/components/LinkItems/Item.vue';
 import SubItemGroup from '@/components/LinkItems/SubItemGroup.vue';
 import Collapsable from '@/components/LinkItems/Collapsable.vue';
 import IframeModal from '@/components/LinkItems/IframeModal.vue';
-import EditSection from '@/components/InteractiveEditor/EditSection.vue';
 import ContextMenu from '@/components/LinkItems/SectionContextMenu.vue';
 import ErrorHandler from '@/utils/ErrorHandler';
 import {
   sortOrder as defaultSortOrder,
   localStorageKeys,
-  modalNames,
 } from '@/utils/defaults';
 import { useAppStore } from '@/store';
 
@@ -121,11 +94,9 @@ export default {
     Item,
     SubItemGroup,
     IframeModal,
-    EditSection,
   },
   data() {
     return {
-      editMenuOpen: false,
       contextMenuOpen: false,
       contextPos: {
         posX: undefined,
@@ -140,9 +111,6 @@ export default {
     appConfig() {
       return this.appStore.appConfig;
     },
-    isEditMode() {
-      return this.appStore.editMode;
-    },
     itemSize() {
       return this.displayData.itemSize || this.appStore.iconSize;
     },
@@ -150,7 +118,6 @@ export default {
       return this.displayData.sortBy || defaultSortOrder;
     },
     hasItems() {
-      if (this.isEditMode) return true;
       return this.items && this.items.length > 0;
     },
     isEmpty() {
@@ -238,29 +205,6 @@ export default {
     expandCollapseSection() {
       const secElem = this.$refs[this.sectionRef];
       if (secElem) secElem.toggle();
-      this.closeContextMenu();
-    },
-    /* Open the Section Edit Menu */
-    openEditSection() {
-      this.editMenuOpen = true;
-      this.$modal.show(modalNames.EDIT_SECTION);
-      this.appStore.setModalOpen(true);
-      this.closeContextMenu();
-    },
-    /* Close the section edit menu */
-    closeEditSection() {
-      this.editMenuOpen = false;
-      this.$modal.hide(modalNames.EDIT_SECTION);
-      this.appStore.setModalOpen(false);
-    },
-    /* Deletes current section, in local state */
-    removeSection() {
-      const confirmMsg = this.$t('interactive-editor.edit-section.remove-confirm');
-      const youSure = confirm(confirmMsg); // eslint-disable-line no-alert, no-restricted-globals
-      if (youSure) {
-        const payload = { sectionIndex: this.index, sectionName: this.title };
-        this.appStore.removeSection(payload);
-      }
       this.closeContextMenu();
     },
     /* Open custom context menu, and set position */
@@ -355,13 +299,6 @@ export default {
     @include big-screen { --item-col-count: 6; }
     @include big-screen-up { --item-col-count: 8; }
     grid-template-columns: repeat(var(--item-col-count, 2), minmax(0, 1fr));
-  }
-}
-
-.add-new-item {
-  display: flex;
-  a {
-    border-style: dashed;
   }
 }
 

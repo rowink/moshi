@@ -1,5 +1,5 @@
 <template>
-  <router-link to="/" class="page-titles" :disabled="isEditMode">
+  <router-link to="/" class="page-titles">
     <!-- Optional page logo image -->
     <img v-if="logo" :src="logo" class="site-logo" />
     <!-- Page heading and sub-heading -->
@@ -7,15 +7,10 @@
       <h1>{{ title }}</h1>
       <span class="subtitle">{{ description }}</span>
     </div>
-    <!-- When in edit mode, show Edit Title button -->
-    <EditModeIcon v-if="isEditMode" @click="editTitle()"
-      class="edit-icon" v-tooltip="tooltip()" />
   </router-link>
 </template>
 
 <script>
-import EditModeIcon from '@/assets/interface-icons/interactive-editor-edit-mode.svg';
-import { modalNames } from '@/utils/defaults';
 import { useAppStore } from '@/store';
 
 export default {
@@ -25,26 +20,8 @@ export default {
     description: String,
     logo: String,
   },
-  components: {
-    EditModeIcon,
-  },
   computed: {
     appStore() { return useAppStore(); },
-    isEditMode() {
-      return this.appStore.editMode;
-    },
-  },
-  methods: {
-    /* On edit button click, open the edit pageInfo modal */
-    editTitle() {
-      this.$modal.show(modalNames.EDIT_PAGE_INFO);
-      this.appStore.setModalOpen(true);
-    },
-    /* Edit button tooltip */
-    tooltip() {
-      const content = this.$t('interactive-editor.menu.edit-page-info-btn');
-      return { content, trigger: 'hover focus', delay: 250 };
-    },
   },
 };
 </script>
@@ -79,22 +56,6 @@ export default {
     flex-direction: column;
     text-align: center;
     padding: 0.25rem 0;
-  }
-  &[disabled] {
-    cursor: default;
-  }
-  svg.edit-icon {
-    width: 1rem;
-    height: 1rem;
-    right: 1rem;
-    top: 0.5rem;
-    padding: 0.25rem;
-    margin: 0.25rem;
-    cursor: pointer;
-    border: 1px solid var(--background-darker);
-    border-radius: var(--curve-factor);
-    path { fill: var(--primary); }
-    &:hover { border: 1px solid var(--primary); }
   }
 }
 </style>

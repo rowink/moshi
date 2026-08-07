@@ -18,10 +18,8 @@
       @long-press="openContextMenu" v-longPress="500">
       <Icon v-if="icon" :icon="icon" size="small" :url="title" class="section-icon" />
       <h3>{{ title }}</h3>
-      <EditModeIcon v-if="isEditMode" @click="openEditModal"
-        v-tooltip="editTooltip()" class="edit-mode-item" />
       <OpenIcon @click.prevent.stop="openContextMenu" @contextmenu.prevent
-        class="edit-mode-item" />
+        class="open-icon" />
     </label>
     <div class="collapsible-content">
       <div class="content-inner">
@@ -35,7 +33,6 @@
 import longPress from '@/directives/LongPress';
 import { localStorageKeys } from '@/utils/defaults';
 import Icon from '@/components/LinkItems/ItemIcon.vue';
-import EditModeIcon from '@/assets/interface-icons/interactive-editor-edit-mode.svg';
 import OpenIcon from '@/assets/interface-icons/config-open-settings.svg';
 import { useAppStore } from '@/store';
 
@@ -54,7 +51,6 @@ export default {
   },
   components: {
     Icon,
-    EditModeIcon,
     OpenIcon,
   },
   directives: {
@@ -62,11 +58,7 @@ export default {
   },
   computed: {
     appStore() { return useAppStore(); },
-    isEditMode() {
-      return this.appStore.editMode;
-    },
     sectionKey() {
-      if (this.isEditMode) return undefined;
       return `collapsible-${this.uniqueKey}`;
     },
     collapseClass() {
@@ -137,15 +129,8 @@ export default {
       // Otherwise, return value of local storage
       return JSON.parse(localStorage[localStorageKeys.COLLAPSE_STATE]);
     },
-    openEditModal() {
-      this.$emit('openEditSection');
-    },
     openContextMenu(e) {
       this.$emit('openContextMenu', e);
-    },
-    editTooltip() {
-      const content = this.$t('interactive-editor.edit-section.edit-tooltip');
-      return { content, trigger: 'hover focus', delay: { show: 100, hide: 0 } };
     },
   },
 };
@@ -252,8 +237,8 @@ export default {
     padding: 0.5rem;
   }
 
-  /* Section edit button, shown when in edit mode */
-  .edit-mode-item {
+  /* Section context menu trigger icon */
+  .open-icon {
     width: 1rem;
     height: 1rem;
     float: right;
@@ -267,7 +252,7 @@ export default {
 
   /* On section hover, set interface icons to full visible */
   &:hover {
-    .edit-mode-item, label.lbl-toggle::before {
+    .open-icon, label.lbl-toggle::before {
       opacity: 1;
       transition: all 0.2s ease-out;
     }

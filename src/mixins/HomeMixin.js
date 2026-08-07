@@ -22,9 +22,6 @@ const HomeMixin = {
     pageInfo() {
       return this.appStore.pageInfo;
     },
-    isEditMode() {
-      return this.appStore.editMode;
-    },
     modalOpen() {
       return this.appStore.modalOpen;
     },

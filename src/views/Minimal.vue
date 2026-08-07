@@ -1,9 +1,5 @@
 <template>
   <div class="minimal-home" :style="getBackgroundImage() + setColumnCount()">
-    <!-- Buttons for config and home page -->
-    <div class="minimal-buttons">
-      <ConfigLauncher @modalChanged="updateModalVisibility" class="config-launcher" />
-    </div>
     <!-- Page title and search bar -->
     <div class="title-and-search">
       <router-link to="/">
@@ -57,7 +53,6 @@ import MinimalSection from '@/components/MinimalView/MinimalSection.vue';
 import MinimalHeading from '@/components/MinimalView/MinimalHeading.vue';
 import MinimalSearch from '@/components/MinimalView/MinimalSearch.vue';
 import { localStorageKeys } from '@/utils/defaults';
-import ConfigLauncher from '@/components/Settings/ConfigLauncher';
 
 export default {
   name: 'home',
@@ -66,7 +61,6 @@ export default {
     MinimalSection,
     MinimalHeading,
     MinimalSearch,
-    ConfigLauncher,
   },
   data: () => ({
     layout: '',
@@ -191,30 +185,5 @@ export default {
     margin: 2rem auto;
     padding: 0.5rem 1rem;
     border-radius: var(--curve-factor);
-}
-
-.minimal-buttons {
-    position: absolute;
-    top: 0.5rem;
-    right: 1rem;
-    display: flex;
-    .home-page-icon {
-      color: var(--minimal-view-settings-color);
-      width: 1.5rem;
-      height: 1.5rem;
-      @extend .svg-button;
-    }
-}
-</style>
-
-<style lang="scss">
-.minimal-home .minimal-buttons {
-  .config-launcher span.config-label { display: none; }
-  svg { opacity: var(--dimming-factor); border: none; }
-  &:hover svg { opacity: 1; }
-  .view-switcher {
-    margin-top: 2rem;
-    right: 0;
-  }
 }
 </style>

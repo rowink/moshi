@@ -1,15 +1,11 @@
 <!-- Main homepage for default view -->
 <template>
   <div class="home" :style="getBackgroundImage()">
-    <!-- Search bar, layout options and settings -->
-    <SettingsContainer ref="filterComp"
+    <!-- Search bar -->
+    <SearchBar
+      v-if="searchVisible"
+      ref="filterComp"
       @user-is-searchin="searching"
-      @change-modal-visibility="updateModalVisibility"
-      :displayLayout="layout"
-      :iconSize="itemSizeBound"
-      :externalThemes="getExternalCSSLinks()"
-      :modalOpen="modalOpen"
-      class="settings-outer"
     />
     <!-- Show back button, when on single-section view -->
     <div v-if="singleSectionView">
@@ -19,11 +15,10 @@
       </router-link>
     </div>
     <!-- Main content, section for each group of items -->
-    <div v-if="checkTheresData(sections) || isEditMode"
+    <div v-if="checkTheresData(sections)"
       :class="`item-group-container `
         + `orientation-${layout} `
         + `item-size-${itemSizeBound} `
-        + (isEditMode ? 'edit-mode ' : '')
         + (singleSectionView ? 'single-section-view ' : '')
         + (this.colCount ? `col-count-${this.colCount} ` : '')"
       >
@@ -44,28 +39,19 @@
           (searchValue && filterTiles(section.items, searchValue).length === 0) ? 'no-results' : ''"
         />
       </template>
-      <!-- Show add new section button, in edit mode -->
-      <AddNewSection v-if="isEditMode && !singleSectionView" />
     </div>
     <!-- Show message when there's no data to show -->
-    <div v-if="checkIfResults() && !isEditMode" class="no-data">
+    <div v-if="checkIfResults()" class="no-data">
       {{searchValue ? $t('home.no-results') : $t('home.no-data')}}
     </div>
-    <!-- Show banner at bottom of screen, for Saving config changes -->
-    <EditModeSaveMenu v-if="isEditMode" />
-    <!-- Modal for viewing and exporting configuration file -->
-    <ExportConfigMenu />
   </div>
 </template>
 
 <script>
 import HomeMixin from '@/mixins/HomeMixin';
-import SettingsContainer from '@/components/Settings/SettingsContainer.vue';
+import SearchBar from '@/components/SearchBar.vue';
 import Section from '@/components/LinkItems/Section.vue';
-import EditModeSaveMenu from '@/components/InteractiveEditor/EditModeSaveMenu.vue';
-import ExportConfigMenu from '@/components/InteractiveEditor/ExportConfigMenu.vue';
-import AddNewSection from '@/components/InteractiveEditor/AddNewSectionLauncher.vue';
-import { localStorageKeys, modalNames } from '@/utils/defaults';
+import { localStorageKeys } from '@/utils/defaults';
 import ErrorHandler from '@/utils/ErrorHandler';
 import BackIcon from '@/assets/interface-icons/back-arrow.svg';
 import { useAppStore } from '@/store';
@@ -74,20 +60,20 @@ export default {
   name: 'home',
   mixins: [HomeMixin],
   components: {
-    SettingsContainer,
-    EditModeSaveMenu,
-    ExportConfigMenu,
-    AddNewSection,
+    SearchBar,
     Section,
     BackIcon,
   },
   data: () => ({
     layout: '',
     itemSizeBound: '',
-    addNewSectionOpen: false,
   }),
   computed: {
     appStore() { return useAppStore(); },
+    /* Whether or not to show the search bar, based on user config */
+    searchVisible() {
+      return this.appStore.visibleComponents.searchBar;
+    },
     singleSectionView() {
       return this.findSingleSection(this.appStore.sections, this.$route.params.section);
     },
@@ -132,16 +118,6 @@ export default {
     getDisplayData(section) {
       return !section.displayData ? {} : section.displayData;
     },
-    openAddNewSectionMenu() {
-      this.addNewSectionOpen = true;
-      this.$modal.show(modalNames.EDIT_SECTION);
-      this.appStore.setModalOpen(true);
-    },
-    closeEditSection() {
-      this.addNewSectionOpen = false;
-      this.$modal.hide(modalNames.EDIT_SECTION);
-      this.appStore.setModalOpen(false);
-    },
     /* If on sub-route, and section exists, then return only that section */
     findSingleSection: (allSections, sectionTitle) => {
       if (!sectionTitle) return undefined;
@@ -154,24 +130,6 @@ export default {
       });
       if (!sectionToReturn) ErrorHandler(`No section named '${sectionTitle}' was found`);
       return sectionToReturn;
-    },
-    /* Returns an array of links to external CSS from the Config */
-    getExternalCSSLinks() {
-      const availibleThemes = {};
-      if (this.appConfig) {
-        if (this.appConfig.externalStyleSheet) {
-          const externals = this.appConfig.externalStyleSheet;
-          if (Array.isArray(externals)) {
-            externals.forEach((ext, i) => {
-              availibleThemes[`External Stylesheet ${i + 1}`] = ext;
-            });
-          } else {
-            availibleThemes['External Stylesheet'] = this.appConfig.externalStyleSheet;
-          }
-        }
-      }
-      availibleThemes.Default = '#';
-      return availibleThemes;
     },
   },
   mounted() {
@@ -261,26 +219,9 @@ export default {
   /* Hide when search term returns nothing */
   .no-results { display: none !important; }
 
-  /* Additional spacing when in edit mode */
-  &.edit-mode {
-    margin-bottom: 12rem;
-  }
-
   /* When in single-section view mode */
   &.single-section-view {
     display: block;
-  }
-  .add-new-section {
-    border: 2px dashed var(--primary);
-    border-radius: var(--curve-factor);
-    padding: var(--item-group-padding);
-    background: var(--item-group-background);
-    color: var(--primary);
-    font-size: 1.2rem;
-    cursor: pointer;
-    text-align: center;
-    height: fit-content;
-    margin: 10px;
   }
 }
 
@@ -293,14 +234,6 @@ export default {
     margin: 2rem auto;
     padding: 0.5rem 1rem;
     border-radius: var(--curve-factor);
-}
-
-/* Settings section, includes search, config and user settings */
-section.settings-outer {
-  border-bottom: 1px solid var(--outline-color);
-  @include phone {
-    flex-direction: column;
-  }
 }
 
 </style>

@@ -32,7 +32,6 @@ const defaults = {
     minimal: '/minimal',
     workspace: '/workspace',
     about: '/about',
-    download: '/download',
     notFound: '/404',
   },
   /* Server Endpoints */
@@ -97,11 +96,10 @@ const defaults = {
     navigation: true,
     pageTitle: true,
     searchBar: true,
-    settings: true,
     footer: true,
   },
   /* A list of route names that page furniture (header, footer, etc) should be hidden on */
-  hideFurnitureOn: ['minimal', 'download'],
+  hideFurnitureOn: ['minimal'],
   /* Key names for local storage identifiers */
   localStorageKeys: {
     LANGUAGE: 'language',
@@ -115,9 +113,6 @@ const defaults = {
     CONF_SECTIONS: 'confSections',
     PAGE_INFO: 'pageInfo',
     APP_CONFIG: 'appConfig',
-    BACKUP_ID: 'backupId',
-    BACKUP_HASH: 'backupHash',
-    HIDE_SETTINGS: 'hideSettings',
     MOST_USED: 'mostUsed',
     LAST_USED: 'lastUsed',
   },
@@ -125,25 +120,6 @@ const defaults = {
   sessionStorageKeys: {
     SW_STATUS: 'serviceWorkerStatus',
     ERROR_LOG: 'errorLog',
-  },
-  /* Unique IDs of modals within the app */
-  modalNames: {
-    CONF_EDITOR: 'CONF_EDITOR',
-    ABOUT_APP: 'ABOUT_APP',
-    LANG_SWITCHER: 'LANG_SWITCHER',
-    EDIT_ITEM: 'EDIT_ITEM',
-    EDIT_SECTION: 'EDIT_SECTION',
-    EDIT_PAGE_INFO: 'EDIT_PAGE_INFO',
-    EDIT_APP_CONFIG: 'EDIT_APP_CONFIG',
-    EDIT_MULTI_PAGES: 'EDIT_MULTI_PAGES',
-    EXPORT_CONFIG_MENU: 'EXPORT_CONFIG_MENU',
-    MOVE_ITEM_TO: 'MOVE_ITEM_TO',
-  },
-  /* Key names for the top-level objects in conf.yml */
-  topLevelConfKeys: {
-    PAGE_INFO: 'pageInfo',
-    APP_CONFIG: 'appConfig',
-    SECTIONS: 'sections',
   },
   /* Amount of time to show splash screen, when enabled, in milliseconds */
   splashScreenTime: 1000,
@@ -261,8 +237,8 @@ export const {
   pageInfo, appConfig, language, startingView, iconSize, layout,
   theme, fontAwesomeKey, faviconApi, sortOrder, openingMethod, routePaths,
   serviceEndpoints, builtInThemes, swatches, mainCssVars, visibleComponents,
-  hideFurnitureOn, localStorageKeys, sessionStorageKeys, modalNames,
-  topLevelConfKeys, splashScreenTime, metaTagData, toastedOptions, tooltipOptions,
+  hideFurnitureOn, localStorageKeys, sessionStorageKeys,
+  splashScreenTime, metaTagData, toastedOptions, tooltipOptions,
   backupEndpoint, faviconApiEndpoints, iconCdns,
   searchEngineUrls, defaultSearchEngine, defaultSearchOpeningMethod, searchBangs,
   sentryDsn, pwa,
