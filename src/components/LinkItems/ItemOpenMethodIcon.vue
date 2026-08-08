@@ -20,14 +20,14 @@
 /* This component displays a small icon, indicating opening method */
 
 // Import Icons
-import NewTabOpenIcon from '@/assets/interface-icons/open-new-tab.svg';
-import SameTabOpenIcon from '@/assets/interface-icons/open-current-tab.svg';
-import IframeOpenIcon from '@/assets/interface-icons/open-iframe.svg';
-import WorkspaceOpenIcon from '@/assets/interface-icons/open-workspace.svg';
-import ParentOpenIcon from '@/assets/interface-icons/open-parent.svg';
-import TopOpenIcon from '@/assets/interface-icons/open-top.svg';
-import ClipboardOpenIcon from '@/assets/interface-icons/open-clipboard.svg';
-import UnknownIcon from '@/assets/interface-icons/unknown-icon.svg';
+import NewTabOpenIcon from "@/assets/interface-icons/open-new-tab.svg";
+import SameTabOpenIcon from "@/assets/interface-icons/open-current-tab.svg";
+import IframeOpenIcon from "@/assets/interface-icons/open-iframe.svg";
+import WorkspaceOpenIcon from "@/assets/interface-icons/open-workspace.svg";
+import ParentOpenIcon from "@/assets/interface-icons/open-parent.svg";
+import TopOpenIcon from "@/assets/interface-icons/open-top.svg";
+import ClipboardOpenIcon from "@/assets/interface-icons/open-clipboard.svg";
+import UnknownIcon from "@/assets/interface-icons/unknown-icon.svg";
 
 defineProps({
   openingMethod: String, // newtab | sametab | parent | top | modal | workspace
@@ -38,11 +38,11 @@ defineProps({
 });
 
 /* Returns custom class string, from optional props */
-function makeClass(position = 'top right', isSmall = false, transparent = false) {
+function makeClass(position = "top right", isSmall = false, transparent = false) {
   return `opening-method-icon
-  ${position || 'top right'}
-  ${isSmall ? 'short' : ''}
-  ${transparent ? 'transparent' : ''}`;
+  ${position || "top right"}
+  ${isSmall ? "short" : ""}
+  ${transparent ? "transparent" : ""}`;
 }
 </script>
 

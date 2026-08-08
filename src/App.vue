@@ -32,7 +32,6 @@ watch(
 
 /* If the user has specified custom text for footer - get it */
 const footerText = computed(() => (pageInfo.value && pageInfo.value.footerText ? pageInfo.value.footerText : ""));
-const config = computed(() => appStore.config);
 const appConfig = computed(() => appStore.appConfig);
 const pageInfo = computed(() => appStore.pageInfo);
 const visibleComponents = computed(() => appStore.visibleComponents);

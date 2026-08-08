@@ -18,11 +18,6 @@ import SideBar from "@/components/Workspace/SideBar.vue";
 import WebContent from "@/components/Workspace/WebContent.vue";
 import MultiTaskingWebComtent from "@/components/Workspace/MultiTaskingWebComtent.vue";
 import Defaults from "@/utils/defaults";
-import {
-  GetTheme,
-  ApplyLocalTheme,
-  ApplyCustomVariables,
-} from "@/utils/ThemeHelper";
 
 const route = useRoute();
 const { appConfig, sections, setTheme } = useHome();
@@ -66,7 +61,9 @@ url.value = getInitialUrl() || "";
 </script>
 
 <style scoped lang="scss">
+/* Header (in normal flow) + workspace + footer must equal 100vh exactly;
+   otherwise the host page overflows and shows a scrollbar outside the iframe */
 .work-space {
-  min-height: calc(100vh - var(--footer-height));
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
 }
 </style>

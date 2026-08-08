@@ -66,7 +66,7 @@ const {
   closeContextMenu,
 } = useItem(
   { item: props.item, isAddNew },
-  emit as (event: string, ...args: unknown[]) => void,
+  emit as (_event: string, ..._args: unknown[]) => void,
 );
 
 const subItemTooltip = computed(() => props.item.title);

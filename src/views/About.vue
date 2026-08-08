@@ -58,7 +58,7 @@
 import { onMounted } from "vue";
 
 onMounted(() => {
-  document.getElementsByTagName('html')[0].setAttribute('data-theme', 'callisto');
+  document.getElementsByTagName("html")[0].setAttribute("data-theme", "callisto");
 });
 </script>
 

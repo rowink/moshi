@@ -1,4 +1,4 @@
-import { createPinia } from 'pinia';
+import { createPinia } from "pinia";
 
 /*
  * The Pinia instance is created in a separate module to avoid circular imports

@@ -35,11 +35,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, PropType } from "vue";
+import { ref, PropType } from "vue";
 import Item from "@/components/LinkItems/Item.vue";
 import SubItemGroup from "@/components/LinkItems/SubItemGroup.vue";
 import IframeModal from "@/components/LinkItems/IframeModal.vue";
-import { useAppStore } from "@/store/modules/appStore";
 import { Item as ItemType } from "@/types/types";
 
 const props = defineProps({
@@ -63,9 +62,6 @@ const props = defineProps({
 
 const emit = defineEmits(["sectionSelected", "itemClicked"]);
 
-const appStore = useAppStore();
-const appConfig = computed(() => appStore.appConfig);
-
 const iframeModals = ref<Record<string, InstanceType<typeof IframeModal> | null>>({});
 
 const setIframeModalRef = (el: unknown) => {
@@ -74,31 +70,9 @@ const setIframeModalRef = (el: unknown) => {
   > | null;
 };
 
-function selectSection(index: number) {
-  emit("sectionSelected", index);
-}
-/* Returns a unique lowercase string, based on name, for section ID */
-function makeId(str: string) {
-  if (!str) return "unnamed-item";
-  return str
-    .replace(/\s+/g, "-")
-    .replace(/[^a-zA-Z ]/g, "")
-    .toLowerCase();
-}
 /* Opens the iframe modal */
 function triggerModal(url: string) {
   iframeModals.value[`iframeModal-${props.groupId}`]?.show(url);
-}
-function shouldEnableStatusCheck(itemPreference: boolean | undefined) {
-  const globalPreference = appConfig.value.statusCheck || false;
-  return itemPreference !== undefined ? itemPreference : globalPreference;
-}
-function getStatusCheckInterval() {
-  let interval = appConfig.value.statusCheckInterval;
-  if (!interval) return 0;
-  if (interval > 60) interval = 60;
-  if (interval < 1) interval = 0;
-  return interval;
 }
 </script>
 

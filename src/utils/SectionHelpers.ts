@@ -1,7 +1,7 @@
 /* Helper functions for Sections and Items */
 
 import { hideFurnitureOn } from "@/utils/defaults";
-import type { Section, Item } from "@/types/types";
+import type { Section } from "@/types/types";
 
 /* Returns false if page furniture should be hidden on said route */
 export const shouldBeVisible = (routeName?: string): boolean => {
@@ -36,9 +36,10 @@ const makeItemId = (
 /* Given an array of sections, apply a unique ID to each item, and return modified array */
 export const applyItemId = (inputSections: Section[]): Section[] => {
   const sections = inputSections || [];
-  sections.forEach((sec, secIdx) => {
+  sections.forEach((sec, _secIdx) => {
     if (sec.items) {
       sec.items.forEach((item, itemIdx) => {
+        /* eslint-disable-next-line no-param-reassign -- item.id is intentionally assigned in place */
         item.id = makeItemId(sec.name, item.title, itemIdx);
       });
     }

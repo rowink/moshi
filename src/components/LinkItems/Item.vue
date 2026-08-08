@@ -108,7 +108,7 @@ const {
     isAddNew: props.isAddNew,
     itemSize: props.itemSize,
   },
-  emit as (event: string, ...args: unknown[]) => void,
+  emit as (_event: string, ..._args: unknown[]) => void,
 );
 
 /* Returns either item.icon, or appConfig.defaultIcon, or null */
@@ -137,21 +137,21 @@ const makeClassList = computed(() => (
 const unicodeOpeningIcon = computed(() => {
   switch (accumulatedTarget.value) {
     case "newtab":
-      return '"\\f360"';
+      return "\"\\f360\"";
     case "sametab":
-      return '"\\f24d"';
+      return "\"\\f24d\"";
     case "parent":
-      return '"\\f3bf"';
+      return "\"\\f3bf\"";
     case "top":
-      return '"\\f102"';
+      return "\"\\f102\"";
     case "modal":
-      return '"\\f2d0"';
+      return "\"\\f2d0\"";
     case "workspace":
-      return '"\\f0b1"';
+      return "\"\\f0b1\"";
     case "clipboard":
-      return '"\\f0ea"';
+      return "\"\\f0ea\"";
     default:
-      return '"\\f054"';
+      return "\"\\f054\"";
   }
 });
 

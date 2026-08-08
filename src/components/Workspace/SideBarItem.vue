@@ -7,8 +7,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import Icon from '@/components/LinkItems/ItemIcon.vue';
+import { computed } from "vue";
+import Icon from "@/components/LinkItems/ItemIcon.vue";
 
 const props = defineProps({
   icon: String,
@@ -18,17 +18,17 @@ const props = defineProps({
   click: Function,
 });
 
-const emit = defineEmits(['launch-app']);
+const emit = defineEmits(["launch-app"]);
 
 function itemClicked() {
-  if (props.url) emit('launch-app', { url: props.url, target: props.target });
+  if (props.url) emit("launch-app", { url: props.url, target: props.target });
 }
 
 const tooltip = computed(() => ({
   disabled: !props.title,
   content: props.title,
-  trigger: 'hover focus',
-  placement: 'bottom-end',
+  trigger: "hover focus",
+  placement: "bottom-end",
 }));
 </script>
 

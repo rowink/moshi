@@ -9,10 +9,10 @@
 
 /* eslint-disable global-require */
 
-import ConfigAccumulator from '@/utils/ConfigAccumalator';
-import { sentryDsn } from '@/utils/defaults';
-import type { App } from 'vue';
-import type { Router } from 'vue-router';
+import ConfigAccumulator from "@/utils/ConfigAccumalator";
+import { sentryDsn } from "@/utils/defaults";
+import type { App } from "vue";
+import type { Router } from "vue-router";
 
 const ErrorReporting = async (app: App, router: Router) => {
   // Fetch users config
@@ -20,9 +20,9 @@ const ErrorReporting = async (app: App, router: Router) => {
   // Check if error reporting is enabled. Only proceed if user has turned it on.
   if (appConfig.enableErrorReporting) {
     // Get current app version
-    const appVersion = process.env.VUE_APP_VERSION ? `moshi@${process.env.VUE_APP_VERSION}` : '';
+    const appVersion = process.env.VUE_APP_VERSION ? `moshi@${process.env.VUE_APP_VERSION}` : "";
     // Import Sentry
-    const Sentry = await import('@sentry/vue');
+    const Sentry = await import("@sentry/vue");
     // Get the Data Source Name for your or moshi's Sentry instance
     const dsn = appConfig.sentryDsn || sentryDsn;
     // Initialize Sentry

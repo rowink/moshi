@@ -57,11 +57,12 @@ module.exports = defineConfig(({ mode }) => ({
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
   // Dart Sass deprecation warnings from legacy stylesheets cannot be fixed in
-  // source, so they are silenced here.
+  // source, so they are silenced here. Note: 'mixed-decls' must NOT be listed -
+  // it is obsolete in current Sass, and silencing it triggers a warning itself.
   css: {
     preprocessorOptions: {
       scss: {
-        silenceDeprecations: ['import', 'global-builtin', 'mixed-decls'],
+        silenceDeprecations: ['import', 'global-builtin'],
       },
     },
   },

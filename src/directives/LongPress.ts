@@ -4,10 +4,10 @@
  * Inspired by: FeliciousX/vue-directive-long-press
  * moshi: Licensed under MIT - (C) 2022
  */
-import type { ObjectDirective } from 'vue';
+import type { ObjectDirective } from "vue";
 
 const LONG_PRESS_DEFAULT_DELAY = 750;
-const longPressEvent = new CustomEvent('long-press');
+const longPressEvent = new CustomEvent("long-press");
 
 let startTime: number | null = null;
 
@@ -17,7 +17,7 @@ const LongPress: ObjectDirective<HTMLElement> = {
     el.dataset.longPressTimeout = String(null);
 
     const swallowClick = (e: MouseEvent) => {
-      el.removeEventListener('click', swallowClick);
+      el.removeEventListener("click", swallowClick);
       if (!el.dataset.elapsed) return true;
       const totalTime = Date.now() - (startTime ?? 0);
       // If was long press, then cancel original action
@@ -35,16 +35,16 @@ const LongPress: ObjectDirective<HTMLElement> = {
     };
 
     const onPointerUp = () => {
-      clearTimeout(parseInt(el.dataset.longPressTimeout || '', 10));
-      document.removeEventListener('pointerup', onPointerUp);
+      clearTimeout(parseInt(el.dataset.longPressTimeout || "", 10));
+      document.removeEventListener("pointerup", onPointerUp);
     };
 
     const onPointerDown = (e: PointerEvent) => {
       // If event was right-click, then immediately trigger
       if (e.button === 2) return;
       startTime = Date.now();
-      document.addEventListener('pointerup', onPointerUp);
-      el.addEventListener('click', swallowClick);
+      document.addEventListener("pointerup", onPointerUp);
+      el.addEventListener("click", swallowClick);
       const timeoutDuration = LONG_PRESS_DEFAULT_DELAY;
       const timeout = setTimeout(triggerEvent, timeoutDuration);
       el.dataset.elapsed = String(false);
@@ -52,12 +52,12 @@ const LongPress: ObjectDirective<HTMLElement> = {
       e.preventDefault();
     };
     el.$longPressHandler = onPointerDown as EventListener;
-    el.addEventListener('pointerdown', onPointerDown);
+    el.addEventListener("pointerdown", onPointerDown);
   },
   unmounted(el) {
     startTime = null;
-    clearTimeout(parseInt(el.dataset.longPressTimeout || '', 10));
-    el.removeEventListener('pointerdown', el.$longPressHandler!);
+    clearTimeout(parseInt(el.dataset.longPressTimeout || "", 10));
+    el.removeEventListener("pointerdown", el.$longPressHandler!);
   },
 };
 

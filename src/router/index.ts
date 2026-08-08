@@ -11,26 +11,27 @@ import {
   createWebHashHistory,
   createMemoryHistory,
   RouteRecordRaw,
-} from 'vue-router';
-import { nextTick } from 'vue';
-import { Progress } from 'rsup-progress';
+  RouterHistory,
+} from "vue-router";
+import { nextTick } from "vue";
+import { Progress } from "rsup-progress";
 
 // Import views, that are not lazy-loaded
-import yaml from 'js-yaml';
-import Home from '@/views/Home.vue';
+import yaml from "js-yaml";
+import Home from "@/views/Home.vue";
 
 // Import helper functions, config data and defaults
-import { makePageSlug, makePageName } from '@/utils/ConfigHelpers';
-import { metaTagData, startingView, routePaths } from '@/utils/defaults';
-import ErrorHandler from '@/utils/ErrorHandler';
+import { makePageSlug, makePageName } from "@/utils/ConfigHelpers";
+import { metaTagData, startingView, routePaths } from "@/utils/defaults";
+import ErrorHandler from "@/utils/ErrorHandler";
 
 // Import data from users conf file. Note that rebuild is required for this to update.
-import confRaw from '../../public/conf.yml?raw';
+import confRaw from "../../public/conf.yml?raw";
 
 const conf = yaml.load(confRaw) as Record<string, unknown> | null;
 
 if (!conf) {
-  ErrorHandler('You\'ve not got any data in your config file yet.');
+  ErrorHandler("You've not got any data in your config file yet.");
 }
 
 // Assign top-level config fields, check not null
@@ -39,7 +40,7 @@ const pages = config.pages || [];
 const pageInfo = config.pageInfo || {};
 const appConfig = config.appConfig || {};
 
-const progress = new Progress({ color: 'var(--progress-bar)' });
+const progress = new Progress({ color: "var(--progress-bar)" });
 
 /* Get the users chosen starting view from app config, or return default */
 const getStartingView = () => (appConfig as { startingView?: string }).startingView || startingView;
@@ -51,8 +52,8 @@ const getStartingView = () => (appConfig as { startingView?: string }).startingV
 const getStartingComponent = () => {
   const usersPreference = getStartingView();
   switch (usersPreference) {
-    case 'minimal': return () => import('../views/Minimal.vue');
-    case 'workspace': return () => import('../views/Workspace.vue');
+    case "minimal": return () => import("../views/Minimal.vue");
+    case "workspace": return () => import("../views/Workspace.vue");
     default: return Home;
   }
 };
@@ -64,8 +65,8 @@ const makeMetaTags = (defaultTitle: string) => ({
 });
 
 const makeSubConfigPath = (rawPath: string) => {
-  if (!rawPath) return '';
-  if (rawPath.startsWith('/') || rawPath.startsWith('http')) return rawPath;
+  if (!rawPath) return "";
+  if (rawPath.startsWith("/") || rawPath.startsWith("http")) return rawPath;
   return `/${rawPath}`;
 };
 
@@ -83,7 +84,7 @@ const makeMultiPageRoutes = (userPages: unknown[]): RouteRecordRaw[] => {
   userPages.forEach((page) => {
     const userPage = page as UserPage;
     if (!userPage.name || !userPage.path) { // Something not right, show warning
-      ErrorHandler('Additional pages must have both a `name` and `path`');
+      ErrorHandler("Additional pages must have both a `name` and `path`");
     }
     // Props to be passed to home mixin
     const subPageInfo = {
@@ -95,38 +96,37 @@ const makeMultiPageRoutes = (userPages: unknown[]): RouteRecordRaw[] => {
     };
     // Create route for default homepage
     multiPageRoutes.push({
-      path: makePageSlug(userPage.name as string, 'home'),
+      path: makePageSlug(userPage.name as string, "home"),
       name: `${subPageInfo.subPageInfo.pageId}-home`,
       component: Home,
       props: subPageInfo,
     });
     // Create route for the workspace view
     multiPageRoutes.push({
-      path: makePageSlug(userPage.name as string, 'workspace'),
+      path: makePageSlug(userPage.name as string, "workspace"),
       name: `${subPageInfo.subPageInfo.pageId}-workspace`,
-      component: () => import('../views/Workspace.vue'),
+      component: () => import("../views/Workspace.vue"),
       props: subPageInfo,
     });
     // Create route for the minimal view
     multiPageRoutes.push({
-      path: makePageSlug(userPage.name as string, 'minimal'),
+      path: makePageSlug(userPage.name as string, "minimal"),
       name: `${subPageInfo.subPageInfo.pageId}-minimal`,
-      component: () => import('../views/Minimal.vue'),
+      component: () => import("../views/Minimal.vue"),
       props: subPageInfo,
     });
   });
   return multiPageRoutes;
 };
 
-/* Routing mode, can be either 'hash', 'history' or 'abstract' */
-const mode = (appConfig as { routingMode?: string }).routingMode || 'history';
+/* Routing mode, can be either "hash", "history" or "abstract" */
+const mode = (appConfig as { routingMode?: string }).routingMode || "history";
 
 // Map the routing mode to the corresponding history implementation
-const history = mode === 'hash'
-  ? createWebHashHistory()
-  : mode === 'abstract'
-    ? createMemoryHistory()
-    : createWebHistory();
+let history: RouterHistory;
+if (mode === "hash") history = createWebHashHistory();
+else if (mode === "abstract") history = createMemoryHistory();
+else history = createWebHistory();
 
 /* List of all routes, props, components and metadata */
 const router = createRouter({
@@ -134,56 +134,56 @@ const router = createRouter({
   routes: [
     ...makeMultiPageRoutes(pages as unknown[]),
     { // The default view can be customized by the user
-      path: '/',
+      path: "/",
       name: `landing-page-${getStartingView()}`,
       component: getStartingComponent(),
-      meta: makeMetaTags('Home Page'),
+      meta: makeMetaTags("Home Page"),
     },
     { // Default home page
       path: routePaths.home,
-      name: 'home',
+      name: "home",
       component: Home,
-      meta: makeMetaTags('Home Page'),
+      meta: makeMetaTags("Home Page"),
     },
     { // View only single section
       path: `${routePaths.home}/:section`,
-      name: 'home-section',
+      name: "home-section",
       component: Home,
-      meta: makeMetaTags('Home Page'),
+      meta: makeMetaTags("Home Page"),
     },
     { // Workspace view page
       path: routePaths.workspace,
-      name: 'workspace',
-      component: () => import('../views/Workspace.vue'),
-      meta: makeMetaTags('Workspace'),
+      name: "workspace",
+      component: () => import("../views/Workspace.vue"),
+      meta: makeMetaTags("Workspace"),
     },
     { // Minimal view page
       path: routePaths.minimal,
-      name: 'minimal',
-      component: () => import('../views/Minimal.vue'),
-      meta: makeMetaTags('Start Page'),
+      name: "minimal",
+      component: () => import("../views/Minimal.vue"),
+      meta: makeMetaTags("Start Page"),
     },
     { // The about app page
       path: routePaths.about,
-      name: 'about', // We lazy load the About page so as to not slow down the app
-      component: () => import('../views/About.vue'),
-      meta: makeMetaTags('About moshi'),
+      name: "about", // We lazy load the About page so as to not slow down the app
+      component: () => import("../views/About.vue"),
+      meta: makeMetaTags("About moshi"),
     },
     { // Page not found, any non-defined routes will land here
       path: routePaths.notFound,
-      name: '404',
-      component: () => import('../views/404.vue'),
-      meta: makeMetaTags('404 Not Found'),
+      name: "404",
+      component: () => import("../views/404.vue"),
+      meta: makeMetaTags("404 Not Found"),
       beforeEnter: (to, from, next) => {
         if (to.redirectedFrom) { // Log error, if redirected here from another route
-          ErrorHandler(`Route not found: '${to.redirectedFrom.path}'`);
+          ErrorHandler(`Route not found: "${to.redirectedFrom.path}"`);
         }
         next();
       },
     },
     { // Redirect any not-found routed to the 404 view
-      path: '/:pathMatch(.*)*',
-      redirect: '/404',
+      path: "/:pathMatch(.*)*",
+      redirect: "/404",
     },
   ],
 });
@@ -197,7 +197,7 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
   progress.end();
   nextTick(() => {
-    document.title = (to.meta?.title as string) || 'moshi';
+    document.title = (to.meta?.title as string) || "moshi";
   });
 });
 

@@ -9,7 +9,7 @@ defineProps({
   url: String,
   id: {
     type: String,
-    default: 'web-app-view',
+    default: "web-app-view",
   },
 });
 </script>

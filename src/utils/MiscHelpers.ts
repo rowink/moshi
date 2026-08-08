@@ -6,7 +6,7 @@ export const asciiHash = (input: string): string => {
   const str = (!input || input.length === 0) ? Math.random().toString() : input;
   // previousHash is always a non-empty string (first char, or prior reduce result)
   const reducer = (previousHash: string, char: string): string => previousHash + char.charCodeAt(0);
-  const asciiSum = str.split('').reduce(reducer).toString();
+  const asciiSum = str.split("").reduce(reducer).toString();
   const shortened = asciiSum.slice(0, 30) + asciiSum.slice(asciiSum.length - 30);
   return window.btoa(shortened);
 };
@@ -14,12 +14,12 @@ export const asciiHash = (input: string): string => {
 /* Encode potentially malicious characters from string */
 export const sanitize = (string: string): string => {
   const map: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;',
-    '/': '&#x2F;',
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#x27;",
+    "/": "&#x2F;",
   };
   const reg = /[&<>"'/]/ig;
   return string.replace(reg, (match) => (map[match]));
@@ -29,7 +29,7 @@ export const sanitize = (string: string): string => {
 export const timestampToDate = (timestamp: number): string => {
   const localFormat = navigator.language;
   const dateFormat: Intl.DateTimeFormatOptions = {
-    weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
+    weekday: "short", day: "numeric", month: "short", year: "numeric",
   };
   const date = new Date(timestamp).toLocaleDateString(localFormat, dateFormat);
   return `${date}`;
@@ -38,7 +38,7 @@ export const timestampToDate = (timestamp: number): string => {
 /* Given a timestamp, returns formatted time in local format */
 export const timestampToTime = (timestamp: number): string => {
   const localFormat = navigator.language;
-  const timeFormat: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const timeFormat: Intl.DateTimeFormatOptions = { hour: "numeric", minute: "numeric", second: "numeric" };
   return Intl.DateTimeFormat(localFormat, timeFormat).format(new Date(timestamp));
 };
 
@@ -49,17 +49,17 @@ export const timestampToDateTime = (timestamp: number): string => {
 
 /* Given a 2-letter country ISO code, return the countries name */
 export const getCountryFromIso = (iso: string): string | undefined => {
-  const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+  const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
   return regionNames.of(iso);
 };
 
 /* Given a 2-digit country code, return path to flag image from Flagpedia */
 export const getCountryFlag = (countryCode: string, dimens?: string): string => {
-  const protocol = 'https';
-  const cdn = 'flagcdn.com';
-  const dimensions = dimens || '64x48';
+  const protocol = "https";
+  const cdn = "flagcdn.com";
+  const dimensions = dimens || "64x48";
   const country = countryCode.toLowerCase();
-  const ext = 'png';
+  const ext = "png";
   return `${protocol}://${cdn}/${dimensions}/${country}.${ext}`;
 };
 
@@ -76,8 +76,8 @@ export const getPlaceUrl = (placeName: string): string => {
 /* Given a large number, will add commas to make more readable */
 export const putCommasInBigNum = (bigNum: number): string => {
   const strNum = Number.isNaN(bigNum) ? String(bigNum) : String(bigNum);
-  const [integerPart, decimalPart] = strNum.split('.');
-  return integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (decimalPart ? `.${decimalPart}` : '');
+  const [integerPart, decimalPart] = strNum.split(".");
+  return integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (decimalPart ? `.${decimalPart}` : "");
 };
 
 /* Given a large number, will convert 1000 into k for readability */
@@ -88,15 +88,15 @@ export const showNumAsThousand = (bigNum: number): number | string => {
 
 /* Capitalizes the first letter of each word within a string */
 export const capitalize = (str: string): string => {
-  const words = str.replaceAll('_', ' ').replaceAll('-', ' ');
+  const words = str.replaceAll("_", " ").replaceAll("-", " ");
   return words.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
 };
 
 /* Given a mem size in bytes, will return it in appropriate unit */
 export const convertBytes = (bytes: number, decimals = 2): string => {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${parseFloat((bytes / (k ** i)).toFixed(decimals))} ${sizes[i]}`;
 };
@@ -105,7 +105,7 @@ export const convertBytes = (bytes: number, decimals = 2): string => {
  * with K, M, B or T respectively, e.g. 4_294_967_295 => 4.3B */
 export const formatNumber = (number: number, decimals = 1): number | string => {
   if (number > -1000 && number < 1000) return number;
-  const units = ['', 'K', 'M', 'B', 'T'];
+  const units = ["", "K", "M", "B", "T"];
   const k = 1000;
   const i = Math.floor(Math.log(number) / Math.log(k));
   const f = parseFloat(String(number / (k ** i)));
@@ -127,7 +127,7 @@ export const roundPrice = (price: number): number | string => {
 };
 
 /* Cuts string off at given length, and adds an ellipse */
-export const truncateStr = (str: string, len = 60, ellipse = '...'): string => {
+export const truncateStr = (str: string, len = 60, ellipse = "..."): string => {
   return str.length > len + ellipse.length ? `${str.slice(0, len)}${ellipse}` : str;
 };
 
@@ -138,14 +138,14 @@ export const getTimeDifference = (startTime: number | string, endTime: number | 
   const divide = (time: number, round: number) => Math.round(time / round);
 
   const periods = [
-    { noun: 'second', value: 1 },
-    { noun: 'minute', value: 60 },
-    { noun: 'hour', value: 3600 },
-    { noun: 'day', value: 86400 },
-    { noun: 'week', value: 604800 },
-    { noun: 'fortnight', value: 1209600 },
-    { noun: 'month', value: 2628000 },
-    { noun: 'year', value: 31557600 },
+    { noun: "second", value: 1 },
+    { noun: "minute", value: 60 },
+    { noun: "hour", value: 3600 },
+    { noun: "day", value: 86400 },
+    { noun: "week", value: 604800 },
+    { noun: "fortnight", value: 1209600 },
+    { noun: "month", value: 2628000 },
+    { noun: "year", value: 31557600 },
   ];
 
   for (let idx = 0; idx < periods.length; idx += 1) {
@@ -157,7 +157,7 @@ export const getTimeDifference = (startTime: number | string, endTime: number | 
     }
   }
 
-  return 'unknown';
+  return "unknown";
 };
 
 /* Given a timestamp, return how long ago it was, e.g. '10 minutes' */
@@ -165,7 +165,7 @@ export const getTimeAgo = (dateTime: number | string): string => {
   const now = new Date().getTime();
   const isHistorical = new Date(dateTime).getTime() < now;
   const diffStr = getTimeDifference(dateTime, now);
-  if (diffStr === 'unknown') return diffStr;
+  if (diffStr === "unknown") return diffStr;
   return isHistorical ? `${diffStr} ago` : `in ${diffStr}`;
 };
 
@@ -189,43 +189,43 @@ export const fahrenheitToCelsius = (fahrenheit: number): number => {
 export const findCurrencySymbol = (currencyCode: string): string => {
   const code = currencyCode.toUpperCase().trim();
   const currencies: Record<string, string> = {
-    USD: '$', // US Dollar
-    EUR: '€', // Euro
-    GBP: '£', // British Pound Sterling
-    AFN: '؋', // Afghan Afghani
-    ALL: 'Lek', // Albanian Lek
-    AUD: '$', // Australian Dollar
-    AWG: 'ƒ', // Aruban Guilder
-    BAM: 'KM', // Bosnian Mark
-    BWP: 'P', // Botswana Pula
-    CAD: '$', // Canadian Dollar
-    CNY: '¥', // Chinese Yuan Renminbi
-    CRC: '₡', // Costa Rican Colón
-    CRS: '₡', // Costa Rican Colon
-    CUP: '₱', // Cuban Peso
-    DKK: 'kr', // Danish Krone
-    HKD: '$', // Hong Kong Dollar
-    HUF: 'Ft', // Hungarian Forint
-    HRK: 'kn', // Croatian Kuna
-    ISK: 'kr', // Icelandic Krona
-    ILS: '₪', // Israeli New Sheqel
-    INR: '₹', // Indian Rupee
-    IRR: '﷼', // Iranian Rial
-    JPY: '¥', // Japanese Yen
-    KRW: '₩', // South Korean Won
-    LAK: '₭', // Laos Kip
-    NGN: '₦', // Nigerian Naira
-    NOK: 'kr', // Norwegian Krone
-    PHP: '₱', // Philippine Peso
-    PKR: '₨', // Pakistani Rupee
-    PLN: 'zł', // Polish Zloty
-    PYG: '₲', // Paraguayan Guarani
-    RUB: '₽', // Russian Ruble
-    THB: '฿', // Thai Baht
-    UAH: '₴', // Ukrainian Hryvnia
-    VND: '₫', // Vietnamese Dong
-    YER: '﷼', // Yemen Rial
-    ZWD: 'Z$', // Zimbabwean Dollar
+    USD: "$", // US Dollar
+    EUR: "€", // Euro
+    GBP: "£", // British Pound Sterling
+    AFN: "؋", // Afghan Afghani
+    ALL: "Lek", // Albanian Lek
+    AUD: "$", // Australian Dollar
+    AWG: "ƒ", // Aruban Guilder
+    BAM: "KM", // Bosnian Mark
+    BWP: "P", // Botswana Pula
+    CAD: "$", // Canadian Dollar
+    CNY: "¥", // Chinese Yuan Renminbi
+    CRC: "₡", // Costa Rican Colón
+    CRS: "₡", // Costa Rican Colon
+    CUP: "₱", // Cuban Peso
+    DKK: "kr", // Danish Krone
+    HKD: "$", // Hong Kong Dollar
+    HUF: "Ft", // Hungarian Forint
+    HRK: "kn", // Croatian Kuna
+    ISK: "kr", // Icelandic Krona
+    ILS: "₪", // Israeli New Sheqel
+    INR: "₹", // Indian Rupee
+    IRR: "﷼", // Iranian Rial
+    JPY: "¥", // Japanese Yen
+    KRW: "₩", // South Korean Won
+    LAK: "₭", // Laos Kip
+    NGN: "₦", // Nigerian Naira
+    NOK: "kr", // Norwegian Krone
+    PHP: "₱", // Philippine Peso
+    PKR: "₨", // Pakistani Rupee
+    PLN: "zł", // Polish Zloty
+    PYG: "₲", // Paraguayan Guarani
+    RUB: "₽", // Russian Ruble
+    THB: "฿", // Thai Baht
+    UAH: "₴", // Ukrainian Hryvnia
+    VND: "₫", // Vietnamese Dong
+    YER: "﷼", // Yemen Rial
+    ZWD: "Z$", // Zimbabwean Dollar
   };
   if (currencies[code]) return currencies[code];
   return `${code} `; // Symbol not found, return text code instead

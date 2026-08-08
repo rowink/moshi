@@ -12,10 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted } from "vue";
 
 function setTheme() {
-  document.getElementsByTagName('html')[0].setAttribute('data-theme', 'docs');
+  document.getElementsByTagName("html")[0].setAttribute("data-theme", "docs");
 }
 
 onMounted(() => {

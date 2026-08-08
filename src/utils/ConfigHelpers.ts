@@ -1,23 +1,23 @@
-import ConfigAccumulator from '@/utils/ConfigAccumalator';
-import { languages } from '@/utils/languages';
+import ConfigAccumulator from "@/utils/ConfigAccumalator";
+import { languages } from "@/utils/languages";
 import {
   visibleComponents,
   localStorageKeys,
   theme as defaultTheme,
   language as defaultLanguage,
-} from '@/utils/defaults';
-import ErrorHandler from '@/utils/ErrorHandler';
-import ConfigSchema from '@/utils/ConfigSchema.json';
-import type { Language } from '@/utils/languages';
+} from "@/utils/defaults";
+import ErrorHandler from "@/utils/ErrorHandler";
+import ConfigSchema from "@/utils/ConfigSchema.json";
+import type { Language } from "@/utils/languages";
 
 /* Given a page name, converts to lowercase, removes special characters and extension */
 export const makePageName = (pageName?: string): string => {
-  if (!pageName) return 'unnamed-page';
+  if (!pageName) return "unnamed-page";
   return pageName
     .toLowerCase()
-    .replaceAll(' ', '-')
-    .replace('.yml', '')
-    .replace(/[^\w\s-]/gi, '');
+    .replaceAll(" ", "-")
+    .replace(".yml", "")
+    .replace(/[^\w\s-]/gi, "");
 };
 
 /* For a given sub-page, and page type, return the URL */
@@ -51,7 +51,7 @@ export const componentVisibility = (appConfig: Record<string, any>) => {
   // Get users choice from app config
   const usersChoice = appConfig.hideComponents || {};
   // Checks if value is defined, and is a boolean
-  const isThere = (userValue: unknown) => typeof userValue === 'boolean';
+  const isThere = (userValue: unknown) => typeof userValue === "boolean";
   // For each option, return users choice (if specified), else use the default
   return {
     pageTitle: isThere(usersChoice.hideHeading)
@@ -81,7 +81,7 @@ export const getTheme = (): string => {
  * @returns An array of objects, one for each theme, containing kvps for variables
  */
 export const getCustomColors = (): Record<string, any> => {
-  const localColors = JSON.parse(localStorage[localStorageKeys.CUSTOM_COLORS] || '{}');
+  const localColors = JSON.parse(localStorage[localStorageKeys.CUSTOM_COLORS] || "{}");
   const configColors = config.appConfig.customColors || {};
   return Object.assign(configColors, localColors);
 };

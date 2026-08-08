@@ -74,7 +74,6 @@ const {
   setTheme,
 } = useHome();
 
-const layout = ref("");
 const selectedSection = ref(0); // The index of currently selected section
 const tabbedView = ref(true); // By default use tabs, when searching then show all instead
 const filterComp = ref<InstanceType<typeof MinimalSearch> | null>(null);

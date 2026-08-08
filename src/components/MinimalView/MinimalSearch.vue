@@ -8,24 +8,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import SearchBar from "@/components/SearchBar.vue";
-import { useAppStore } from "@/store/modules/appStore";
 
 defineProps({
   active: Boolean,
 });
 
 const emit = defineEmits(["user-is-searchin"]);
-
-const appStore = useAppStore();
-const appConfig = computed(() => appStore.appConfig);
-const webSearchEnabled = computed(() => {
-  if (appConfig.value && appConfig.value.webSearch) {
-    return !appConfig.value.webSearch.disableWebSearch;
-  }
-  return true;
-});
 
 const input = ref(""); // Users current search term
 const MinimalSearchBar = ref<InstanceType<typeof SearchBar> | null>(null);

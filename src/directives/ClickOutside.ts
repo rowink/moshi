@@ -4,12 +4,12 @@
  * Used to close context menus popup modals and tips
  * moshi: Licensed under MIT - (C) 2022
  */
-import type { ObjectDirective } from 'vue';
+import type { ObjectDirective } from "vue";
 
 const instances: Array<{ index: number; click: (event: Event) => void }> = []; // List of click event instances
 
 /* Trigger action when click anywhere, except target elem */
-function onDocumentClick(event: Event, elem: HTMLElement, action: (event: Event) => void) {
+function onDocumentClick(event: Event, elem: HTMLElement, action: (e: Event) => void) {
   const { target } = event;
   if (elem !== target && !elem.contains(target as Node)) {
     action(event);
@@ -28,8 +28,8 @@ const ClickOutside: ObjectDirective<HTMLElement> = {
       onDocumentClick(event, elem, action);
     };
 
-    document.addEventListener('click', click);
-    document.addEventListener('touchstart', click);
+    document.addEventListener("click", click);
+    document.addEventListener("touchstart", click);
     instances.push({ index, click });
   },
   /* Remove event listeners */
@@ -38,8 +38,8 @@ const ClickOutside: ObjectDirective<HTMLElement> = {
     const index = Number(elem.dataset.outsideClickIndex);
     const handler = instances[index];
     if (handler) {
-      document.removeEventListener('click', handler.click);
-      document.removeEventListener('touchstart', handler.click);
+      document.removeEventListener("click", handler.click);
+      document.removeEventListener("touchstart", handler.click);
       instances.splice(index, 1);
     }
   },

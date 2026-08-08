@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import Icon from '@/components/LinkItems/ItemIcon.vue';
+import Icon from "@/components/LinkItems/ItemIcon.vue";
 
 const props = defineProps({
   index: Number,
@@ -18,14 +18,14 @@ const props = defineProps({
   hideTitleText: Boolean,
 });
 
-const emit = defineEmits(['sectionSelected']);
+const emit = defineEmits(["sectionSelected"]);
 
 function selectSection(index: number | undefined) {
-  emit('sectionSelected', index);
+  emit("sectionSelected", index);
 }
 function tooltip() {
   return props.hideTitleText
-    ? { content: props.title, trigger: 'hover focus', delay: 250 } : null;
+    ? { content: props.title, trigger: "hover focus", delay: 250 } : null;
 }
 </script>
 

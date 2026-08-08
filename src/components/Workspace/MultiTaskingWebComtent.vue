@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import WebContent from '@/components/Workspace/WebContent.vue';
+import { ref, watch } from "vue";
+import WebContent from "@/components/Workspace/WebContent.vue";
 
 const props = defineProps({
   url: String, // The URL of currently visible app

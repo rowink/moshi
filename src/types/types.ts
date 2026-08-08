@@ -1,10 +1,10 @@
 /* Types aligned with the JSON schema in src/utils/ConfigSchema.json. All fields optional, as the config is user-customizable. */
 
-export type ItemTarget = 'newtab' | 'sametab' | 'parent' | 'top' | 'modal' | 'workspace' | 'clipboard';
-export type NavLinkTarget = 'newtab' | 'sametab' | 'parent' | 'top';
-export type ItemSize = 'small' | 'medium' | 'large';
-export type SectionLayout = 'grid' | 'auto';
-export type SortBy = 'default' | 'most-used' | 'last-used' | 'alphabetical' | 'reverse-alphabetical' | 'random';
+export type ItemTarget = "newtab" | "sametab" | "parent" | "top" | "modal" | "workspace" | "clipboard";
+export type NavLinkTarget = "newtab" | "sametab" | "parent" | "top";
+export type ItemSize = "small" | "medium" | "large";
+export type SectionLayout = "grid" | "auto";
+export type SortBy = "default" | "most-used" | "last-used" | "alphabetical" | "reverse-alphabetical" | "random";
 
 export interface SubItem {
   title?: string;
@@ -102,7 +102,7 @@ export interface AppConfig {
   layout?: string;
   iconSize?: ItemSize;
   colCount?: number;
-  routingMode?: 'hash' | 'history';
+  routingMode?: "hash" | "history";
   workspaceLandingUrl?: string;
   enableMultiTasking?: boolean;
   webSearch?: WebSearchConfig;
