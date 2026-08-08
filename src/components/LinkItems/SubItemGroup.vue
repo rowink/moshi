@@ -11,43 +11,38 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { computed, PropType } from "vue";
 import SubItem from "@/components/LinkItems/SubItem.vue";
-import { PropType, defineComponent } from "vue";
 import { SubItem as SubItemType } from "@/types/types";
 
-export default defineComponent({
-  props: {
-    itemId: String,
-    subItems: {
-      type: Array as PropType<SubItemType[]>,
-      default: () => [],
-    },
-    title: String,
-    subItemGridSize: Number,
+const props = defineProps({
+  itemId: String,
+  subItems: {
+    type: Array as PropType<SubItemType[]>,
+    default: () => [],
   },
-  components: {
-    SubItem,
-  },
-  computed: {
-    /* Determine number of columns to split items into, depending on number of items */
-    columnCount() {
-      if (this.subItemGridSize) return this.subItemGridSize;
-      const numItems = this.subItems.length;
-      if (numItems >= 10) return 4;
-      if (numItems >= 5) return 3;
-      if (numItems >= 2) return 2;
-      if (numItems === 1) return 1;
-      return 2;
-    },
-  },
-  methods: {
-    /* Pass open modal emit event up */
-    triggerModal(url: string) {
-      this.$emit("triggerModal", url);
-    },
-  },
+  title: String,
+  subItemGridSize: Number,
 });
+
+const emit = defineEmits(["triggerModal"]);
+
+/* Determine number of columns to split items into, depending on number of items */
+const columnCount = computed(() => {
+  if (props.subItemGridSize) return props.subItemGridSize;
+  const numItems = props.subItems.length;
+  if (numItems >= 10) return 4;
+  if (numItems >= 5) return 3;
+  if (numItems >= 2) return 2;
+  if (numItems === 1) return 1;
+  return 2;
+});
+
+/* Pass open modal emit event up */
+function triggerModal(url: string) {
+  emit("triggerModal", url);
+}
 </script>
 
 <style scoped lang="scss">

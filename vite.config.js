@@ -1,30 +1,16 @@
 /**
- * Vite config for moshi (Vue 2.7).
+ * Vite config for moshi (Vue 3).
  * Replaces the previous Vue CLI (webpack 5) build chain.
  */
 const path = require('path');
 const fs = require('fs');
 const { defineConfig } = require('vite');
-const vue = require('@vitejs/plugin-vue2');
+const vue = require('@vitejs/plugin-vue');
 const { VitePWA } = require('vite-plugin-pwa');
-const svgToVue = require('svg-to-vue');
+const svgLoader = require('vite-svg-loader');
 const pkg = require('./package.json');
 
 const base = process.env.BASE_URL || '/';
-
-// Compile SVGs imported as Vue components (replaces vue-svg-loader).
-// svg-to-vue runs SVGO, then compiles the result into a functional render
-// function via vue-template-compiler. Its CJS output is re-exported as ESM.
-const svgAsVueComponent = () => ({
-  name: 'svg-as-vue-component',
-  enforce: 'pre',
-  async load(id) {
-    if (!id.endsWith('.svg')) return;
-    const content = fs.readFileSync(id, 'utf-8');
-    const component = await svgToVue(content, { svgoPath: id });
-    return component.replace('module.exports =', 'export default');
-  },
-});
 
 // conf.yml must stay in public/ (Docker volume mount + runtime server
 // reads/writes), but Vite forbids importing from the public dir. Resolve
@@ -49,7 +35,7 @@ module.exports = defineConfig(({ mode }) => ({
   base,
   plugins: [
     vue(),
-    svgAsVueComponent(),
+    svgLoader(),
     loadPublicConfigRaw(),
     VitePWA({
       filename: 'service-worker.js',
@@ -70,13 +56,12 @@ module.exports = defineConfig(({ mode }) => ({
     // list omits .vue, so it is appended here
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
-  // Dart Sass deprecation warnings from vue-select (node_modules) cannot be
-  // fixed in source, so they are silenced here. src/ styles no longer use
-  // @import or global built-ins.
+  // Dart Sass deprecation warnings from legacy stylesheets cannot be fixed in
+  // source, so they are silenced here.
   css: {
     preprocessorOptions: {
       scss: {
-        silenceDeprecations: ['import', 'global-builtin'],
+        silenceDeprecations: ['import', 'global-builtin', 'mixed-decls'],
       },
     },
   },

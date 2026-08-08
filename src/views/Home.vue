@@ -28,9 +28,8 @@
         (colCount ? `col-count-${colCount} ` : '')
       "
     >
-      <template v-for="(section, index) in filteredTiles">
+      <template v-for="(section, index) in filteredTiles" :key="index">
         <Section
-          :key="index"
           :index="index"
           :title="section.name"
           :icon="section.icon || undefined"
@@ -56,114 +55,112 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import HomeMixin from "@/mixins/HomeMixin";
+<script setup lang="ts">
+import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useHome } from "@/composables/useHome";
 import SearchBar from "@/components/SearchBar.vue";
 import LayoutOptions from "@/components/LayoutOptions/LayoutOptions.vue";
 import Section from "@/components/LinkItems/Section.vue";
 import { localStorageKeys } from "@/utils/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 import BackIcon from "@/assets/interface-icons/back-arrow.svg";
-import { useAppStore } from "@/store/modules/appStore";
-import { Item, Section as SectionType } from "@/types/types";
+import { Section as SectionType } from "@/types/types";
 
-export default defineComponent({
-  name: "home",
-  mixins: [HomeMixin],
-  components: {
-    SearchBar,
-    LayoutOptions,
-    Section,
-    BackIcon,
-  },
-  data: () => ({
-    layout: "",
-    itemSizeBound: "",
-  }),
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    /* Whether or not to show the search bar, based on user config */
-    searchVisible() {
-      return this.appStore.visibleComponents.searchBar;
-    },
-    singleSectionView() {
-      return this.findSingleSection(
-        this.appStore.sections,
-        this.$route.params.section,
-      );
-    },
-    /* Get class for num columns, if specified by user */
-    colCount(): number | null {
-      let { colCount } = this.appConfig;
-      if (!colCount) return null;
-      if (colCount < 1) colCount = 1;
-      if (colCount > 8) colCount = 8;
-      return colCount;
-    },
-    /* Return all sections, that match users search term */
-    filteredTiles() {
-      const sections = this.singleSectionView || this.sections;
-      return sections.filter((section: SectionType) =>
-        this.filterTiles(section.items, this.searchValue),
-      );
-    },
-    /* Updates layout (when button clicked), and saves in local storage */
-    layoutOrientation() {
-      return this.appStore.layout;
-    },
-    /* Updates icon size (when button clicked), and saves in local storage */
-    iconSize() {
-      return this.appStore.iconSize;
-    },
-  },
-  watch: {
-    layoutOrientation(layout) {
-      localStorage.setItem(localStorageKeys.LAYOUT_ORIENTATION, layout);
-      this.layout = layout;
-    },
-    iconSize(size) {
-      localStorage.setItem(localStorageKeys.ICON_SIZE, size);
-      this.itemSizeBound = size;
-    },
-  },
-  methods: {
-    /* Clears input field, once a searched item is opened */
-    finishedSearching() {
-      if (this.$refs.filterComp) this.$refs.filterComp.clearFilterInput();
-    },
-    /* Returns optional section display preferences if available */
-    getDisplayData(section: SectionType) {
-      return !section.displayData ? {} : section.displayData;
-    },
-    /* If on sub-route, and section exists, then return only that section */
-    findSingleSection: (
-      allSections: SectionType[],
-      sectionTitle: string,
-    ): SectionType[] | undefined => {
-      if (!sectionTitle) return undefined;
-      let sectionToReturn: SectionType[] | undefined;
-      const parse = (section: string) =>
-        section.replaceAll(" ", "-").toLowerCase().trim();
-      allSections.forEach((section) => {
-        if (parse(sectionTitle) === parse(section.name || "")) {
-          sectionToReturn = [section];
-        }
-      });
-      if (!sectionToReturn)
-        ErrorHandler(`No section named '${sectionTitle}' was found`);
-      return sectionToReturn;
-    },
-  },
-  mounted() {
-    this.initiateFontAwesome();
-    this.initiateMaterialDesignIcons();
-    this.layout = this.layoutOrientation;
-    this.itemSizeBound = this.iconSize;
-  },
+const route = useRoute();
+const {
+  appStore,
+  sections,
+  appConfig,
+  pageId,
+  searchValue,
+  filterTiles,
+  searching,
+  updateModalVisibility,
+  checkTheresData,
+  checkIfResults,
+  getBackgroundImage,
+  initiateFontAwesome,
+  initiateMaterialDesignIcons,
+} = useHome();
+
+const layout = ref("");
+const itemSizeBound = ref("");
+const filterComp = ref<InstanceType<typeof SearchBar> | null>(null);
+
+/* Whether or not to show the search bar, based on user config */
+const searchVisible = computed(() => appStore.visibleComponents.searchBar);
+
+const singleSectionView = computed(() =>
+  findSingleSection(sections.value, route.params.section as string),
+);
+
+/* Get class for num columns, if specified by user */
+const colCount = computed<number | null>(() => {
+  let { colCount: userColCount } = appConfig.value;
+  if (!userColCount) return null;
+  if (userColCount < 1) userColCount = 1;
+  if (userColCount > 8) userColCount = 8;
+  return userColCount;
 });
+
+/* Return all sections, that match users search term */
+const filteredTiles = computed(() => {
+  const currentSections = singleSectionView.value || sections.value;
+  return currentSections.filter((section: SectionType) =>
+    filterTiles(section.items, searchValue.value),
+  );
+});
+
+/* Updates layout (when button clicked), and saves in local storage */
+const layoutOrientation = computed(() => appStore.layout);
+
+/* Updates icon size (when button clicked), and saves in local storage */
+const iconSize = computed(() => appStore.iconSize);
+
+watch(layoutOrientation, (newLayout) => {
+  localStorage.setItem(localStorageKeys.LAYOUT_ORIENTATION, newLayout);
+  layout.value = newLayout;
+});
+
+watch(iconSize, (size) => {
+  localStorage.setItem(localStorageKeys.ICON_SIZE, size);
+  itemSizeBound.value = size;
+});
+
+/* Clears input field, once a searched item is opened */
+const finishedSearching = () => {
+  if (filterComp.value) filterComp.value.clearFilterInput();
+};
+
+/* Returns optional section display preferences if available */
+const getDisplayData = (section: SectionType) => {
+  return !section.displayData ? {} : section.displayData;
+};
+
+/* If on sub-route, and section exists, then return only that section */
+const findSingleSection = (
+  allSections: SectionType[],
+  sectionTitle: string,
+): SectionType[] | undefined => {
+  if (!sectionTitle) return undefined;
+  let sectionToReturn: SectionType[] | undefined;
+  const parse = (section: string) =>
+    section.replaceAll(" ", "-").toLowerCase().trim();
+  allSections.forEach((section) => {
+    if (parse(sectionTitle) === parse(section.name || "")) {
+      sectionToReturn = [section];
+    }
+  });
+  if (!sectionToReturn)
+    ErrorHandler(`No section named '${sectionTitle}' was found`);
+  return sectionToReturn;
+};
+
+initiateFontAwesome();
+initiateMaterialDesignIcons();
+layout.value = layoutOrientation.value;
+itemSizeBound.value = iconSize.value;
 </script>
 
 <style lang="scss" scoped>

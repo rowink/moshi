@@ -6,17 +6,15 @@
     />
     <nav id="nav" v-if="navVisible">
       <!-- Render either router-link or anchor, depending if internal / external link -->
-      <template v-for="(link, index) in allLinks">
+      <template v-for="(link, index) in allLinks" :key="index">
         <router-link
           v-if="!isUrl(link.path)"
-          :key="index"
           :to="link.path"
           class="nav-item"
           >{{ link.title }}
         </router-link>
         <a
           v-else
-          :key="index"
           :href="link.path"
           :target="determineTarget(link)"
           class="nav-item"
@@ -28,72 +26,61 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { ref, computed, PropType } from "vue";
 import IconBurger from "@/assets/interface-icons/burger-menu.svg";
 import { makePageSlug } from "@/utils/ConfigHelpers";
 import { useAppStore } from "@/store/modules/appStore";
 import { NavLink as NavLinkType } from "@/types/types";
 
-export default defineComponent({
-  name: "Nav",
-  components: {
-    IconBurger,
-  },
-  props: {
-    links: {
-      type: Array as PropType<NavLinkType[]>,
-      default: () => [],
-    },
-  },
-  data: () => ({
-    navVisible: true,
-    isMobile: false,
-  }),
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    /* Get links to sub-pages, and combine with nav-links */
-    allLinks() {
-      const subPages = this.appStore.pages.map(
-        (subPage: Record<string, any>) => ({
-          path: makePageSlug(subPage.name, "home"),
-          title: subPage.name,
-        }),
-      );
-      const navLinks = this.links || [];
-      return [...navLinks, ...subPages];
-    },
-  },
-  created() {
-    this.navVisible = !this.detectMobile();
-    this.isMobile = this.detectMobile();
-  },
-  methods: {
-    detectMobile() {
-      const screenWidth = document.body.clientWidth;
-      return !!(screenWidth && screenWidth < 600);
-    },
-    isUrl: (str: string | undefined) =>
-      new RegExp(/(http|https):\/\/(\S+)(:[0-9]+)?/).test(str as string),
-    determineTarget(link: NavLinkType) {
-      if (!link.target) return "_blank";
-      switch (link.target) {
-        case "sametab":
-          return "_self";
-        case "newtab":
-          return "_blank";
-        case "parent":
-          return "_parent";
-        case "top":
-          return "_top";
-        default:
-          return undefined;
-      }
-    },
+const props = defineProps({
+  links: {
+    type: Array as PropType<NavLinkType[]>,
+    default: () => [],
   },
 });
+
+const appStore = useAppStore();
+
+const navVisible = ref(true);
+const isMobile = ref(false);
+
+/* Get links to sub-pages, and combine with nav-links */
+const allLinks = computed(() => {
+  const subPages = appStore.pages.map((subPage: Record<string, any>) => ({
+    path: makePageSlug(subPage.name, "home"),
+    title: subPage.name,
+  }));
+  return [...(props.links || []), ...subPages];
+});
+
+function detectMobile() {
+  const screenWidth = document.body.clientWidth;
+  return !!(screenWidth && screenWidth < 600);
+}
+
+function isUrl(str: string | undefined) {
+  return new RegExp(/(http|https):\/\/(\S+)(:[0-9]+)?/).test(str as string);
+}
+
+function determineTarget(link: NavLinkType) {
+  if (!link.target) return "_blank";
+  switch (link.target) {
+    case "sametab":
+      return "_self";
+    case "newtab":
+      return "_blank";
+    case "parent":
+      return "_parent";
+    case "top":
+      return "_top";
+    default:
+      return undefined;
+  }
+}
+
+navVisible.value = !detectMobile();
+isMobile.value = detectMobile();
 </script>
 
 <style scoped lang="scss">

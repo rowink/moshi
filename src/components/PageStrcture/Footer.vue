@@ -25,32 +25,38 @@
   </footer>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import { shouldBeVisible } from "@/utils/SectionHelpers";
 import { useAppStore } from "@/store/modules/appStore";
 
-export default defineComponent({
-  name: "Footer",
-  props: {
-    text: String,
-    authorName: { type: String, default: "" },
-    authorUrl: { type: String, default: "" },
-    license: { type: String, default: "MIT" },
-    licenseUrl: { type: String, default: "" },
-    date: { type: String, default: `${new Date().getFullYear()}` },
-    showCopyright: { type: Boolean, default: true },
-    repoUrl: { type: String, default: "" },
+withDefaults(
+  defineProps<{
+    text?: string;
+    authorName?: string;
+    authorUrl?: string;
+    license?: string;
+    licenseUrl?: string;
+    date?: string;
+    showCopyright?: boolean;
+    repoUrl?: string;
+  }>(),
+  {
+    authorName: "",
+    authorUrl: "",
+    license: "MIT",
+    licenseUrl: "",
+    date: `${new Date().getFullYear()}`,
+    showCopyright: true,
+    repoUrl: "",
   },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    visible() {
-      return shouldBeVisible(this.$route.name);
-    },
-  },
-});
+);
+
+const route = useRoute();
+const appStore = useAppStore();
+
+const visible = computed(() => shouldBeVisible(route.name as string));
 </script>
 
 <style scoped lang="scss">

@@ -11,7 +11,7 @@
     :cutToHeight="displayData.cutToHeight"
     @openContextMenu="openContextMenu"
     :id="sectionRef"
-    :ref="sectionRef"
+    :ref="setCollapsableRef"
   >
     <!-- If no items, show message -->
     <div v-if="isEmpty" class="no-items">
@@ -25,10 +25,9 @@
       :id="`section-${groupId}`"
     >
       <!-- Show for each item -->
-      <template v-for="item in sortedItems">
+      <template v-for="item in sortedItems" :key="item.id">
         <SubItemGroup
           v-if="item.subItems"
-          :key="item.id"
           :itemId="item.id"
           :title="item.title"
           :subItems="item.subItems"
@@ -37,10 +36,9 @@
         <Item
           v-else
           :item="item"
-          :key="item.id"
           :itemSize="itemSize"
           :parentSectionTitle="title"
-          @itemClicked="$emit('itemClicked')"
+          @itemClicked="emit('itemClicked')"
           @triggerModal="triggerModal"
           :isAddNew="false"
           :sectionWidth="sectionWidth"
@@ -50,9 +48,9 @@
     </div>
     <!-- Modal for opening in modal view -->
     <IframeModal
-      :ref="`iframeModal-${groupId}`"
+      :ref="setIframeModalRef"
       :name="`iframeModal-${groupId}`"
-      @closed="$emit('itemClicked')"
+      @closed="emit('itemClicked')"
     />
     <!-- Right-click item options context menu -->
     <ContextMenu
@@ -67,9 +65,16 @@
   </Collapsable>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import router from "../../router";
+<script setup lang="ts">
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  type PropType,
+} from "vue";
+import { useRouter } from "vue-router";
 import Item from "@/components/LinkItems/Item.vue";
 import SubItemGroup from "@/components/LinkItems/SubItemGroup.vue";
 import Collapsable from "@/components/LinkItems/Collapsable.vue";
@@ -83,193 +88,180 @@ import {
 import { useAppStore } from "@/store/modules/appStore";
 import { Item as ItemType } from "@/types/types";
 
-export default defineComponent({
-  name: "Section",
-  props: {
-    groupId: String,
-    title: String,
-    icon: String,
-    displayData: {
-      type: Object as PropType<Record<string, any>>,
-      default: () => ({}),
-    },
-    items: { type: Array as PropType<ItemType[]>, default: () => [] },
-    index: Number,
-    searchTerm: String,
+const props = defineProps({
+  groupId: String,
+  title: String,
+  icon: String,
+  displayData: {
+    type: Object as PropType<Record<string, any>>,
+    default: () => ({}),
   },
-  components: {
-    Collapsable,
-    ContextMenu,
-    Item,
-    SubItemGroup,
-    IframeModal,
-  },
-  data() {
-    return {
-      contextMenuOpen: false,
-      contextPos: {
-        posX: undefined as number | undefined,
-        posY: undefined as number | undefined,
-      },
-      sectionWidth: 0,
-      resizeObserver: undefined as ResizeObserver | undefined,
-    };
-  },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    appConfig() {
-      return this.appStore.appConfig;
-    },
-    itemSize() {
-      return this.displayData.itemSize || this.appStore.iconSize;
-    },
-    sortOrder() {
-      return this.displayData.sortBy || defaultSortOrder;
-    },
-    hasItems() {
-      return this.items && this.items.length > 0;
-    },
-    isEmpty() {
-      return !this.hasItems;
-    },
-    sectionRef() {
-      return `section-outer-${this.groupId}`;
-    },
-    /* If the sortBy attribute is specified, then return sorted data */
-    sortedItems() {
-      const items = [...this.items];
-      if (this.appConfig.disableSmartSort) return items;
-      if (this.sortOrder === "alphabetical") {
-        return this.sortAlphabetically(items);
-      } else if (this.sortOrder === "reverse-alphabetical") {
-        return this.sortAlphabetically(items).reverse();
-      } else if (this.sortOrder === "most-used") {
-        return this.sortByMostUsed(items);
-      } else if (this.sortOrder === "last-used") {
-        return this.sortByLastUsed(items);
-      } else if (this.sortOrder === "random") {
-        return this.sortRandomly(items);
-      } else if (this.sortOrder && this.sortOrder !== "default") {
-        ErrorHandler(
-          `Unknown Sort order '${this.sortOrder}' under '${this.title}'`,
-        );
-      }
-      return items;
-    },
-    isGridLayout() {
-      return (
-        this.displayData.sectionLayout === "grid" ||
-        !!(this.displayData.itemCountX || this.displayData.itemCountY)
-      );
-    },
-    gridStyle() {
-      let styles = "";
-      if (document.body.clientWidth > 600) {
-        // Only proceed if not on tiny screen
-        styles += this.displayData.itemCountX
-          ? `grid-template-columns: repeat(${this.displayData.itemCountX}, minmax(0, 1fr));`
-          : "";
-        styles += this.displayData.itemCountY
-          ? `grid-template-rows: repeat(${this.displayData.itemCountY}, minmax(0, 1fr));`
-          : "";
-      }
-      return styles;
-    },
-  },
-  methods: {
-    /* Opens the iframe modal */
-    triggerModal(url: string) {
-      this.$refs[`iframeModal-${this.groupId}`].show(url);
-    },
-    /* Sorts items alphabetically using the title attribute */
-    sortAlphabetically(items: ItemType[]) {
-      return items.sort((a, b) =>
-        (a.title || "").toLowerCase() > (b.title || "").toLowerCase() ? 1 : -1,
-      );
-    },
-    /* Sorts items by most used to least used, based on click-count */
-    sortByMostUsed(items: ItemType[]) {
-      const usageCount = JSON.parse(
-        localStorage.getItem(localStorageKeys.MOST_USED) || "{}",
-      );
-      const gmu = (item: ItemType) => usageCount[item.id || ""] || 0;
-      items.reverse().sort((a, b) => (gmu(a) < gmu(b) ? 1 : -1));
-      return items;
-    },
-    /* Sorts items by most recently used */
-    sortByLastUsed(items: ItemType[]) {
-      const usageCount = JSON.parse(
-        localStorage.getItem(localStorageKeys.LAST_USED) || "{}",
-      );
-      const glu = (item: ItemType) => usageCount[item.id || ""] || 0;
-      items.reverse().sort((a, b) => (glu(a) < glu(b) ? 1 : -1));
-      return items;
-    },
-    /* Sorts items randomly */
-    sortRandomly(items: ItemType[]) {
-      return items
-        .map((value) => ({ value, sort: Math.random() }))
-        .sort((a, b) => a.sort - b.sort)
-        .map(({ value }) => value);
-    },
-    /* Navigate to the section's single-section view page */
-    navigateToSection() {
-      if (!this.title) {
-        ErrorHandler("Cannot open section without a valid name");
-        return;
-      }
-      const parse = (section: string) =>
-        section.replace(" ", "-").toLowerCase().trim();
-      const sectionIdentifier = parse(this.title);
-      router.push({ path: `/home/${sectionIdentifier}` });
-      this.closeContextMenu();
-    },
-    /* Toggle sections collapse state */
-    expandCollapseSection() {
-      const secElem = this.$refs[this.sectionRef];
-      if (secElem) secElem.toggle();
-      this.closeContextMenu();
-    },
-    /* Open custom context menu, and set position */
-    openContextMenu(e: MouseEvent) {
-      this.contextMenuOpen = true; // Open context menu
-      // If mouse position not set, use section coordinates
-      const sectionOuterId = `section-outer-${this.groupId}`;
-      const sectionPosition = document
-        .getElementById(sectionOuterId)!
-        .getBoundingClientRect();
-      this.contextPos = {
-        posX: (e.clientX || sectionPosition.right - 10) + window.pageXOffset,
-        posY: (e.clientY || sectionPosition.top + 30) + window.pageYOffset,
-      };
-    },
-    /* Hide the right-click context menu */
-    closeContextMenu() {
-      this.contextMenuOpen = false;
-    },
-    /* Calculate width of section, used to dynamically set number of columns */
-    calculateSectionWidth() {
-      const secElem = this.$refs[this.sectionRef];
-      if (secElem && secElem.$el.clientWidth)
-        this.sectionWidth = secElem.$el.clientWidth;
-    },
-  },
-  mounted() {
-    // Set the section width, and recalculate when section resized
-    if (this.$refs[this.sectionRef]) {
-      this.resizeObserver = new ResizeObserver(
-        this.calculateSectionWidth,
-      ).observe(this.$refs[this.sectionRef].$el) as unknown as ResizeObserver;
-    }
-  },
-  beforeDestroy() {
-    // If resize observer set, and element still present, then de-register
-    if (this.resizeObserver && this.$refs[this.sectionRef]) {
-      this.resizeObserver.unobserve(this.$refs[this.sectionRef].$el);
-    }
-  },
+  items: { type: Array as PropType<ItemType[]>, default: () => [] },
+  index: Number,
+  searchTerm: String,
+});
+const emit = defineEmits(["itemClicked"]);
+
+const router = useRouter();
+const appStore = useAppStore();
+const appConfig = computed(() => appStore.appConfig);
+
+const contextMenuOpen = ref(false);
+const contextPos = reactive({
+  posX: undefined as number | undefined,
+  posY: undefined as number | undefined,
+});
+const sectionWidth = ref(0);
+const resizeObserver = ref<ResizeObserver | undefined>(undefined);
+
+/* Template refs */
+const collapsableRef = ref<InstanceType<typeof Collapsable> | null>(null);
+const iframeModals = ref<Record<string, InstanceType<typeof IframeModal> | null>>({});
+
+const setCollapsableRef = (el: unknown) => {
+  collapsableRef.value = el as InstanceType<typeof Collapsable> | null;
+};
+const setIframeModalRef = (el: unknown) => {
+  iframeModals.value[`iframeModal-${props.groupId}`] = el as InstanceType<
+    typeof IframeModal
+  > | null;
+};
+
+const itemSize = computed(
+  () => props.displayData.itemSize || appStore.iconSize,
+);
+const sortOrder = computed(() => props.displayData.sortBy || defaultSortOrder);
+const hasItems = computed(() => props.items && props.items.length > 0);
+const isEmpty = computed(() => !hasItems.value);
+const sectionRef = computed(() => `section-outer-${props.groupId}`);
+/* If the sortBy attribute is specified, then return sorted data */
+const sortedItems = computed(() => {
+  const items = [...props.items];
+  if (appConfig.value.disableSmartSort) return items;
+  if (sortOrder.value === "alphabetical") {
+    return sortAlphabetically(items);
+  } else if (sortOrder.value === "reverse-alphabetical") {
+    return sortAlphabetically(items).reverse();
+  } else if (sortOrder.value === "most-used") {
+    return sortByMostUsed(items);
+  } else if (sortOrder.value === "last-used") {
+    return sortByLastUsed(items);
+  } else if (sortOrder.value === "random") {
+    return sortRandomly(items);
+  } else if (sortOrder.value && sortOrder.value !== "default") {
+    ErrorHandler(
+      `Unknown Sort order '${sortOrder.value}' under '${props.title}'`,
+    );
+  }
+  return items;
+});
+const isGridLayout = computed(
+  () =>
+    props.displayData.sectionLayout === "grid" ||
+    !!(props.displayData.itemCountX || props.displayData.itemCountY),
+);
+const gridStyle = computed(() => {
+  let styles = "";
+  if (document.body.clientWidth > 600) {
+    // Only proceed if not on tiny screen
+    styles += props.displayData.itemCountX
+      ? `grid-template-columns: repeat(${props.displayData.itemCountX}, minmax(0, 1fr));`
+      : "";
+    styles += props.displayData.itemCountY
+      ? `grid-template-rows: repeat(${props.displayData.itemCountY}, minmax(0, 1fr));`
+      : "";
+  }
+  return styles;
+});
+
+/* Opens the iframe modal */
+function triggerModal(url: string) {
+  iframeModals.value[`iframeModal-${props.groupId}`]?.show(url);
+}
+/* Sorts items alphabetically using the title attribute */
+function sortAlphabetically(items: ItemType[]) {
+  return items.sort((a, b) =>
+    (a.title || "").toLowerCase() > (b.title || "").toLowerCase() ? 1 : -1,
+  );
+}
+/* Sorts items by most used to least used, based on click-count */
+function sortByMostUsed(items: ItemType[]) {
+  const usageCount = JSON.parse(
+    localStorage.getItem(localStorageKeys.MOST_USED) || "{}",
+  );
+  const gmu = (item: ItemType) => usageCount[item.id || ""] || 0;
+  items.reverse().sort((a, b) => (gmu(a) < gmu(b) ? 1 : -1));
+  return items;
+}
+/* Sorts items by most recently used */
+function sortByLastUsed(items: ItemType[]) {
+  const usageCount = JSON.parse(
+    localStorage.getItem(localStorageKeys.LAST_USED) || "{}",
+  );
+  const glu = (item: ItemType) => usageCount[item.id || ""] || 0;
+  items.reverse().sort((a, b) => (glu(a) < glu(b) ? 1 : -1));
+  return items;
+}
+/* Sorts items randomly */
+function sortRandomly(items: ItemType[]) {
+  return items
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+}
+/* Navigate to the section's single-section view page */
+function navigateToSection() {
+  if (!props.title) {
+    ErrorHandler("Cannot open section without a valid name");
+    return;
+  }
+  const parse = (section: string) =>
+    section.replace(" ", "-").toLowerCase().trim();
+  const sectionIdentifier = parse(props.title);
+  router.push({ path: `/home/${sectionIdentifier}` });
+  closeContextMenu();
+}
+/* Toggle sections collapse state */
+function expandCollapseSection() {
+  if (collapsableRef.value) collapsableRef.value.toggle();
+  closeContextMenu();
+}
+/* Open custom context menu, and set position */
+function openContextMenu(e: MouseEvent) {
+  contextMenuOpen.value = true; // Open context menu
+  // If mouse position not set, use section coordinates
+  const sectionOuterId = `section-outer-${props.groupId}`;
+  const sectionPosition = document
+    .getElementById(sectionOuterId)!
+    .getBoundingClientRect();
+  contextPos.posX =
+    (e.clientX || sectionPosition.right - 10) + window.pageXOffset;
+  contextPos.posY =
+    (e.clientY || sectionPosition.top + 30) + window.pageYOffset;
+}
+/* Hide the right-click context menu */
+function closeContextMenu() {
+  contextMenuOpen.value = false;
+}
+/* Calculate width of section, used to dynamically set number of columns */
+function calculateSectionWidth() {
+  const secElem = collapsableRef.value;
+  if (secElem && secElem.$el.clientWidth)
+    sectionWidth.value = secElem.$el.clientWidth;
+}
+
+onMounted(() => {
+  // Set the section width, and recalculate when section resized
+  if (collapsableRef.value) {
+    resizeObserver.value = new ResizeObserver(calculateSectionWidth);
+    resizeObserver.value.observe(collapsableRef.value.$el);
+  }
+});
+onBeforeUnmount(() => {
+  // If resize observer set, and element still present, then de-register
+  if (resizeObserver.value && collapsableRef.value) {
+    resizeObserver.value.unobserve(collapsableRef.value.$el);
+  }
 });
 </script>
 

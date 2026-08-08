@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 /* This component displays a small icon, indicating opening method */
 
 // Import Icons
@@ -28,37 +28,22 @@ import ParentOpenIcon from '@/assets/interface-icons/open-parent.svg';
 import TopOpenIcon from '@/assets/interface-icons/open-top.svg';
 import ClipboardOpenIcon from '@/assets/interface-icons/open-clipboard.svg';
 import UnknownIcon from '@/assets/interface-icons/unknown-icon.svg';
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  name: 'ItemOpenMethodIcon',
-  props: {
-    openingMethod: String, // newtab | sametab | parent | top | modal | workspace
-    isSmall: Boolean, // If true, will apply small class
-    position: String, // Position classes: top, bottom, left, right
-    isTransparent: Boolean, // If true, will apply opacity
-    hotkey: Number, // Optional hotkey to also display
-  },
-  methods: {
-    /* Returns custom class string, from optional props */
-    makeClass(position = 'top right', isSmall = false, transparent = false) {
-      return `opening-method-icon
-      ${position || 'top right'}
-      ${isSmall ? 'short' : ''}
-      ${transparent ? 'transparent' : ''}`;
-    },
-  },
-  components: {
-    NewTabOpenIcon,
-    SameTabOpenIcon,
-    IframeOpenIcon,
-    WorkspaceOpenIcon,
-    ParentOpenIcon,
-    TopOpenIcon,
-    ClipboardOpenIcon,
-    UnknownIcon,
-  },
+defineProps({
+  openingMethod: String, // newtab | sametab | parent | top | modal | workspace
+  isSmall: Boolean, // If true, will apply small class
+  position: String, // Position classes: top, bottom, left, right
+  isTransparent: Boolean, // If true, will apply opacity
+  hotkey: Number, // Optional hotkey to also display
 });
+
+/* Returns custom class string, from optional props */
+function makeClass(position = 'top right', isSmall = false, transparent = false) {
+  return `opening-method-icon
+  ${position || 'top right'}
+  ${isSmall ? 'short' : ''}
+  ${transparent ? 'transparent' : ''}`;
+}
 </script>
 
 <style scoped lang="scss">

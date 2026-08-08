@@ -4,17 +4,17 @@
  * you have purposely set appConfig.enableErrorReporting: true.
  * It is false by default.
  * You may want to enable error reporting if you have encountered a bug,
- * as access to the console errors enable it to be triaged an fixed effectively
+ * as access to the console errors enable it to be triaged and fixed effectively
  */
 
 /* eslint-disable global-require */
 
 import ConfigAccumulator from '@/utils/ConfigAccumalator';
 import { sentryDsn } from '@/utils/defaults';
-import type { VueConstructor } from 'vue';
-import type VueRouter from 'vue-router';
+import type { App } from 'vue';
+import type { Router } from 'vue-router';
 
-const ErrorReporting = async (Vue: VueConstructor, router: VueRouter) => {
+const ErrorReporting = async (app: App, router: Router) => {
   // Fetch users config
   const appConfig = new ConfigAccumulator().appConfig() || {};
   // Check if error reporting is enabled. Only proceed if user has turned it on.
@@ -23,17 +23,14 @@ const ErrorReporting = async (Vue: VueConstructor, router: VueRouter) => {
     const appVersion = process.env.VUE_APP_VERSION ? `moshi@${process.env.VUE_APP_VERSION}` : '';
     // Import Sentry
     const Sentry = await import('@sentry/vue');
-    const { Integrations } = await import('@sentry/tracing');
     // Get the Data Source Name for your or moshi's Sentry instance
     const dsn = appConfig.sentryDsn || sentryDsn;
     // Initialize Sentry
     Sentry.init({
-      Vue,
+      app,
       dsn,
       integrations: [
-        new Integrations.BrowserTracing({
-          routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-        }),
+        Sentry.browserTracingIntegration({ router }),
       ],
       tracesSampleRate: 1.0,
       release: appVersion,

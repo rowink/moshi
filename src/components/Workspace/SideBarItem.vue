@@ -6,38 +6,30 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 import Icon from '@/components/LinkItems/ItemIcon.vue';
 
-export default defineComponent({
-  name: 'SideBarItem',
-  props: {
-    icon: String,
-    title: String,
-    url: String,
-    target: String,
-    click: Function,
-  },
-  components: {
-    Icon,
-  },
-  methods: {
-    itemClicked() {
-      if (this.url) this.$emit('launch-app', { url: this.url, target: this.target });
-    },
-  },
-  data() {
-    return {
-      tooltip: {
-        disabled: !this.title,
-        content: this.title,
-        trigger: 'hover focus',
-        placement: 'bottom-end',
-      },
-    };
-  },
+const props = defineProps({
+  icon: String,
+  title: String,
+  url: String,
+  target: String,
+  click: Function,
 });
+
+const emit = defineEmits(['launch-app']);
+
+function itemClicked() {
+  if (props.url) emit('launch-app', { url: props.url, target: props.target });
+}
+
+const tooltip = computed(() => ({
+  disabled: !props.title,
+  content: props.title,
+  trigger: 'hover focus',
+  placement: 'bottom-end',
+}));
 </script>
 
 <style lang="scss" scoped>

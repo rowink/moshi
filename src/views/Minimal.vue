@@ -51,86 +51,93 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import HomeMixin from "@/mixins/HomeMixin";
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import { useHome } from "@/composables/useHome";
 import MinimalSection from "@/components/MinimalView/MinimalSection.vue";
 import MinimalHeading from "@/components/MinimalView/MinimalHeading.vue";
 import MinimalSearch from "@/components/MinimalView/MinimalSearch.vue";
 import { localStorageKeys } from "@/utils/defaults";
 import { Section as SectionType } from "@/types/types";
 
-export default defineComponent({
-  name: "home",
-  mixins: [HomeMixin],
-  components: {
-    MinimalSection,
-    MinimalHeading,
-    MinimalSearch,
-  },
-  data: () => ({
-    layout: "",
-    selectedSection: 0, // The index of currently selected section
-    tabbedView: true, // By default use tabs, when searching then show all instead
-  }),
-  watch: {
-    searchValue() {
-      this.tabbedView = !this.searchValue || this.searchValue.length === 0;
-    },
-  },
-  methods: {
-    handleSearchInput(s: string) {
-      this.searchValue = s;
-    },
-    sectionSelected(index: number) {
-      this.selectedSection = index;
-    },
-    /* Returns sections from local storage if available, otherwise uses the conf.yml */
-    getSections(sections: SectionType[]) {
-      // If the user has stored sections in local storage, return those
-      const localSections = localStorage[localStorageKeys.CONF_SECTIONS];
-      if (localSections) {
-        const json = JSON.parse(localSections);
-        if (json.length >= 1) return json;
-      }
-      // Otherwise, return the usuall data from conf.yml
-      return sections;
-    },
-    /* Clears input field, once a searched item is opened */
-    finishedSearching() {
-      if (this.$refs.filterComp) this.$refs.filterComp.clearMinFilterInput();
-    },
-    /* Returns true if there is more than 1 sub-result visible during searching */
-    checkIfResults() {
-      if (!this.sections) return false;
-      else {
-        let itemsFound = true;
-        this.sections.forEach((section: SectionType) => {
-          if (this.filterTiles(section.items).length > 0) {
-            itemsFound = false;
-          }
-        });
-        return itemsFound;
-      }
-    },
-    /* Make CSS to set the number of columns based on the number of sections */
-    setColumnCount() {
-      return `--col-count: ${this.sections.length};`;
-    },
-    /* Make CSS styles to apply the users custom background image */
-    getBackgroundImage() {
-      if (this.appConfig && this.appConfig.backgroundImg) {
-        return `background: url('${this.appConfig.backgroundImg}') no-repeat center fixed;background-size:cover;`;
-      }
-      return "";
-    },
-  },
-  mounted() {
-    this.initiateFontAwesome();
-    this.initiateMaterialDesignIcons();
-    this.setTheme();
-  },
+const {
+  sections,
+  appConfig,
+  pageInfo,
+  modalOpen,
+  searchValue,
+  filterTiles,
+  updateModalVisibility,
+  checkTheresData,
+  initiateFontAwesome,
+  initiateMaterialDesignIcons,
+  setTheme,
+} = useHome();
+
+const layout = ref("");
+const selectedSection = ref(0); // The index of currently selected section
+const tabbedView = ref(true); // By default use tabs, when searching then show all instead
+const filterComp = ref<InstanceType<typeof MinimalSearch> | null>(null);
+
+watch(searchValue, () => {
+  tabbedView.value = !searchValue.value || searchValue.value.length === 0;
 });
+
+const handleSearchInput = (s: string) => {
+  searchValue.value = s;
+};
+
+const sectionSelected = (index: number) => {
+  selectedSection.value = index;
+};
+
+/* Returns sections from local storage if available, otherwise uses the conf.yml */
+const getSections = (allSections: SectionType[]) => {
+  // If the user has stored sections in local storage, return those
+  const localSections = localStorage[localStorageKeys.CONF_SECTIONS];
+  if (localSections) {
+    const json = JSON.parse(localSections);
+    if (json.length >= 1) return json;
+  }
+  // Otherwise, return the usuall data from conf.yml
+  return allSections;
+};
+
+/* Clears input field, once a searched item is opened */
+const finishedSearching = () => {
+  if (filterComp.value) filterComp.value.clearMinFilterInput();
+};
+
+/* Returns true if there is more than 1 sub-result visible during searching */
+const checkIfResults = () => {
+  if (!sections.value) return false;
+  else {
+    let itemsFound = true;
+    sections.value.forEach((section: SectionType) => {
+      if (filterTiles(section.items).length > 0) {
+        itemsFound = false;
+      }
+    });
+    return itemsFound;
+  }
+};
+
+/* Make CSS to set the number of columns based on the number of sections */
+const setColumnCount = () => {
+  return `--col-count: ${sections.value.length};`;
+};
+
+/* Make CSS styles to apply the users custom background image */
+const getBackgroundImage = () => {
+  if (appConfig.value && appConfig.value.backgroundImg) {
+    return `background: url('${appConfig.value.backgroundImg}') no-repeat center fixed;background-size:cover;`;
+  }
+  return "";
+};
+
+initiateFontAwesome();
+initiateMaterialDesignIcons();
+setTheme();
 </script>
 
 <style lang="scss" scoped>

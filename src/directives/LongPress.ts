@@ -4,15 +4,15 @@
  * Inspired by: FeliciousX/vue-directive-long-press
  * moshi: Licensed under MIT - (C) 2022
  */
-import { DirectiveOptions } from 'vue';
+import type { ObjectDirective } from 'vue';
 
 const LONG_PRESS_DEFAULT_DELAY = 750;
 const longPressEvent = new CustomEvent('long-press');
 
 let startTime: number | null = null;
 
-const LongPress: DirectiveOptions = {
-  bind(element, binding, vnode) {
+const LongPress: ObjectDirective<HTMLElement> = {
+  mounted(element) {
     const el = element;
     el.dataset.longPressTimeout = String(null);
 
@@ -28,10 +28,9 @@ const LongPress: DirectiveOptions = {
       return false;
     };
 
-    /* Emit event to component */
+    /* Emit event to element */
     const triggerEvent = () => {
-      if (vnode.componentInstance) vnode.componentInstance.$emit('long-press');
-      else el.dispatchEvent(longPressEvent);
+      el.dispatchEvent(longPressEvent);
       el.dataset.elapsed = String(true);
     };
 
@@ -55,7 +54,7 @@ const LongPress: DirectiveOptions = {
     el.$longPressHandler = onPointerDown as EventListener;
     el.addEventListener('pointerdown', onPointerDown);
   },
-  unbind(el) {
+  unmounted(el) {
     startTime = null;
     clearTimeout(parseInt(el.dataset.longPressTimeout || '', 10));
     el.removeEventListener('pointerdown', el.$longPressHandler!);

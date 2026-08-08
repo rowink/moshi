@@ -10,43 +10,28 @@
   </header>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { computed, PropType } from "vue";
+import { useRoute } from "vue-router";
 import PageTitle from "@/components/PageStrcture/PageTitle.vue";
 import Nav from "@/components/PageStrcture/Nav.vue";
 import { shouldBeVisible } from "@/utils/SectionHelpers";
 import { useAppStore } from "@/store/modules/appStore";
 
-export default defineComponent({
-  name: "Header",
-  components: {
-    PageTitle,
-    Nav,
-  },
-  props: {
-    pageInfo: {
-      type: Object as PropType<Record<string, any>>,
-      default: () => ({}),
-    },
-  },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    componentVisible() {
-      return shouldBeVisible(this.$route.name);
-    },
-    visibleComponents() {
-      return this.appStore.visibleComponents;
-    },
-    titleVisible() {
-      return this.visibleComponents.pageTitle;
-    },
-    navVisible() {
-      return this.visibleComponents.navigation;
-    },
+defineProps({
+  pageInfo: {
+    type: Object as PropType<Record<string, any>>,
+    default: () => ({}),
   },
 });
+
+const route = useRoute();
+const appStore = useAppStore();
+
+const componentVisible = computed(() => shouldBeVisible(route.name as string));
+const visibleComponents = computed(() => appStore.visibleComponents);
+const titleVisible = computed(() => visibleComponents.value.pageTitle);
+const navVisible = computed(() => visibleComponents.value.navigation);
 </script>
 
 <style scoped lang="scss">

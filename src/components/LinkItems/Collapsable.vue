@@ -45,120 +45,104 @@
   </div>
 </template>
 
-<script lang="ts">
-import longPress from "@/directives/LongPress";
+<script setup lang="ts">
+import vLongPress from "@/directives/LongPress";
 import { localStorageKeys } from "@/utils/defaults";
 import Icon from "@/components/LinkItems/ItemIcon.vue";
 import OpenIcon from "@/assets/interface-icons/config-open-settings.svg";
-import { useAppStore } from "@/store/modules/appStore";
-import { defineComponent } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
-export default defineComponent({
-  name: "CollapsableContainer",
-  props: {
-    uniqueKey: String, // Generated unique ID
-    title: String, // The section title
-    icon: String, // An optional section icon
-    collapsed: Boolean, // Optional override collapse state
-    cols: Number, // Set section horizontal col span / width
-    rows: Number, // Set section vertical row span / height
-    color: String, // Optional color override
-    customStyles: String, // Optional custom stylings
-    cutToHeight: Boolean, // To set section height with content height
+const props = defineProps({
+  uniqueKey: String, // Generated unique ID
+  title: String, // The section title
+  icon: String, // An optional section icon
+  collapsed: Boolean, // Optional override collapse state
+  cols: Number, // Set section horizontal col span / width
+  rows: Number, // Set section vertical row span / height
+  color: String, // Optional color override
+  customStyles: String, // Optional custom stylings
+  cutToHeight: Boolean, // To set section height with content height
+});
+const emit = defineEmits(["openContextMenu"]);
+
+const sectionKey = computed(() => `collapsible-${props.uniqueKey}`);
+const rowColSpanClass = computed(() => {
+  const { rows, cols } = props;
+  return `${checkSpanNum(cols, "col")} ${checkSpanNum(rows, "row")}`;
+});
+const sectionClassName = computed(() => {
+  if (!props.title) return "unnamed-section";
+  return `section_${props.title.replaceAll(" ", "-").toLowerCase()}`;
+});
+/* Used to fetch initial collapse state, and set new collapse state on change */
+const isExpanded = computed({
+  get() {
+    if (props.collapsed !== undefined) return !props.collapsed;
+    const collapseStateObject = locallyStoredCollapseStates();
+    if (collapseStateObject[props.uniqueKey as string] !== undefined) {
+      return collapseStateObject[props.uniqueKey as string];
+    }
+    return true;
   },
-  components: {
-    Icon,
-    OpenIcon,
-  },
-  directives: {
-    longPress,
-  },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    sectionKey() {
-      return `collapsible-${this.uniqueKey}`;
-    },
-    collapseClass() {
-      return !this.isExpanded ? " is-collapsed" : "is-open";
-    },
-    rowColSpanClass() {
-      const { rows, cols, checkSpanNum } = this;
-      return `${checkSpanNum(cols, "col")} ${checkSpanNum(rows, "row")}`;
-    },
-    sectionClassName() {
-      if (!this.title) return "unnamed-section";
-      return `section_${this.title.replaceAll(" ", "-").toLowerCase()}`;
-    },
-    /* Used to fetch initial collapse state, and set new collapse state on change */
-    isExpanded: {
-      get() {
-        if (this.collapsed !== undefined) return !this.collapsed;
-        const collapseStateObject = this.locallyStoredCollapseStates();
-        if (collapseStateObject[this.uniqueKey as string] !== undefined) {
-          return collapseStateObject[this.uniqueKey as string];
-        }
-        return true;
-      },
-      set(newState: boolean) {
-        const collapseState = this.locallyStoredCollapseStates();
-        collapseState[this.uniqueKey as string] = newState;
-        localStorage.setItem(
-          localStorageKeys.COLLAPSE_STATE,
-          JSON.stringify(collapseState),
-        );
-      },
-    },
-  },
-  data: () => ({
-    checkboxState: true,
-  }),
-  mounted() {
-    this.checkboxState = this.isExpanded;
-  },
-  watch: {
-    checkboxState(newState: boolean) {
-      this.isExpanded = newState;
-    },
-    uniqueKey() {
-      this.checkboxState = this.isExpanded;
-    },
-  },
-  methods: {
-    /* Either expand or collapse section, based on it's current state */
-    toggle() {
-      this.checkboxState = !this.checkboxState;
-    },
-    /* Check that row & column span is valid, and not over the max */
-    checkSpanNum(span: string | number | undefined, classPrefix: string) {
-      const maxSpan = 6;
-      let numSpan = /^\d*$/.test(String(span)) ? parseInt(String(span), 10) : 1;
-      numSpan = numSpan > maxSpan ? maxSpan : numSpan;
-      return `${classPrefix}-${numSpan}`;
-    },
-    /* Removes all special characters, except those allowed in valid CSS */
-    sanitizeCustomStyles(userCss: string | undefined) {
-      return userCss ? userCss.replace(/[^a-zA-Z0-9- :;.]/g, "") : "";
-    },
-    /* Returns local storage collapse state data, and if not yet set then initialized is */
-    locallyStoredCollapseStates() {
-      // If not yet set, then call initialize
-      if (!localStorage[localStorageKeys.COLLAPSE_STATE]) {
-        localStorage.setItem(
-          localStorageKeys.COLLAPSE_STATE,
-          JSON.stringify({}),
-        );
-        return {};
-      }
-      // Otherwise, return value of local storage
-      return JSON.parse(localStorage[localStorageKeys.COLLAPSE_STATE]);
-    },
-    openContextMenu(e: MouseEvent) {
-      this.$emit("openContextMenu", e);
-    },
+  set(newState: boolean) {
+    const collapseState = locallyStoredCollapseStates();
+    collapseState[props.uniqueKey as string] = newState;
+    localStorage.setItem(
+      localStorageKeys.COLLAPSE_STATE,
+      JSON.stringify(collapseState),
+    );
   },
 });
+
+const checkboxState = ref(true);
+
+onMounted(() => {
+  checkboxState.value = isExpanded.value;
+});
+
+watch(checkboxState, (newState: boolean) => {
+  isExpanded.value = newState;
+});
+watch(
+  () => props.uniqueKey,
+  () => {
+    checkboxState.value = isExpanded.value;
+  },
+);
+
+/* Either expand or collapse section, based on it's current state */
+function toggle() {
+  checkboxState.value = !checkboxState.value;
+}
+/* Check that row & column span is valid, and not over the max */
+function checkSpanNum(span: string | number | undefined, classPrefix: string) {
+  const maxSpan = 6;
+  let numSpan = /^\d*$/.test(String(span)) ? parseInt(String(span), 10) : 1;
+  numSpan = numSpan > maxSpan ? maxSpan : numSpan;
+  return `${classPrefix}-${numSpan}`;
+}
+/* Removes all special characters, except those allowed in valid CSS */
+function sanitizeCustomStyles(userCss: string | undefined) {
+  return userCss ? userCss.replace(/[^a-zA-Z0-9- :;.]/g, "") : "";
+}
+/* Returns local storage collapse state data, and if not yet set then initialized is */
+function locallyStoredCollapseStates() {
+  // If not yet set, then call initialize
+  if (!localStorage[localStorageKeys.COLLAPSE_STATE]) {
+    localStorage.setItem(
+      localStorageKeys.COLLAPSE_STATE,
+      JSON.stringify({}),
+    );
+    return {};
+  }
+  // Otherwise, return value of local storage
+  return JSON.parse(localStorage[localStorageKeys.COLLAPSE_STATE]);
+}
+function openContextMenu(e: MouseEvent) {
+  emit("openContextMenu", e);
+}
+
+defineExpose({ toggle });
 </script>
 
 <style scoped lang="scss">

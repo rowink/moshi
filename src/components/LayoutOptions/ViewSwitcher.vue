@@ -20,24 +20,15 @@
 </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import IconHome from '@/assets/interface-icons/application-home.svg';
 import IconWorkspaceView from '@/assets/interface-icons/open-workspace.svg';
 import IconMinimalView from '@/assets/interface-icons/application-minimal.svg';
-import { defineComponent } from 'vue';
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
 
-export default defineComponent({
-  components: {
-    IconHome,
-    IconWorkspaceView,
-    IconMinimalView,
-  },
-  computed: {
-    subPagePath() {
-      return this.$route.path.split('/').pop() || '';
-    },
-  },
-});
+const route = useRoute();
+const subPagePath = computed(() => route.path.split('/').pop() || '');
 </script>
 
 <style scoped lang="scss">

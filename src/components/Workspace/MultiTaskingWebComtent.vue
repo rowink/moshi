@@ -1,52 +1,39 @@
 <template>
-  <div class="multi-taking-view" ref="container"></div>
+  <div class="multi-taking-view">
+    <WebContent
+      v-for="app in openApps"
+      :key="app"
+      :url="app"
+      :id="`wc-${btoaId(app)}`"
+      :class="{ hide: app !== url }"
+    />
+  </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import Vue from 'vue';
+<script setup lang="ts">
+import { ref, watch } from 'vue';
 import WebContent from '@/components/Workspace/WebContent.vue';
 
-export default defineComponent({
-  name: 'WebContent',
-  props: {
-    url: String, // The URL of currently visible app
-  },
-  data: () => ({
-    openApps: [] as string[], // List of all currently open apps
-  }),
-  watch: {
-    /* Update the currently open app, when URL changes */
-    url() { this.launchApp(); },
-  },
-  methods: {
-    /* Check if app already open or not, and call appropriate opener */
-    launchApp() {
-      if (this.openApps.includes(this.url as string)) {
-        this.openExistingApp();
-      } else {
-        this.openApps.push(this.url as string);
-        this.appendNewApp();
-      }
-    },
-    /* Opens a new app */
-    appendNewApp() {
-      const ComponentClass = Vue.extend(WebContent);
-      const instance = new ComponentClass({
-        propsData: { url: this.url, id: btoa(this.url as string) },
-      });
-      instance.$mount(); // pass nothing
-      this.$refs.container.appendChild(instance.$el);
-    },
-    /* Switches visibility to an already open app */
-    openExistingApp() {
-      Array.from(document.getElementsByClassName('web-content')).forEach((frame) => {
-        frame.classList.add('hide');
-      });
-      document.getElementById(btoa(this.url as string))!.classList.remove('hide');
-    },
-  },
+const props = defineProps({
+  url: String, // The URL of currently visible app
 });
+
+const openApps = ref<string[]>([]); // List of all currently open apps
+
+/* Encodes a URL for use as an element id */
+const btoaId = (value: string) => btoa(value);
+
+/* Adds the currently visible app to the list of open apps */
+function launchApp() {
+  if (!props.url) return;
+  if (openApps.value.includes(props.url)) return; // Already open; visibility handled by class binding
+  openApps.value.push(props.url);
+}
+
+watch(
+  () => props.url,
+  () => { launchApp(); },
+);
 </script>
 
 <style lang="scss" scoped>

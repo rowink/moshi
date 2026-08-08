@@ -12,50 +12,30 @@
   </section>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import LayoutSelector from "@/components/LayoutOptions/LayoutSelector.vue";
 import IconSizeSelector from "@/components/LayoutOptions/IconSizeSelector.vue";
 import ViewSwitcher from "@/components/LayoutOptions/ViewSwitcher.vue";
 import IconViewMode from "@/assets/interface-icons/application-change-view.svg";
 import { useAppStore } from "@/store/modules/appStore";
-import { defineComponent } from "vue";
+import { computed, ref } from "vue";
 
-export default defineComponent({
-  name: "LayoutOptions",
-  components: {
-    LayoutSelector,
-    IconSizeSelector,
-    ViewSwitcher,
-    IconViewMode,
-  },
-  data: () => ({
-    viewSwitcherOpen: false,
-  }),
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    /* Current layout orientation, from app config */
-    displayLayout() {
-      return this.appStore.layout;
-    },
-    /* Current item size, from app config */
-    iconSize() {
-      return this.appStore.iconSize;
-    },
-  },
-  methods: {
-    openChangeViewMenu() {
-      this.viewSwitcherOpen = !this.viewSwitcherOpen;
-    },
-    closeViewSwitcher() {
-      this.viewSwitcherOpen = false;
-    },
-    tooltip(content: string) {
-      return { content, trigger: "hover focus", delay: 250 };
-    },
-  },
-});
+const appStore = useAppStore();
+const viewSwitcherOpen = ref(false);
+/* Current layout orientation, from app config */
+const displayLayout = computed(() => appStore.layout);
+/* Current item size, from app config */
+const iconSize = computed(() => appStore.iconSize);
+
+function openChangeViewMenu() {
+  viewSwitcherOpen.value = !viewSwitcherOpen.value;
+}
+function closeViewSwitcher() {
+  viewSwitcherOpen.value = false;
+}
+function tooltip(content: string) {
+  return { content, trigger: "hover focus", delay: 250 };
+}
 </script>
 
 <style scoped lang="scss">

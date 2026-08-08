@@ -24,37 +24,24 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import IconSmall from "@/assets/interface-icons/icon-size-small.svg";
 import IconMedium from "@/assets/interface-icons/icon-size-medium.svg";
 import IconLarge from "@/assets/interface-icons/icon-size-large.svg";
 import { useAppStore } from "@/store/modules/appStore";
-import { defineComponent } from "vue";
 
-export default defineComponent({
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-  },
-  name: "IconSizeSelector",
-  props: {
-    iconSize: String,
-  },
-  components: {
-    IconSmall,
-    IconMedium,
-    IconLarge,
-  },
-  methods: {
-    updateIconSize(iconSize: string) {
-      this.appStore.setItemSize(iconSize);
-    },
-    tooltip(content: string) {
-      return { content, trigger: "hover focus", delay: 250 };
-    },
-  },
+defineProps({
+  iconSize: String,
 });
+
+const appStore = useAppStore();
+
+function updateIconSize(iconSize: string) {
+  appStore.setItemSize(iconSize);
+}
+function tooltip(content: string) {
+  return { content, trigger: "hover focus", delay: 250 };
+}
 </script>
 
 <style scoped lang="scss">

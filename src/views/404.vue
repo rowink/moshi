@@ -11,19 +11,15 @@
   </main>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { onMounted } from 'vue';
 
-export default defineComponent({
-  name: 'not-found',
-  methods: {
-    setTheme() {
-      document.getElementsByTagName('html')[0].setAttribute('data-theme', 'docs');
-    },
-  },
-  mounted() {
-    this.setTheme();
-  },
+function setTheme() {
+  document.getElementsByTagName('html')[0].setAttribute('data-theme', 'docs');
+}
+
+onMounted(() => {
+  setTheme();
 });
 </script>
 

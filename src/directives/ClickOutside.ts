@@ -4,9 +4,9 @@
  * Used to close context menus popup modals and tips
  * moshi: Licensed under MIT - (C) 2022
  */
-import { DirectiveOptions, VNodeDirective } from 'vue';
+import type { ObjectDirective } from 'vue';
 
-const instances: Array<(event: Event) => void> = []; // List of click event instances
+const instances: Array<{ index: number; click: (event: Event) => void }> = []; // List of click event instances
 
 /* Trigger action when click anywhere, except target elem */
 function onDocumentClick(event: Event, elem: HTMLElement, action: (event: Event) => void) {
@@ -16,11 +16,12 @@ function onDocumentClick(event: Event, elem: HTMLElement, action: (event: Event)
   }
 }
 
-const ClickOutside: DirectiveOptions = {
+const ClickOutside: ObjectDirective<HTMLElement> = {
   /* Add event listeners */
-  bind(element: HTMLElement, binding: VNodeDirective) {
+  mounted(element, binding) {
     const elem = element;
-    elem.dataset.outsideClickIndex = String(instances.length);
+    const index = instances.length;
+    elem.dataset.outsideClickIndex = String(index);
 
     const action = binding.value as (event: Event) => void;
     const click = (event: Event) => {
@@ -29,15 +30,18 @@ const ClickOutside: DirectiveOptions = {
 
     document.addEventListener('click', click);
     document.addEventListener('touchstart', click);
-    instances.push(click);
+    instances.push({ index, click });
   },
   /* Remove event listeners */
-  unbind(elem: HTMLElement) {
+  unmounted(elem) {
     if (!elem.dataset) return;
     const index = Number(elem.dataset.outsideClickIndex);
     const handler = instances[index];
-    document.removeEventListener('click', handler!);
-    instances.splice(index, 1);
+    if (handler) {
+      document.removeEventListener('click', handler.click);
+      document.removeEventListener('touchstart', handler.click);
+      instances.splice(index, 1);
+    }
   },
 };
 

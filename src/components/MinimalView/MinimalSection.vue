@@ -3,10 +3,9 @@
     :class="`minimal-section-inner ${selected ? 'selected' : ''} ${showAll ? 'show-all' : ''}`"
   >
     <div class="section-items" v-if="items && (selected || showAll)">
-      <template v-for="item in items">
+      <template v-for="item in items" :key="item.id">
         <SubItemGroup
           v-if="item.subItems"
-          :key="item.id"
           :itemId="item.id"
           :title="item.title"
           :subItems="item.subItems"
@@ -15,10 +14,9 @@
         <Item
           v-else
           :item="item"
-          :key="item.id"
           :itemSize="itemSize"
           :parentSectionTitle="title"
-          @itemClicked="$emit('itemClicked')"
+          @itemClicked="emit('itemClicked')"
           @triggerModal="triggerModal"
           :isAddNew="false"
           :sectionDisplayData="displayData"
@@ -29,83 +27,79 @@
       <p>{{ $t("home.no-items-section") }}</p>
     </div>
     <IframeModal
-      :ref="`iframeModal-${groupId}`"
+      :ref="setIframeModalRef"
       :name="`iframeModal-${groupId}`"
-      @closed="$emit('itemClicked')"
+      @closed="emit('itemClicked')"
     />
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { computed, ref, PropType } from "vue";
 import Item from "@/components/LinkItems/Item.vue";
 import SubItemGroup from "@/components/LinkItems/SubItemGroup.vue";
 import IframeModal from "@/components/LinkItems/IframeModal.vue";
 import { useAppStore } from "@/store/modules/appStore";
 import { Item as ItemType } from "@/types/types";
 
-export default defineComponent({
-  name: "ItemGroup",
-  props: {
-    groupId: String,
-    title: String,
-    icon: String,
-    displayData: {
-      type: Object as PropType<Record<string, any>>,
-      default: () => ({}),
-    },
-    items: {
-      type: Array as PropType<ItemType[]>,
-      default: () => [],
-    },
-    itemSize: String,
-    modalOpen: Boolean,
-    index: Number,
-    selected: Boolean,
-    showAll: Boolean,
+const props = defineProps({
+  groupId: String,
+  title: String,
+  icon: String,
+  displayData: {
+    type: Object as PropType<Record<string, any>>,
+    default: () => ({}),
   },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    appConfig() {
-      return this.appStore.appConfig;
-    },
+  items: {
+    type: Array as PropType<ItemType[]>,
+    default: () => [],
   },
-  components: {
-    Item,
-    SubItemGroup,
-    IframeModal,
-  },
-  methods: {
-    selectSection(index: number) {
-      this.$emit("sectionSelected", index);
-    },
-    /* Returns a unique lowercase string, based on name, for section ID */
-    makeId(str: string) {
-      if (!str) return "unnamed-item";
-      return str
-        .replace(/\s+/g, "-")
-        .replace(/[^a-zA-Z ]/g, "")
-        .toLowerCase();
-    },
-    /* Opens the iframe modal */
-    triggerModal(url: string) {
-      this.$refs[`iframeModal-${this.groupId}`].show(url);
-    },
-    shouldEnableStatusCheck(itemPreference: boolean | undefined) {
-      const globalPreference = this.appConfig.statusCheck || false;
-      return itemPreference !== undefined ? itemPreference : globalPreference;
-    },
-    getStatusCheckInterval() {
-      let interval = this.appConfig.statusCheckInterval;
-      if (!interval) return 0;
-      if (interval > 60) interval = 60;
-      if (interval < 1) interval = 0;
-      return interval;
-    },
-  },
+  itemSize: String,
+  modalOpen: Boolean,
+  index: Number,
+  selected: Boolean,
+  showAll: Boolean,
 });
+
+const emit = defineEmits(["sectionSelected", "itemClicked"]);
+
+const appStore = useAppStore();
+const appConfig = computed(() => appStore.appConfig);
+
+const iframeModals = ref<Record<string, InstanceType<typeof IframeModal> | null>>({});
+
+const setIframeModalRef = (el: unknown) => {
+  iframeModals.value[`iframeModal-${props.groupId}`] = el as InstanceType<
+    typeof IframeModal
+  > | null;
+};
+
+function selectSection(index: number) {
+  emit("sectionSelected", index);
+}
+/* Returns a unique lowercase string, based on name, for section ID */
+function makeId(str: string) {
+  if (!str) return "unnamed-item";
+  return str
+    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z ]/g, "")
+    .toLowerCase();
+}
+/* Opens the iframe modal */
+function triggerModal(url: string) {
+  iframeModals.value[`iframeModal-${props.groupId}`]?.show(url);
+}
+function shouldEnableStatusCheck(itemPreference: boolean | undefined) {
+  const globalPreference = appConfig.value.statusCheck || false;
+  return itemPreference !== undefined ? itemPreference : globalPreference;
+}
+function getStatusCheckInterval() {
+  let interval = appConfig.value.statusCheckInterval;
+  if (!interval) return 0;
+  if (interval > 60) interval = 60;
+  if (interval < 1) interval = 0;
+  return interval;
+}
 </script>
 
 <style scoped lang="scss">

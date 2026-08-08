@@ -62,128 +62,127 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { computed, PropType } from "vue";
 import Icon from "@/components/LinkItems/ItemIcon.vue";
 import ItemOpenMethodIcon from "@/components/LinkItems/ItemOpenMethodIcon.vue";
 import StatusIndicator from "@/components/LinkItems/StatusIndicator.vue";
 import ContextMenu from "@/components/LinkItems/ItemContextMenu.vue";
-import ItemMixin, { ItemMixinItem } from "@/mixins/ItemMixin";
-import { useAppStore } from "@/store/modules/appStore";
+import useItem, { ItemComposableItem } from "@/composables/useItem";
+import vLongPress from "@/directives/LongPress";
 
-export default defineComponent({
-  name: "Item",
-  mixins: [ItemMixin],
-  props: {
-    item: {
-      type: Object as PropType<ItemMixinItem>,
-      default: (): ItemMixinItem => ({}),
-    },
-    itemSize: String,
-    parentSectionTitle: String, // Title of parent section (for add new)
-    isAddNew: Boolean, // Only set if 'fake' item used as Add New button
-    sectionWidth: Number, // Width of parent section
-    sectionDisplayData: {
-      type: Object as PropType<Record<string, any>>,
-      default: () => ({}),
-    },
+const props = defineProps({
+  item: {
+    type: Object as PropType<ItemComposableItem>,
+    default: (): ItemComposableItem => ({}),
   },
-  components: {
-    Icon,
-    ItemOpenMethodIcon,
-    StatusIndicator,
-    ContextMenu,
-  },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    /* Returns either item.icon, or appConfig.defaultIcon, or null */
-    itemIcon() {
-      return this.item.icon || this.appStore.appConfig?.defaultIcon;
-    },
-    makeColumnCount() {
-      if ((this.sectionDisplayData || {}).itemCountX)
-        return this.sectionDisplayData.itemCountX;
-      if (this.sectionWidth! < 380) return 1;
-      if (this.sectionWidth! < 520) return 2;
-      if (this.sectionWidth! < 730) return 3;
-      if (this.sectionWidth! < 1000) return 4;
-      if (this.sectionWidth! < 1300) return 5;
-      return 0;
-    },
-    /* Based on item props, adjust class names */
-    makeClassList() {
-      const { isAddNew, size } = this;
-      return (
-        `size-${size} ${!this.itemIcon ? "short" : ""} ` +
-        `${isAddNew ? "add-new" : ""}`
-      );
-    },
-    /* Used by certain themes (material), to show animated CSS icon */
-    unicodeOpeningIcon() {
-      switch (this.accumulatedTarget) {
-        case "newtab":
-          return '"\\f360"';
-        case "sametab":
-          return '"\\f24d"';
-        case "parent":
-          return '"\\f3bf"';
-        case "top":
-          return '"\\f102"';
-        case "modal":
-          return '"\\f2d0"';
-        case "workspace":
-          return '"\\f0b1"';
-        case "clipboard":
-          return '"\\f0ea"';
-        default:
-          return '"\\f054"';
-      }
-    },
-  },
-  methods: {
-    /* Returns configuration object for the tooltip */
-    getTooltipOptions() {
-      if (!this.item.description && !this.item.provider) return {}; // If no description, then skip
-      const description = this.item.description || "";
-      const providerText = this.item.provider
-        ? `<b>Provider</b>: ${this.item.provider}`
-        : "";
-      const lb1 = description && providerText ? "<br>" : "";
-      const hotkeyText = this.item.hotkey
-        ? `<br>Press '${this.item.hotkey}' to launch`
-        : "";
-      const tooltipText = providerText + lb1 + description + hotkeyText;
-      return {
-        content: tooltipText,
-        trigger: "hover focus",
-        hideOnTargetClick: true,
-        html: true,
-        placement: this.statusResponse ? "left" : "auto",
-        delay: { show: 600, hide: 200 },
-        classes: `item-description-tooltip tooltip-is-${this.size}`,
-      };
-    },
-  },
-  mounted() {
-    // If ststus checking is enabled, then check service status
-    if (this.enableStatusCheck) {
-      this.checkWebsiteStatus();
-      // If continious status checking is enabled, then start ever-lasting loop
-      if (this.statusCheckInterval > 0) {
-        this.intervalId = window.setInterval(
-          this.checkWebsiteStatus,
-          this.statusCheckInterval * 1000,
-        );
-      }
-    }
-  },
-  beforeDestroy() {
-    // Stop periodic status-check when item is destroyed (e.g. navigating in multi-page setup)
-    if (this.intervalId) clearInterval(this.intervalId);
+  itemSize: String,
+  parentSectionTitle: String, // Title of parent section (for add new)
+  isAddNew: Boolean, // Only set if 'fake' item used as Add New button
+  sectionWidth: Number, // Width of parent section
+  sectionDisplayData: {
+    type: Object as PropType<Record<string, any>>,
+    default: () => ({}),
   },
 });
+
+const emit = defineEmits(["itemClicked", "triggerModal"]);
+
+const {
+  appStore,
+  statusResponse,
+  contextMenuOpen,
+  contextPos,
+  customStyles,
+  size,
+  enableStatusCheck,
+  accumulatedTarget,
+  anchorTarget,
+  itemClicked,
+  launchItem,
+  openContextMenu,
+  closeContextMenu,
+} = useItem(
+  {
+    item: props.item,
+    isAddNew: props.isAddNew,
+    itemSize: props.itemSize,
+  },
+  emit as (event: string, ...args: unknown[]) => void,
+);
+
+/* Returns either item.icon, or appConfig.defaultIcon, or null */
+const itemIcon = computed(
+  () => props.item.icon || appStore.appConfig?.defaultIcon,
+);
+
+const makeColumnCount = computed(() => {
+  if ((props.sectionDisplayData || {}).itemCountX)
+    return props.sectionDisplayData.itemCountX;
+  if (props.sectionWidth! < 380) return 1;
+  if (props.sectionWidth! < 520) return 2;
+  if (props.sectionWidth! < 730) return 3;
+  if (props.sectionWidth! < 1000) return 4;
+  if (props.sectionWidth! < 1300) return 5;
+  return 0;
+});
+
+/* Based on item props, adjust class names */
+const makeClassList = computed(() => (
+  `size-${size.value} ${!itemIcon.value ? "short" : ""} ` +
+  `${props.isAddNew ? "add-new" : ""}`
+));
+
+/* Used by certain themes (material), to show animated CSS icon */
+const unicodeOpeningIcon = computed(() => {
+  switch (accumulatedTarget.value) {
+    case "newtab":
+      return '"\\f360"';
+    case "sametab":
+      return '"\\f24d"';
+    case "parent":
+      return '"\\f3bf"';
+    case "top":
+      return '"\\f102"';
+    case "modal":
+      return '"\\f2d0"';
+    case "workspace":
+      return '"\\f0b1"';
+    case "clipboard":
+      return '"\\f0ea"';
+    default:
+      return '"\\f054"';
+  }
+});
+
+const customStyle = computed(() => (
+  `--open-icon:${unicodeOpeningIcon.value};` +
+  `color:${props.item?.color};` +
+  `background:${props.item?.backgroundColor}`
+));
+
+/* Returns configuration object for the tooltip */
+function getTooltipOptions() {
+  if (!props.item.description && !props.item.provider) return {}; // If no description, then skip
+  const description = props.item.description || "";
+  const providerText = props.item.provider
+    ? `<b>Provider</b>: ${props.item.provider}`
+    : "";
+  const lb1 = description && providerText ? "<br>" : "";
+  const hotkeyText = props.item.hotkey
+    ? `<br>Press '${props.item.hotkey}' to launch`
+    : "";
+  const tooltipText = providerText + lb1 + description + hotkeyText;
+  return {
+    content: tooltipText,
+    trigger: "hover focus",
+    hideOnTargetClick: true,
+    html: true,
+    placement: statusResponse.value ? "left" : "auto",
+    delay: { show: 600, hide: 200 },
+    classes: `item-description-tooltip tooltip-is-${size.value}`,
+  };
+}
 </script>
 
 <style lang="scss">

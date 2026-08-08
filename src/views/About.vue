@@ -54,9 +54,12 @@
   </article>
 </template>
 
-<script lang="ts">
-document.getElementsByTagName('html')[0].setAttribute('data-theme', 'callisto');
-export default {};
+<script setup lang="ts">
+import { onMounted } from "vue";
+
+onMounted(() => {
+  document.getElementsByTagName('html')[0].setAttribute('data-theme', 'callisto');
+});
 </script>
 
 <style scoped lang="scss">

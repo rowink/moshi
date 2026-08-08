@@ -10,9 +10,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import HomeMixin from "@/mixins/HomeMixin";
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
+import useHome from "@/composables/useHome";
 import SideBar from "@/components/Workspace/SideBar.vue";
 import WebContent from "@/components/Workspace/WebContent.vue";
 import MultiTaskingWebComtent from "@/components/Workspace/MultiTaskingWebComtent.vue";
@@ -22,70 +23,46 @@ import {
   ApplyLocalTheme,
   ApplyCustomVariables,
 } from "@/utils/ThemeHelper";
-import { useAppStore } from "@/store/modules/appStore";
 
-export default defineComponent({
-  name: "Workspace",
-  mixins: [HomeMixin],
-  data: () => ({
-    url: "",
-    GetTheme,
-    ApplyLocalTheme,
-    ApplyCustomVariables,
-  }),
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    sections() {
-      return this.appStore.sections;
-    },
-    appConfig() {
-      return this.appStore.appConfig;
-    },
-    isMultiTaskingEnabled() {
-      return this.appConfig.enableMultiTasking || false;
-    },
-  },
-  components: {
-    SideBar,
-    WebContent,
-    MultiTaskingWebComtent,
-  },
-  methods: {
-    launchApp(options: Record<string, any>) {
-      if (options.target === "newtab") {
-        window.open(options.url, "_blank");
-      } else {
-        this.url = options.url;
-      }
-    },
-    initiateFontAwesome() {
-      const fontAwesomeScript = document.createElement("script");
-      const faKey = this.appConfig.fontAwesomeKey || Defaults.fontAwesomeKey;
-      fontAwesomeScript.setAttribute(
-        "src",
-        `https://kit.fontawesome.com/${faKey}.js`,
-      );
-      document.head.appendChild(fontAwesomeScript);
-    },
-    /* Returns a service URL, if set as a URL param, or if user has specified landing URL */
-    getInitialUrl() {
-      const route = this.$route;
-      if (route.query && route.query.url) {
-        return decodeURI(route.query.url);
-      } else if (this.appConfig.workspaceLandingUrl) {
-        return this.appConfig.workspaceLandingUrl;
-      }
-      return undefined;
-    },
-  },
-  mounted() {
-    this.setTheme();
-    this.initiateFontAwesome();
-    this.url = this.getInitialUrl();
-  },
-});
+const route = useRoute();
+const { appConfig, sections, setTheme } = useHome();
+
+const url = ref<string | undefined>("");
+const isMultiTaskingEnabled = computed(
+  () => appConfig.value.enableMultiTasking || false,
+);
+
+function launchApp(options: Record<string, any>) {
+  if (options.target === "newtab") {
+    window.open(options.url, "_blank");
+  } else {
+    url.value = options.url;
+  }
+}
+
+function initiateFontAwesome() {
+  const fontAwesomeScript = document.createElement("script");
+  const faKey = appConfig.value.fontAwesomeKey || Defaults.fontAwesomeKey;
+  fontAwesomeScript.setAttribute(
+    "src",
+    `https://kit.fontawesome.com/${faKey}.js`,
+  );
+  document.head.appendChild(fontAwesomeScript);
+}
+
+/* Returns a service URL, if set as a URL param, or if user has specified landing URL */
+function getInitialUrl() {
+  if (route.query && route.query.url) {
+    return decodeURI(route.query.url as string);
+  } else if (appConfig.value.workspaceLandingUrl) {
+    return appConfig.value.workspaceLandingUrl;
+  }
+  return undefined;
+}
+
+setTheme();
+initiateFontAwesome();
+url.value = getInitialUrl() || "";
 </script>
 
 <style scoped lang="scss">

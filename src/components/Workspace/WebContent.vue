@@ -4,17 +4,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  name: 'WebContent',
-  props: {
-    url: String,
-    id: {
-      type: String,
-      default: 'web-app-view',
-    },
+<script setup lang="ts">
+defineProps({
+  url: String,
+  id: {
+    type: String,
+    default: 'web-app-view',
   },
 });
 </script>

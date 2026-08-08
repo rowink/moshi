@@ -20,50 +20,42 @@
   </transition>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // Import icons for each element
 import SameTabOpenIcon from "@/assets/interface-icons/open-current-tab.svg";
 import ExpandCollapseIcon from "@/assets/interface-icons/section-expand-collapse.svg";
 import { useAppStore } from "@/store/modules/appStore";
-import { defineComponent } from "vue";
+import { computed, getCurrentInstance } from "vue";
 
-export default defineComponent({
-  name: "ContextMenu",
-  components: {
-    SameTabOpenIcon,
-    ExpandCollapseIcon,
-  },
-  props: {
-    posX: Number, // The X coordinate for positioning
-    posY: Number, // The Y coordinate for positioning
-    show: Boolean, // Should show or hide the menu
-  },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    isMenuDisabled() {
-      return !!this.appStore.appConfig.disableContextMenu;
-    },
-  },
-  methods: {
-    /* Called on item click, emits an event up to Item */
-    /* in order to launch the current app to a given target */
-    openSection() {
-      this.$emit("navigateToSection");
-    },
-    expandCollapseSection() {
-      this.$emit("expandCollapseSection");
-    },
-    calcPosition() {
-      const bounds = this.$parent!.$el.getBoundingClientRect();
-      const left = (this.posX as number) < (bounds.right + bounds.left) / 2;
-      const position = `top:${this.posY}px;${left ? "left" : "right"}:\
-        ${left ? this.posX : document.documentElement.clientWidth - (this.posX as number)}px;`;
-      return position;
-    },
-  },
+const props = defineProps({
+  posX: Number, // The X coordinate for positioning
+  posY: Number, // The Y coordinate for positioning
+  show: Boolean, // Should show or hide the menu
 });
+const emit = defineEmits(["navigateToSection", "expandCollapseSection"]);
+
+const appStore = useAppStore();
+const isMenuDisabled = computed(() => !!appStore.appConfig.disableContextMenu);
+
+/* Called on item click, emits an event up to Item */
+/* in order to launch the current app to a given target */
+function openSection() {
+  emit("navigateToSection");
+}
+function expandCollapseSection() {
+  emit("expandCollapseSection");
+}
+function calcPosition() {
+  const parentEl = getCurrentInstance()?.parent?.proxy?.$el as
+    | HTMLElement
+    | undefined;
+  const bounds = (parentEl || document.body).getBoundingClientRect();
+  const left = (props.posX as number) < (bounds.right + bounds.left) / 2;
+  const position = `top:${props.posY}px;${left ? "left" : "right"}:${
+    left ? props.posX : document.documentElement.clientWidth - (props.posX as number)
+  }px;`;
+  return position;
+}
 </script>
 
 <style scoped lang="scss">

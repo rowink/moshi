@@ -1,12 +1,18 @@
 /**
- * This is the router config, which defined the location for
+ * This is the router config, which defines the location for
  * each page within the app, and how they should be loaded
  * Note that the page paths are defined in @/utils/defaults.js
  */
 
-// Import Vue.js and vue router
-import Vue from 'vue';
-import Router, { RouteConfig } from 'vue-router';
+// Import vue-router 4
+import {
+  createRouter,
+  createWebHistory,
+  createWebHashHistory,
+  createMemoryHistory,
+  RouteRecordRaw,
+} from 'vue-router';
+import { nextTick } from 'vue';
 import { Progress } from 'rsup-progress';
 
 // Import views, that are not lazy-loaded
@@ -21,7 +27,7 @@ import ErrorHandler from '@/utils/ErrorHandler';
 // Import data from users conf file. Note that rebuild is required for this to update.
 import confRaw from '../../public/conf.yml?raw';
 
-const conf = yaml.load(confRaw) as Record<string, any> | null;
+const conf = yaml.load(confRaw) as Record<string, unknown> | null;
 
 if (!conf) {
   ErrorHandler('You\'ve not got any data in your config file yet.');
@@ -33,15 +39,14 @@ const pages = config.pages || [];
 const pageInfo = config.pageInfo || {};
 const appConfig = config.appConfig || {};
 
-Vue.use(Router);
 const progress = new Progress({ color: 'var(--progress-bar)' });
 
 /* Get the users chosen starting view from app config, or return default */
-const getStartingView = () => appConfig.startingView || startingView;
+const getStartingView = () => (appConfig as { startingView?: string }).startingView || startingView;
 
 /**
  * Returns the component that should be rendered at the base path,
- * Defaults to Home, but the user can change this to Workspace of Minimal
+ * Defaults to Home, but the user can change this to Workspace or Minimal
  */
 const getStartingComponent = () => {
   const usersPreference = getStartingView();
@@ -54,51 +59,57 @@ const getStartingComponent = () => {
 
 /* Returns the meta tags for each route */
 const makeMetaTags = (defaultTitle: string) => ({
-  title: pageInfo.title || defaultTitle,
+  title: (pageInfo as { title?: string }).title || defaultTitle,
   metaTags: metaTagData,
 });
 
 const makeSubConfigPath = (rawPath: string) => {
   if (!rawPath) return '';
   if (rawPath.startsWith('/') || rawPath.startsWith('http')) return rawPath;
-  else return `/${rawPath}`;
+  return `/${rawPath}`;
 };
 
+interface UserPage {
+  name?: string;
+  path?: string;
+}
+
 /* For each additional config file, create routes for home, minimal and workspace views */
-const makeMultiPageRoutes = (userPages: Record<string, any>[]): RouteConfig[] => {
+const makeMultiPageRoutes = (userPages: unknown[]): RouteRecordRaw[] => {
   // If no multi pages specified, or is not array, then return nothing
   if (!userPages || !Array.isArray(userPages)) return [];
-  const multiPageRoutes: RouteConfig[] = [];
+  const multiPageRoutes: RouteRecordRaw[] = [];
   // For each user page, create an additional route
   userPages.forEach((page) => {
-    if (!page.name || !page.path) { // Sumin not right, show warning
+    const userPage = page as UserPage;
+    if (!userPage.name || !userPage.path) { // Something not right, show warning
       ErrorHandler('Additional pages must have both a `name` and `path`');
     }
     // Props to be passed to home mixin
     const subPageInfo = {
       subPageInfo: {
-        confPath: makeSubConfigPath(page.path),
-        pageId: makePageName(page.name),
-        pageTitle: page.name,
+        confPath: makeSubConfigPath(userPage.path as string),
+        pageId: makePageName(userPage.name as string),
+        pageTitle: userPage.name,
       },
     };
     // Create route for default homepage
     multiPageRoutes.push({
-      path: makePageSlug(page.name, 'home'),
+      path: makePageSlug(userPage.name as string, 'home'),
       name: `${subPageInfo.subPageInfo.pageId}-home`,
       component: Home,
       props: subPageInfo,
     });
     // Create route for the workspace view
     multiPageRoutes.push({
-      path: makePageSlug(page.name, 'workspace'),
+      path: makePageSlug(userPage.name as string, 'workspace'),
       name: `${subPageInfo.subPageInfo.pageId}-workspace`,
       component: () => import('../views/Workspace.vue'),
       props: subPageInfo,
     });
     // Create route for the minimal view
     multiPageRoutes.push({
-      path: makePageSlug(page.name, 'minimal'),
+      path: makePageSlug(userPage.name as string, 'minimal'),
       name: `${subPageInfo.subPageInfo.pageId}-minimal`,
       component: () => import('../views/Minimal.vue'),
       props: subPageInfo,
@@ -108,13 +119,20 @@ const makeMultiPageRoutes = (userPages: Record<string, any>[]): RouteConfig[] =>
 };
 
 /* Routing mode, can be either 'hash', 'history' or 'abstract' */
-const mode = appConfig.routingMode || 'history';
+const mode = (appConfig as { routingMode?: string }).routingMode || 'history';
+
+// Map the routing mode to the corresponding history implementation
+const history = mode === 'hash'
+  ? createWebHashHistory()
+  : mode === 'abstract'
+    ? createMemoryHistory()
+    : createWebHistory();
 
 /* List of all routes, props, components and metadata */
-const router = new Router({
-  mode,
+const router = createRouter({
+  history,
   routes: [
-    ...makeMultiPageRoutes(pages),
+    ...makeMultiPageRoutes(pages as unknown[]),
     { // The default view can be customized by the user
       path: '/',
       name: `landing-page-${getStartingView()}`,
@@ -158,13 +176,13 @@ const router = new Router({
       meta: makeMetaTags('404 Not Found'),
       beforeEnter: (to, from, next) => {
         if (to.redirectedFrom) { // Log error, if redirected here from another route
-          ErrorHandler(`Route not found: '${to.redirectedFrom}'`);
+          ErrorHandler(`Route not found: '${to.redirectedFrom.path}'`);
         }
         next();
       },
     },
     { // Redirect any not-found routed to the 404 view
-      path: '*',
+      path: '/:pathMatch(.*)*',
       redirect: '/404',
     },
   ],
@@ -178,8 +196,8 @@ router.beforeEach((to, from, next) => {
 /* If title is missing, then apply default page title */
 router.afterEach((to) => {
   progress.end();
-  Vue.nextTick(() => {
-    document.title = to.meta?.title || 'moshi';
+  nextTick(() => {
+    document.title = (to.meta?.title as string) || 'moshi';
   });
 });
 

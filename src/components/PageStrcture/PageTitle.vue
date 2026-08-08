@@ -10,23 +10,16 @@
   </router-link>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
 import { useAppStore } from "@/store/modules/appStore";
 
-export default defineComponent({
-  name: "PageTitle",
-  props: {
-    title: { type: String, default: "" },
-    description: { type: String, default: "" },
-    logo: { type: String, default: "" },
-  },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-  },
+defineProps({
+  title: { type: String, default: "" },
+  description: { type: String, default: "" },
+  logo: { type: String, default: "" },
 });
+
+useAppStore();
 </script>
 
 <style scoped lang="scss">

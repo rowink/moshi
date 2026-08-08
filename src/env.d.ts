@@ -1,21 +1,20 @@
 /// <reference types="vite/client" />
 
+declare module 'v-tooltip';
+
 declare module '*.vue' {
-  import Vue from 'vue';
-  export default Vue;
+  import type { DefineComponent } from 'vue';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const component: DefineComponent<{}, {}, any>;
+  export default component;
 }
 
 declare module '*.svg' {
-  import Vue from 'vue';
-  export default Vue;
+  import type { DefineComponent } from 'vue';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const component: DefineComponent<{}, {}, any>;
+  export default component;
 }
-
-declare module 'vue-js-modal';
-declare module 'vue-toasted';
-declare module 'vue-material-tabs';
-declare module 'vue-json-tree-view';
-declare module 'vue-select';
-declare module 'v-tooltip';
 
 declare const process: {
   env: {
@@ -34,14 +33,6 @@ interface ImportMetaEnv {
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
-}
-
-declare module 'vue/types/vue' {
-  interface Vue {
-    $toasted: any;
-    $modal: any;
-    $vToastify: any;
-  }
 }
 
 interface HTMLElement {

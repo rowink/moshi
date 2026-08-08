@@ -33,79 +33,69 @@
   </nav>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { ref, onMounted, PropType } from "vue";
 import SideBarItem from "@/components/Workspace/SideBarItem.vue";
 import SideBarSection from "@/components/Workspace/SideBarSection.vue";
 import IconHome from "@/assets/interface-icons/application-home.svg";
 import IconMinimalView from "@/assets/interface-icons/application-minimal.svg";
 import { Section as SectionType, Item as ItemType } from "@/types/types";
 
-export default defineComponent({
-  name: "SideBar",
-  props: {
-    sections: {
-      type: Array as PropType<SectionType[]>,
-      default: () => [],
-    },
-    initUrl: String,
+const props = defineProps({
+  sections: {
+    type: Array as PropType<SectionType[]>,
+    default: () => [],
   },
-  data() {
-    return {
-      isOpen: new Array(this.sections.length).fill(false),
-    };
-  },
-  components: {
-    SideBarItem,
-    SideBarSection,
-    IconMinimalView,
-    IconHome,
-  },
-  methods: {
-    /* Toggles the section clicked, and closes all other sections */
-    openSection(index: number) {
-      this.isOpen = this.isOpen.map((val: boolean, ind: number) =>
-        ind !== index ? false : !val,
-      );
-    },
-    /* When item clicked, emit a launch event */
-    launchApp(options: Record<string, any>) {
-      this.$emit("launch-app", options);
-    },
-    /* If an initial URL is specified, then open relevant section */
-    openDefaultSection() {
-      if (!this.initUrl) return;
-      const process = (url: string | undefined) =>
-        url ? url.replace(/[^\w\s]/gi, "").toLowerCase() : undefined;
-      const compare = (item: ItemType) =>
-        process(item.url) === process(this.initUrl);
-      this.sections.forEach((section: SectionType, secIndx: number) => {
-        if (!section.items) return; // Cancel if no items
-        if (section.items.findIndex(compare) !== -1) this.openSection(secIndx);
-        section.items.forEach((item: ItemType) => {
-          // Do the same for sub-items, if set
-          if (item.subItems && item.subItems.findIndex(compare) !== -1)
-            this.openSection(secIndx);
-        });
-      });
-    },
-    /* Return a list with visible items on a section to the user or guest */
-    filterTiles(allTiles: ItemType[] | undefined) {
-      if (!allTiles) {
-        return [];
-      }
-      return allTiles;
-    },
-  },
-  mounted() {
-    if (this.sections.length === 1) {
-      // If only 1 section, go ahead and open it
-      this.openSection(0);
-    } else {
-      // Otherwise, see if user set a default section, and open that
-      this.openDefaultSection();
-    }
-  },
+  initUrl: String,
+});
+
+const emit = defineEmits(["launch-app"]);
+
+const isOpen = ref(new Array(props.sections.length).fill(false));
+
+/* Toggles the section clicked, and closes all other sections */
+function openSection(index: number) {
+  isOpen.value = isOpen.value.map((val: boolean, ind: number) =>
+    ind !== index ? false : !val,
+  );
+}
+/* When item clicked, emit a launch event */
+function launchApp(options: Record<string, any>) {
+  emit("launch-app", options);
+}
+/* If an initial URL is specified, then open relevant section */
+function openDefaultSection() {
+  if (!props.initUrl) return;
+  const process = (url: string | undefined) =>
+    url ? url.replace(/[^\w\s]/gi, "").toLowerCase() : undefined;
+  const compare = (item: ItemType) =>
+    process(item.url) === process(props.initUrl);
+  props.sections.forEach((section: SectionType, secIndx: number) => {
+    if (!section.items) return; // Cancel if no items
+    if (section.items.findIndex(compare) !== -1) openSection(secIndx);
+    section.items.forEach((item: ItemType) => {
+      // Do the same for sub-items, if set
+      if (item.subItems && item.subItems.findIndex(compare) !== -1)
+        openSection(secIndx);
+    });
+  });
+}
+/* Return a list with visible items on a section to the user or guest */
+function filterTiles(allTiles: ItemType[] | undefined) {
+  if (!allTiles) {
+    return [];
+  }
+  return allTiles;
+}
+
+onMounted(() => {
+  if (props.sections.length === 1) {
+    // If only 1 section, go ahead and open it
+    openSection(0);
+  } else {
+    // Otherwise, see if user set a default section, and open that
+    openDefaultSection();
+  }
 });
 </script>
 

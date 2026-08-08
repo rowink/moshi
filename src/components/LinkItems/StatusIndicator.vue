@@ -11,36 +11,35 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
 
-export default defineComponent({
-  name: 'StatusIndicator',
-  props: {
-    statusText: String,
-    statusSuccess: Boolean,
-  },
-  methods: {
-    /* Returns a color, based on success status */
-    color() {
-      switch (this.statusSuccess) {
-        case undefined: return ((new Date().getTime() - this.startTime.getTime()) > 2000) ? 'grey' : 'yellow';
-        case true: return 'green'; // Success!
-        default: return 'red'; // Not success, therefore failure
-      }
-    },
-  },
-  data() {
-    return {
-      startTime: new Date(), // Used for timeout
-      otherStatusText: 'Checking...', // Used before server has responded
-    };
-  },
-  mounted() {
-    setTimeout(() => {
-      if (!this.statusText) this.otherStatusText = 'Request timed out';
-    }, 2000);
-  },
+const props = defineProps({
+  statusText: String,
+  statusSuccess: Boolean,
+});
+
+const startTime = new Date(); // Used for timeout
+const otherStatusText = ref("Checking..."); // Used before server has responded
+
+/* Returns a color, based on success status */
+function color() {
+  switch (props.statusSuccess) {
+    case undefined:
+      return new Date().getTime() - startTime.getTime() > 2000
+        ? "grey"
+        : "yellow";
+    case true:
+      return "green"; // Success!
+    default:
+      return "red"; // Not success, therefore failure
+  }
+}
+
+onMounted(() => {
+  setTimeout(() => {
+    if (!props.statusText) otherStatusText.value = "Request timed out";
+  }, 2000);
 });
 </script>
 

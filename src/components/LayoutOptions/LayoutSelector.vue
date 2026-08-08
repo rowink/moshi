@@ -24,37 +24,24 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import IconDeafault from "@/assets/interface-icons/layout-default.svg";
 import IconHorizontal from "@/assets/interface-icons/layout-horizontal.svg";
 import IconVertical from "@/assets/interface-icons/layout-vertical.svg";
 import { useAppStore } from "@/store/modules/appStore";
-import { defineComponent } from "vue";
 
-export default defineComponent({
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-  },
-  name: "LayoutSelector",
-  props: {
-    displayLayout: String,
-  },
-  components: {
-    IconDeafault,
-    IconHorizontal,
-    IconVertical,
-  },
-  methods: {
-    updateDisplayLayout(layout: string) {
-      this.appStore.setItemLayout(layout);
-    },
-    tooltip(content: string) {
-      return { content, trigger: "hover focus", delay: 250 };
-    },
-  },
+defineProps({
+  displayLayout: String,
 });
+
+const appStore = useAppStore();
+
+function updateDisplayLayout(layout: string) {
+  appStore.setItemLayout(layout);
+}
+function tooltip(content: string) {
+  return { content, trigger: "hover focus", delay: 250 };
+}
 </script>
 
 <style scoped lang="scss">

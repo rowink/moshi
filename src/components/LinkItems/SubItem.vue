@@ -36,35 +36,40 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { computed, PropType } from "vue";
 import Icon from "@/components/LinkItems/ItemIcon.vue";
 import ContextMenu from "@/components/LinkItems/ItemContextMenu.vue";
-import ItemMixin from "@/mixins/ItemMixin";
+import useItem from "@/composables/useItem";
 import { SubItem } from "@/types/types";
+import vLongPress from "@/directives/LongPress";
 // import { targetValidator } from '@/utils/ConfigHelpers';
 
-export default defineComponent({
-  name: "Item",
-  mixins: [ItemMixin],
-  props: {
-    id: String, // The unique ID of a tile (e.g. 001)
-    item: { type: Object as PropType<SubItem>, default: (): SubItem => ({}) },
-  },
-  components: {
-    Icon,
-    ContextMenu,
-  },
-  computed: {
-    subItemTooltip() {
-      return this.item.title;
-    },
-  },
-  data() {
-    return {};
-  },
-  methods: {},
+const props = defineProps({
+  id: String, // The unique ID of a tile (e.g. 001)
+  item: { type: Object as PropType<SubItem>, default: (): SubItem => ({}) },
 });
+
+const emit = defineEmits(["itemClicked", "triggerModal"]);
+
+const isAddNew = false; // Sub-items are never the 'fake' add-new tile
+
+const {
+  contextMenuOpen,
+  contextPos,
+  customStyles,
+  anchorTarget,
+  hyperLinkHref,
+  itemClicked,
+  launchItem,
+  openContextMenu,
+  closeContextMenu,
+} = useItem(
+  { item: props.item, isAddNew },
+  emit as (event: string, ...args: unknown[]) => void,
+);
+
+const subItemTooltip = computed(() => props.item.title);
 </script>
 
 <style lang="scss">

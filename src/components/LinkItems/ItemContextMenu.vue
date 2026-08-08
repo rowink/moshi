@@ -35,7 +35,7 @@
   </transition>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // Import icons for each element
 import SameTabOpenIcon from "@/assets/interface-icons/open-current-tab.svg";
 import NewTabOpenIcon from "@/assets/interface-icons/open-new-tab.svg";
@@ -43,38 +43,23 @@ import IframeOpenIcon from "@/assets/interface-icons/open-iframe.svg";
 import WorkspaceOpenIcon from "@/assets/interface-icons/open-workspace.svg";
 import ClipboardOpenIcon from "@/assets/interface-icons/open-clipboard.svg";
 import { useAppStore } from "@/store/modules/appStore";
-import { defineComponent } from "vue";
+import { computed } from "vue";
 
-export default defineComponent({
-  name: "ContextMenu",
-  components: {
-    SameTabOpenIcon,
-    NewTabOpenIcon,
-    IframeOpenIcon,
-    WorkspaceOpenIcon,
-    ClipboardOpenIcon,
-  },
-  props: {
-    posX: Number, // The X coordinate for positioning
-    posY: Number, // The Y coordinate for positioning
-    show: Boolean, // Should show or hide the menu
-  },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    isMenuDisabled() {
-      return !!this.appStore.appConfig.disableContextMenu;
-    },
-  },
-  methods: {
-    /* Called on item click, emits an event up to Item */
-    /* in order to launch the current app to a given target */
-    launch(target: string) {
-      this.$emit("launchItem", target);
-    },
-  },
+defineProps({
+  posX: Number, // The X coordinate for positioning
+  posY: Number, // The Y coordinate for positioning
+  show: Boolean, // Should show or hide the menu
 });
+const emit = defineEmits(["launchItem"]);
+
+const appStore = useAppStore();
+const isMenuDisabled = computed(() => !!appStore.appConfig.disableContextMenu);
+
+/* Called on item click, emits an event up to Item */
+/* in order to launch the current app to a given target */
+function launch(target: string) {
+  emit("launchItem", target);
+}
 </script>
 
 <style lang="scss">

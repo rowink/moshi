@@ -30,7 +30,8 @@
   </form>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import router from "../router";
 import ArrowKeyNavigation from "@/utils/ArrowKeyNavigation";
 import ErrorHandler from "@/utils/ErrorHandler";
@@ -47,132 +48,121 @@ import {
   defaultSearchOpeningMethod,
   searchBangs as defaultSearchBangs,
 } from "@/utils/defaults";
-import { defineComponent } from "vue";
 
-export default defineComponent({
-  name: "FilterTile",
-  props: {
-    minimalSearch: Boolean, // If true, then keep it simple
-  },
-  data() {
-    return {
-      input: "", // Users current search term
-      akn: new ArrowKeyNavigation(), // Class that manages arrow key naviagtion
-      getCustomKeyShortcuts,
-    };
-  },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    active() {
-      return !this.appStore.modalOpen;
-    },
-    searchPrefs() {
-      return this.appStore.webSearch || {};
-    },
-  },
-  mounted() {
-    window.addEventListener("keydown", this.handleKeyPress);
-  },
-  beforeDestroy() {
-    window.removeEventListener("keydown", this.handleKeyPress);
-  },
-  methods: {
-    /* Call correct function dependending on which key is pressed */
-    handleKeyPress(event: KeyboardEvent) {
-      const currentElem = document.activeElement
-        ? document.activeElement.id
-        : "";
-      const { key, keyCode } = event;
-      const notAlreadySearching = currentElem !== "filter-tiles";
-      // If a modal is open, then do nothing
-      if (!this.active) return;
-      if (/^[/:!a-zA-Z]$/.test(key) && notAlreadySearching) {
-        // Letter or bang key pressed - start searching
-        if (this.$refs.filter) this.$refs.filter.focus();
-        this.userIsTypingSomething();
-      } else if (/^[0-9]$/.test(key)) {
-        // Number key pressed, check if user has a custom binding
-        this.handleHotKey(key);
-      } else if (keyCode >= 37 && keyCode <= 40) {
-        // Arrow key pressed - start navigation
-        this.akn.arrowNavigation(keyCode);
-      } else if (keyCode === 27) {
-        // Esc key pressed - reset form
-        this.clearFilterInput();
-      }
-    },
-    /* Emmits users's search term up to parent */
-    userIsTypingSomething() {
-      this.$emit("user-is-searchin", this.input);
-    },
-    /* Resets everything to initial state, when user is finished */
-    clearFilterInput() {
-      this.input = ""; // Clear input model
-      this.userIsTypingSomething(); // Emmit new empty value
-      (document.activeElement as HTMLElement)?.blur(); // Remove focus
-      this.akn.resetIndex(); // Reset current element index
-    },
-    /* If configured, launch specific app when hotkey pressed */
-    handleHotKey(key: string) {
-      const usersHotKeys = this.getCustomKeyShortcuts();
-      usersHotKeys.forEach((hotkey: Record<string, any>) => {
-        if (hotkey.hotkey === parseInt(key, 10)) {
-          if (hotkey.url) window.open(hotkey.url, "_blank");
-        }
-      });
-    },
-    /* Launch search results, with users desired opening method */
-    launchWebSearch(url: string, method: string) {
-      switch (method) {
-        case "newtab":
-          window.open(url, "_blank");
-          break;
-        case "sametab":
-          window.open(url, "_self");
-          break;
-        case "workspace":
-          router.push({ name: "workspace", query: { url } });
-          break;
-        default:
-          ErrorHandler(`Unknown opening method: ${method}`);
-          window.open(url, "_blank");
-      }
-    },
-
-    /* Launch web search, to correct search engine, passing in users query */
-    searchSubmitted() {
-      // Get search preferences from appConfig
-      const { searchPrefs } = this;
-      if (!searchPrefs.disableWebSearch) {
-        // Only proceed if user hasn't disabled web search
-        const bangList = {
-          ...defaultSearchBangs,
-          ...(searchPrefs.searchBangs || {}),
-        };
-        const openingMethod =
-          searchPrefs.openingMethod || defaultSearchOpeningMethod;
-        const searchBang = getSearchEngineFromBang(this.input, bangList);
-        const searchEngine = searchPrefs.searchEngine || defaultSearchEngine;
-        // Use either search bang, or preffered search engine
-        const desiredSearchEngine = searchBang || searchEngine;
-        const isCustomSearch =
-          searchPrefs.searchEngine === "custom" &&
-          searchPrefs.customSearchEngine;
-        let searchUrl = isCustomSearch
-          ? searchPrefs.customSearchEngine
-          : findUrlForSearchEngine(desiredSearchEngine, searchEngineUrls);
-        if (searchUrl) {
-          // Append search query to URL, and launch
-          searchUrl += encodeURIComponent(stripBangs(this.input, bangList));
-          this.launchWebSearch(searchUrl, openingMethod);
-          this.clearFilterInput();
-        }
-      }
-    },
-  },
+defineProps({
+  minimalSearch: Boolean, // If true, then keep it simple
 });
+
+const emit = defineEmits(["user-is-searchin"]);
+
+const input = ref(""); // Users current search term
+const akn = new ArrowKeyNavigation(); // Class that manages arrow key naviagtion
+const filter = ref<HTMLInputElement | null>(null);
+
+const appStore = useAppStore();
+const active = computed(() => !appStore.modalOpen);
+const searchPrefs = computed(() => appStore.webSearch || {});
+
+/* Call correct function dependending on which key is pressed */
+function handleKeyPress(event: KeyboardEvent) {
+  const currentElem = document.activeElement
+    ? document.activeElement.id
+    : "";
+  const { key, keyCode } = event;
+  const notAlreadySearching = currentElem !== "filter-tiles";
+  // If a modal is open, then do nothing
+  if (!active.value) return;
+  if (/^[/:!a-zA-Z]$/.test(key) && notAlreadySearching) {
+    // Letter or bang key pressed - start searching
+    if (filter.value) filter.value.focus();
+    userIsTypingSomething();
+  } else if (/^[0-9]$/.test(key)) {
+    // Number key pressed, check if user has a custom binding
+    handleHotKey(key);
+  } else if (keyCode >= 37 && keyCode <= 40) {
+    // Arrow key pressed - start navigation
+    akn.arrowNavigation(keyCode);
+  } else if (keyCode === 27) {
+    // Esc key pressed - reset form
+    clearFilterInput();
+  }
+}
+/* Emmits users's search term up to parent */
+function userIsTypingSomething() {
+  emit("user-is-searchin", input.value);
+}
+/* Resets everything to initial state, when user is finished */
+function clearFilterInput() {
+  input.value = ""; // Clear input model
+  userIsTypingSomething(); // Emmit new empty value
+  (document.activeElement as HTMLElement)?.blur(); // Remove focus
+  akn.resetIndex(); // Reset current element index
+}
+/* If configured, launch specific app when hotkey pressed */
+function handleHotKey(key: string) {
+  const usersHotKeys = getCustomKeyShortcuts();
+  usersHotKeys.forEach((hotkey: Record<string, any>) => {
+    if (hotkey.hotkey === parseInt(key, 10)) {
+      if (hotkey.url) window.open(hotkey.url, "_blank");
+    }
+  });
+}
+/* Launch search results, with users desired opening method */
+function launchWebSearch(url: string, method: string) {
+  switch (method) {
+    case "newtab":
+      window.open(url, "_blank");
+      break;
+    case "sametab":
+      window.open(url, "_self");
+      break;
+    case "workspace":
+      router.push({ name: "workspace", query: { url } });
+      break;
+    default:
+      ErrorHandler(`Unknown opening method: ${method}`);
+      window.open(url, "_blank");
+  }
+}
+
+/* Launch web search, to correct search engine, passing in users query */
+function searchSubmitted() {
+  // Get search preferences from appConfig
+  if (!searchPrefs.value.disableWebSearch) {
+    // Only proceed if user hasn't disabled web search
+    const bangList = {
+      ...defaultSearchBangs,
+      ...(searchPrefs.value.searchBangs || {}),
+    };
+    const openingMethod =
+      searchPrefs.value.openingMethod || defaultSearchOpeningMethod;
+    const searchBang = getSearchEngineFromBang(input.value, bangList);
+    const searchEngine = searchPrefs.value.searchEngine || defaultSearchEngine;
+    // Use either search bang, or preffered search engine
+    const desiredSearchEngine = searchBang || searchEngine;
+    const isCustomSearch =
+      searchPrefs.value.searchEngine === "custom" &&
+      searchPrefs.value.customSearchEngine;
+    const searchUrl = isCustomSearch
+      ? searchPrefs.value.customSearchEngine
+      : findUrlForSearchEngine(desiredSearchEngine, searchEngineUrls);
+    if (searchUrl) {
+      // Append search query to URL, and launch
+      const fullUrl = searchUrl + encodeURIComponent(stripBangs(input.value, bangList));
+      launchWebSearch(fullUrl, openingMethod);
+      clearFilterInput();
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("keydown", handleKeyPress);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", handleKeyPress);
+});
+
+defineExpose({ clearFilterInput, userIsTypingSomething });
 </script>
 
 <style scoped lang="scss">

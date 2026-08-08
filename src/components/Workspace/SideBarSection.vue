@@ -26,28 +26,23 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { PropType } from "vue";
 import SideBarItem from "@/components/Workspace/SideBarItem.vue";
 import { Item as ItemType } from "@/types/types";
 
-export default defineComponent({
-  name: "SideBarSection",
-  props: {
-    items: {
-      type: Array as PropType<ItemType[]>,
-      default: () => [],
-    },
-  },
-  components: {
-    SideBarItem,
-  },
-  methods: {
-    launchApp(options: Record<string, any>) {
-      this.$emit("launch-app", options);
-    },
+defineProps({
+  items: {
+    type: Array as PropType<ItemType[]>,
+    default: () => [],
   },
 });
+
+const emit = defineEmits(["launch-app"]);
+
+function launchApp(options: Record<string, any>) {
+  emit("launch-app", options);
+}
 </script>
 
 <style lang="scss" scoped>

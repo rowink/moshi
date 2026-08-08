@@ -5,8 +5,9 @@
     <Footer :text="footerText" v-if="visibleComponents.footer && !isFetching" />
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import Header from "@/components/PageStrcture/Header.vue";
 import Footer from "@/components/PageStrcture/Footer.vue";
 import { welcomeMsg } from "@/utils/CoolConsole";
@@ -17,131 +18,106 @@ import {
   language as defaultLanguage,
 } from "@/utils/defaults";
 
-export default defineComponent({
-  name: "app",
-  components: {
-    Header,
-    Footer,
-  },
-  data() {
-    return {
-      isFetching: true, // Set to false after the conf has been fetched
-    };
-  },
-  watch: {
-    config() {
-      this.isFetching = false;
-    },
-  },
-  computed: {
-    appStore() {
-      return useAppStore();
-    },
-    /* If the user has specified custom text for footer - get it */
-    footerText() {
-      return this.pageInfo && this.pageInfo.footerText
-        ? this.pageInfo.footerText
-        : "";
-    },
-    config() {
-      return this.appStore.config;
-    },
-    appConfig() {
-      return this.appStore.appConfig;
-    },
-    pageInfo() {
-      return this.appStore.pageInfo;
-    },
-    sections() {
-      return this.appStore.pageInfo;
-    },
-    visibleComponents() {
-      return this.appStore.visibleComponents;
-    },
-    subPageClassName() {
-      const currentSubPage = this.appStore.currentConfigInfo;
-      return currentSubPage && currentSubPage.pageId
-        ? currentSubPage.pageId
-        : "";
-    },
-    topLevelStyleModifications() {
-      const vc = this.visibleComponents;
-      if (!vc.footer && !vc.pageTitle) {
-        return "--footer-height: 1rem;";
-      } else if (!vc.footer) {
-        return "--footer-height: 5rem;";
-      } else if (!vc.pageTitle) {
-        return "--footer-height: 4rem;";
-      }
-      return "";
-    },
-  },
-  methods: {
-    /* Injects the users custom CSS as a style tag */
-    injectCustomStyles(usersCss: string) {
-      const style = document.createElement("style");
-      style.textContent = usersCss;
-      document.head.append(style);
-    },
+const appStore = useAppStore();
+const { availableLocales } = useI18n();
 
-    /* Auto-detects users language from browser/ os, when not specified */
-    autoDetectLanguage(availibleLocales: string[]) {
-      const isLangSupported = (languageList: string[], userLang: string) =>
-        languageList
-          .map((lang) => lang.toLowerCase())
-          .find((lang) => lang === userLang.toLowerCase());
+const isFetching = ref(true); // Set to false after the conf has been fetched
 
-      const usersBorwserLang1 = window.navigator.language || ""; // e.g. en-GB or or ''
-      const usersBorwserLang2 = usersBorwserLang1.split("-")[0]; // e.g. en or undefined
-      const usersSpairLangs = window.navigator.languages; // e.g [en, en-GB, en-US]
-      return (
-        isLangSupported(availibleLocales, usersBorwserLang1) ||
-        isLangSupported(availibleLocales, usersBorwserLang2) ||
-        usersSpairLangs.find((spair) =>
-          isLangSupported(availibleLocales, spair),
-        ) ||
-        defaultLanguage
-      );
-    },
-
-    /* Get users language, if not available then call auto-detect */
-    getLanguage() {
-      const availibleLocales = this.$i18n.availableLocales; // All available locales
-      const usersLang =
-        localStorage[localStorageKeys.LANGUAGE] || this.appConfig.language;
-      if (usersLang) {
-        if (availibleLocales.includes(usersLang)) {
-          return usersLang;
-        } else {
-          ErrorHandler(`Unsupported Language: '${usersLang}'`);
-        }
-      }
-      return this.autoDetectLanguage(availibleLocales);
-    },
-
-    /* Fetch or detect users language, then apply it */
-    applyLanguage() {
-      const language = this.getLanguage();
-      this.appStore.setLanguage(language);
-      this.$i18n.locale = language;
-      document.getElementsByTagName("html")[0].setAttribute("lang", language);
-    },
+watch(
+  () => appStore.config,
+  () => {
+    isFetching.value = false;
   },
-  /* Basic initialization tasks on app load */
-  async mounted() {
-    await this.appStore.initializeConfig(); // Initialize config before moving on
-    this.applyLanguage(); // Apply users local language
-    if (this.appConfig.customCss) {
-      // Inject users custom CSS, if present
-      const cleanedCss = this.appConfig.customCss.replace(
-        /<\/?[^>]+(>|$)/g,
-        "",
-      );
-      this.injectCustomStyles(cleanedCss);
-    }
-    welcomeMsg(); // Show message in console
-  },
+);
+
+/* If the user has specified custom text for footer - get it */
+const footerText = computed(() => (pageInfo.value && pageInfo.value.footerText ? pageInfo.value.footerText : ""));
+const config = computed(() => appStore.config);
+const appConfig = computed(() => appStore.appConfig);
+const pageInfo = computed(() => appStore.pageInfo);
+const visibleComponents = computed(() => appStore.visibleComponents);
+
+const subPageClassName = computed(() => {
+  const currentSubPage = appStore.currentConfigInfo;
+  return currentSubPage && currentSubPage.pageId ? currentSubPage.pageId : "";
 });
+
+const topLevelStyleModifications = computed(() => {
+  const vc = visibleComponents.value;
+  if (!vc.footer && !vc.pageTitle) {
+    return "--footer-height: 1rem;";
+  } else if (!vc.footer) {
+    return "--footer-height: 5rem;";
+  } else if (!vc.pageTitle) {
+    return "--footer-height: 4rem;";
+  }
+  return "";
+});
+
+/* Injects the users custom CSS as a style tag */
+const injectCustomStyles = (usersCss: string) => {
+  const style = document.createElement("style");
+  style.textContent = usersCss;
+  document.head.append(style);
+};
+
+/* Auto-detects users language from browser/ os, when not specified */
+const autoDetectLanguage = (availibleLocales: string[]) => {
+  const isLangSupported = (languageList: string[], userLang: string) =>
+    languageList
+      .map((lang) => lang.toLowerCase())
+      .find((lang) => lang === userLang.toLowerCase());
+
+  const usersBorwserLang1 = window.navigator.language || ""; // e.g. en-GB or ''
+  const usersBorwserLang2 = usersBorwserLang1.split("-")[0]; // e.g. en or undefined
+  const usersSpairLangs = window.navigator.languages; // e.g [en, en-GB, en-US]
+  return (
+    isLangSupported(availibleLocales, usersBorwserLang1) ||
+    isLangSupported(availibleLocales, usersBorwserLang2) ||
+    usersSpairLangs.find((spair) =>
+      isLangSupported(availibleLocales, spair),
+    ) ||
+    defaultLanguage
+  );
+};
+
+/* Get users language, if not available then call auto-detect */
+const getLanguage = () => {
+  const allAvailableLocales = availableLocales; // All available locales
+  const usersLang =
+    localStorage[localStorageKeys.LANGUAGE] || appConfig.value.language;
+  if (usersLang) {
+    if (allAvailableLocales.includes(usersLang)) {
+      return usersLang;
+    } else {
+      ErrorHandler(`Unsupported Language: '${usersLang}'`);
+    }
+  }
+  return autoDetectLanguage(allAvailableLocales);
+};
+
+/* Fetch or detect users language, then apply it */
+const applyLanguage = () => {
+  const language = getLanguage();
+  appStore.setLanguage(language);
+  useI18n().locale.value = language;
+  document.getElementsByTagName("html")[0].setAttribute("lang", language);
+};
+
+/* Basic initialization tasks on app load */
+(async () => {
+  await appStore.initializeConfig(); // Initialize config before moving on
+  applyLanguage(); // Apply users local language
+  if (appConfig.value.customCss) {
+    // Inject users custom CSS, if present
+    const cleanedCss = appConfig.value.customCss.replace(
+      /<\/?[^>]+(>|$)/g,
+      "",
+    );
+    injectCustomStyles(cleanedCss);
+  }
+  welcomeMsg(); // Show message in console
+})();
 </script>
 
 <style lang="scss">
