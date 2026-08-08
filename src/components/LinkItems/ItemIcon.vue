@@ -4,11 +4,6 @@
     <i v-if="iconType === 'font-awesome'" :class="`${icon} ${size}`" ></i>
     <!-- Material Design Icon -->
     <span v-else-if="iconType === 'mdi'" :class=" `mdi ${icon} ${size}`"></span>
-    <!-- Simple-Icons -->
-    <svg v-else-if="iconType === 'si' && !broken" :class="`simple-icons ${size}`"
-      role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path :d="getSimpleIcon(icon)" />
-    </svg>
     <!-- Standard image asset icon -->
     <img v-else-if="icon" :src="iconPath" @error="imageNotFound"
       :class="`tile-icon ${size} ${broken ? 'broken' : ''}`"
@@ -19,7 +14,6 @@
 </template>
 
 <script lang="ts">
-import simpleIcons from 'simple-icons';
 import BrokenImage from '@/assets/interface-icons/broken-icon.svg';
 import ErrorHandler from '@/utils/ErrorHandler';
 import { asciiHash } from '@/utils/MiscHelpers';
@@ -68,7 +62,6 @@ export default defineComponent({
       else if (this.isImage(img)) imgType = 'img';
       else if (img.includes('fa-')) imgType = 'font-awesome';
       else if (img.includes('mdi-')) imgType = 'mdi';
-      else if (img.includes('si-')) imgType = 'si';
       else if (img.includes('hl-')) imgType = 'home-lab-icons';
       else if (img.includes('favicon-')) imgType = 'custom-favicon';
       else if (img === 'favicon') imgType = 'favicon';
@@ -85,7 +78,6 @@ export default defineComponent({
         case 'custom-favicon': return this.getCustomFavicon(url, img!);
         case 'generative': return this.getGenerativeIcon(url);
         case 'mdi': return img; // Material design icons
-        case 'simple-icons': return this.getSimpleIcon(img);
         case 'home-lab-icons': return this.getHomeLabIcon(img);
         case 'svg': return img; // Local SVG icon
         default: return '';
@@ -147,16 +139,6 @@ export default defineComponent({
     getGenerativeIcon(url: string | undefined, cdn?: string) {
       const host = encodeURI(url as string) || Math.random().toString();
       return (cdn || iconCdns.generative).replace('{icon}', asciiHash(host));
-    },
-    /* Returns the SVG path content  */
-    getSimpleIcon(img: string | undefined) {
-      const imageName = img!.replace('si-', '');
-      const icon = simpleIcons.Get(imageName);
-      if (!icon) {
-        this.imageNotFound(`No icon was found for '${imageName}' in Simple Icons`);
-        return undefined;
-      }
-      return icon.path;
     },
     /* Gets home-lab icon from GitHub */
     getHomeLabIcon(img: string | undefined, cdn?: string) {
@@ -261,16 +243,6 @@ export default defineComponent({
     svg, svg g, svg g path {
       fill: currentColor;
     }
-  }
-  /* Simple Icons */
-  .item-icon .simple-icons {
-    width: 2rem;
-    &.small { width: 1.5rem; }
-    &.large { width: 2.5rem; }
-  }
-
-  .item-icon .simple-icons path {
-    fill: currentColor;
   }
   /* Icon Not Found */
   .missing-image {
