@@ -14,7 +14,7 @@ import { PiniaVuePlugin } from "pinia";
 
 // Import base moshi components and utils
 import Moshi from "@/App.vue"; // Main moshi Vue app
-import router from "../router"; // Router, for navigation
+import router from "./router"; // Router, for navigation
 import { pinia } from "@/store"; // Pinia, for local state management
 import serviceWorker from "@/utils/InitServiceWorker"; // Service worker initialization
 import { messages } from "@/utils/languages"; // Language texts

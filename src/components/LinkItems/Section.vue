@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import router from "../../../router";
+import router from "../../router";
 import Item from "@/components/LinkItems/Item.vue";
 import SubItemGroup from "@/components/LinkItems/SubItemGroup.vue";
 import Collapsable from "@/components/LinkItems/Collapsable.vue";

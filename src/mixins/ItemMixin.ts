@@ -1,7 +1,7 @@
 /** Reusable mixin for items */
 import { defineComponent, PropType } from "vue";
 import axios from "axios";
-import router from "../../router";
+import router from "../router";
 import longPress from "@/directives/LongPress";
 import ErrorHandler from "@/utils/ErrorHandler";
 import {

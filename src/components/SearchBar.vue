@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import router from "../../router";
+import router from "../router";
 import ArrowKeyNavigation from "@/utils/ArrowKeyNavigation";
 import ErrorHandler from "@/utils/ErrorHandler";
 import { getCustomKeyShortcuts } from "@/utils/ConfigHelpers";
