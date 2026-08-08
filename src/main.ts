@@ -12,8 +12,8 @@ import Toasted from 'vue-toasted';      // Toast component, used to show confirm
 import TreeView from 'vue-json-tree-view';
 import { PiniaVuePlugin } from 'pinia';
 
-// Import base Dashy components and utils
-import Dashy from '@/App.vue';          // Main Dashy Vue app
+// Import base moshi components and utils
+import Moshi from '@/App.vue';          // Main moshi Vue app
 import router from '@/router';          // Router, for navigation
 import { pinia } from '@/pinia';        // Pinia, for local state management
 import serviceWorker from '@/utils/InitServiceWorker'; // Service worker initialization
@@ -52,7 +52,7 @@ serviceWorker();
 ErrorReporting(Vue, router);
 
 // Render function
-const render = (awesome: CreateElement) => awesome(Dashy);
+const render = (awesome: CreateElement) => awesome(Moshi);
 
 // Mount the app, with router, pinia i18n and render func
 const mount = () => new Vue({

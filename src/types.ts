@@ -114,7 +114,6 @@ export interface AppConfig {
   externalStyleSheet?: string[];
   customCss?: string;
   hideComponents?: HideComponentsConfig;
-  showSplashScreen?: boolean;
   preventWriteToDisk?: boolean;
   preventLocalSave?: boolean;
   disableConfiguration?: boolean;
@@ -122,7 +121,6 @@ export interface AppConfig {
   allowConfigEdit?: boolean;
   enableServiceWorker?: boolean;
   disableContextMenu?: boolean;
-  disableUpdateChecks?: boolean;
   disableSmartSort?: boolean;
   enableErrorReporting?: boolean;
   sentryDsn?: string;
@@ -133,7 +131,7 @@ export interface Page {
   path?: string;
 }
 
-export interface DashyConfig {
+export interface moshiConfig {
   pages?: Page[];
   pageInfo?: PageInfo;
   appConfig?: AppConfig;

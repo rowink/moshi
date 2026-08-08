@@ -18,7 +18,7 @@ export default defineComponent({
   name: 'not-found',
   methods: {
     setTheme() {
-      document.getElementsByTagName('html')[0].setAttribute('data-theme', 'dashy-docs');
+      document.getElementsByTagName('html')[0].setAttribute('data-theme', 'docs');
     },
   },
   mounted() {

@@ -7,10 +7,16 @@
       Using: {{ appStore.currentConfigInfo.confPath }}
     </span>
     <span>
-      {{ $t('footer.dev-by') }} <a :href="authorUrl">{{authorName}}</a>.
-      {{ $t('footer.licensed-under') }} <a :href="licenseUrl">{{license}}</a>
-      {{ showCopyright? '©': '' }} {{date}}.
-      {{ $t('footer.get-the') }} <a :href="repoUrl">{{ $t('footer.source-code') }}</a>.
+      <template v-if="authorName">
+        {{ $t('footer.dev-by') }} <a :href="authorUrl">{{authorName}}</a>.
+      </template>
+      <template v-if="licenseUrl">
+        {{ $t('footer.licensed-under') }} <a :href="licenseUrl">{{license}}</a>
+      </template>
+      <template v-if="showCopyright && date">© {{date}}.</template>
+      <template v-if="repoUrl">
+        {{ $t('footer.get-the') }} <a :href="repoUrl">{{ $t('footer.source-code') }}</a>.
+      </template>
     </span>
   </footer>
 </template>
@@ -24,13 +30,13 @@ export default defineComponent({
   name: 'Footer',
   props: {
     text: String,
-    authorName: { type: String, default: 'Alicia Sykes' },
-    authorUrl: { type: String, default: 'https://aliciasykes.com' },
+    authorName: { type: String, default: '' },
+    authorUrl: { type: String, default: '' },
     license: { type: String, default: 'MIT' },
-    licenseUrl: { type: String, default: 'https://gist.github.com/Lissy93/143d2ee01ccc5c052a17' },
+    licenseUrl: { type: String, default: '' },
     date: { type: String, default: `${new Date().getFullYear()}` },
     showCopyright: { type: Boolean, default: true },
-    repoUrl: { type: String, default: 'https://github.com/lissy93/dashy' },
+    repoUrl: { type: String, default: '' },
   },
   computed: {
     appStore() { return useAppStore(); },

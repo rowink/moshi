@@ -86,8 +86,8 @@
           "description": "Path to an optional image asset, to be displayed in the header",
           "pattern": "^(http|/)(.*?)",
           "examples": [
-            "/web-icons/dashy-logo.png",
-            "https://i.ibb.co/yhbt6CY/dashy.png"
+            "/web-icons/favicon-32x32.png",
+            "https://example.com/logo.png"
           ]
         }
       },
@@ -395,12 +395,6 @@
             }
           }
         },
-        "showSplashScreen": {
-          "title": "Show splash screen",
-          "type": "boolean",
-          "default": "false",
-          "description": "If set to true, a loading screen will be shown"
-        },
         "preventWriteToDisk": {
           "title": "Prevent saving config to disk",
           "type": "boolean",
@@ -443,12 +437,6 @@
           "default": false,
           "description": "If set to true, custom right-click context menu will be disabled"
         },
-        "disableUpdateChecks": {
-          "title": "Disable Update Checks",
-          "type": "boolean",
-          "default": false,
-          "description": "Prevents Dashy from checking for updates"
-        },
         "disableSmartSort": {
           "title": "Disable Smart-Sort",
           "type": "boolean",
@@ -459,7 +447,7 @@
           "title": "Enable Error Reporting",
           "type": "boolean",
           "default": false,
-          "description": "Enable anonymous crash reports. This helps bugs be found and fixed, in order to make Dashy more stable. Reporting is off by default, and no data will EVER be collected without your explicit and active concent."
+          "description": "Enable anonymous crash reports. This helps bugs be found and fixed, in order to make moshi more stable. Reporting is off by default, and no data will EVER be collected without your explicit and active concent."
         },
         "sentryDsn": {
           "title": "Custom Sentry DSN",

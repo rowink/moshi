@@ -2,7 +2,7 @@
  * A Vue directive to trigger an event when the user
  * clicks anywhere other than the specified elements
  * Used to close context menus popup modals and tips
- * Dashy: Licensed under MIT - (C) Alicia Sykes 2022
+ * moshi: Licensed under MIT - (C) 2022
  */
 import { DirectiveOptions, VNodeDirective } from 'vue';
 

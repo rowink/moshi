@@ -10,8 +10,6 @@ const setSwStatus = (swStateToSet: Record<string, boolean>) => {
     ready: false,
     registered: false,
     cached: false,
-    updateFound: false,
-    updated: false,
     offline: false,
     error: false,
     devMode: false,
@@ -59,7 +57,7 @@ const registerServiceWorker = async () => {
       ready() {
         setSwStatus({ ready: true });
         printSwStatus(
-          'Dashy is being served from cache by a service worker.\n'
+          'moshi is being served from cache by a service worker.\n'
           + 'For more details, visit https://goo.gl/AFskqB',
         );
       },
@@ -71,17 +69,9 @@ const registerServiceWorker = async () => {
         setSwStatus({ cached: true });
         printSwStatus('App has been cached for offline use.');
       },
-      updatefound() {
-        setSwStatus({ updateFound: true });
-        printSwStatus('New content is downloading...');
-      },
-      updated() {
-        setSwStatus({ updated: true });
-        printSwStatus('New content is available; please refresh the page.');
-      },
       offline() {
         setSwStatus({ offline: true });
-        printSwStatus('No internet connection found. Dashy is running in offline mode.');
+        printSwStatus('No internet connection found. moshi is running in offline mode.');
       },
       error(error: Error) {
         setSwStatus({ error: true });

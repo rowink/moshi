@@ -1,5 +1,5 @@
 /**
- * Vite config for Dashy (Vue 2.7).
+ * Vite config for moshi (Vue 2.7).
  * Replaces the previous Vue CLI (webpack 5) build chain.
  */
 const path = require('path');
@@ -53,7 +53,7 @@ module.exports = defineConfig(({ mode }) => ({
     loadPublicConfigRaw(),
     VitePWA({
       filename: 'service-worker.js',
-      injectRegister: false, // Dashy registers the SW itself in InitServiceWorker.js
+      injectRegister: false, // moshi registers the SW itself in InitServiceWorker.js
       registerType: 'prompt',
       manifest: false, // manifest.json is kept in public/ and copied as-is
       workbox: {
@@ -80,7 +80,7 @@ module.exports = defineConfig(({ mode }) => ({
       },
     },
   },
-  // Dashy reads build-time values via process.env.*; Vite only exposes
+  // moshi reads build-time values via process.env.*; Vite only exposes
   // import.meta.env by default, so the used variables are defined here
   define: {
     'process.env.NODE_ENV': JSON.stringify(mode),

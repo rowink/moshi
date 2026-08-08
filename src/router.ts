@@ -149,7 +149,7 @@ const router = new Router({
       path: routePaths.about,
       name: 'about', // We lazy load the About page so as to not slow down the app
       component: () => import('./views/About.vue'),
-      meta: makeMetaTags('About Dashy'),
+      meta: makeMetaTags('About moshi'),
     },
     { // Page not found, any non-defined routes will land here
       path: routePaths.notFound,
@@ -179,7 +179,7 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
   progress.end();
   Vue.nextTick(() => {
-    document.title = to.meta?.title || 'Dashy';
+    document.title = to.meta?.title || 'moshi';
   });
 });
 

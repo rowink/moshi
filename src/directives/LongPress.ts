@@ -2,7 +2,7 @@
  * A Vue directive to call event when element is long-pressed
  * Used to open context menus on touch-enabled devices
  * Inspired by: FeliciousX/vue-directive-long-press
- * Dashy: Licensed under MIT - (C) Alicia Sykes 2022
+ * moshi: Licensed under MIT - (C) 2022
  */
 import { DirectiveOptions } from 'vue';
 

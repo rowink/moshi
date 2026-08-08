@@ -63,12 +63,6 @@ export const getCountryFlag = (countryCode: string, dimens?: string): string => 
   return `${protocol}://${cdn}/${dimensions}/${country}.${ext}`;
 };
 
-/* Given a currency code, return path to corresponding countries flag icon */
-export const getCurrencyFlag = (currency: string): string => {
-  const cdn = 'https://raw.githubusercontent.com/Lissy93/currency-flags';
-  return `${cdn}/master/assets/flags_png_rectangle/${currency.toLowerCase()}.png`;
-};
-
 /* Given a Latitude & Longitude object, and optional zoom level, return link to OSM */
 export const getMapUrl = (location: { lat: number; lon: number }, zoom?: number): string => {
   return `https://www.openstreetmap.org/#map=${zoom || 10}/${location.lat}/${location.lon}`;

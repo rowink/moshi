@@ -56,7 +56,7 @@ const printWelcomeMessage = () => {
     });
   } catch (e) {
     // Fetching info for welcome message failed, print simple msg instead
-    console.log(`Dashy server has started (${port})`); // eslint-disable-line no-console
+    console.log(`moshi server has started (${port})`); // eslint-disable-line no-console
   }
 };
 
@@ -73,7 +73,7 @@ const app = express()
   .use(sslServer.middleware)
   // Serves up static files
   .use(express.static(path.join(__dirname, 'dist')))
-  .use(express.static(path.join(__dirname, 'public'), { index: 'initialization.html' }))
+  .use(express.static(path.join(__dirname, 'public')))
   // Load middlewares for parsing JSON, and supporting HTML5 history routing
   .use(express.json({ limit: '1mb' }))
   .use(history())
@@ -131,7 +131,7 @@ http.createServer(app)
     printWelcomeMessage();
   })
   .on('error', (err) => {
-    printWarning('Unable to start Dashy\'s Node server', err);
+    printWarning('Unable to start moshi\'s Node server', err);
   });
 
 /* Check, and if possible start SSL server too */

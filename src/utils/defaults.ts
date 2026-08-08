@@ -1,7 +1,7 @@
 const defaults = {
   /* Default pageInfo object, used if user does not specify their own */
   pageInfo: {
-    title: 'Dashy',
+    title: 'moshi',
     description: '',
     navLinks: [],
     footerText: '',
@@ -44,7 +44,7 @@ const defaults = {
     'callisto',
     'material',
     'material-dark',
-    'dashy-docs',
+    'docs',
     'colorful',
     'dracula',
     'one-dark',
@@ -77,16 +77,6 @@ const defaults = {
     'high-contrast-light',
     'adventure-basic',
     'basic',
-  ],
-  /* Default color options for the theme configurator swatches */
-  swatches: [
-    ['#eb5cad', '#985ceb', '#5346f3', '#5c90eb'],
-    ['#5cdfeb', '#00CCB4', '#5ceb8d', '#afeb5c'],
-    ['#eff961', '#ebb75c', '#eb615c', '#eb2d6c'],
-    ['#060913', '#141b33', '#1c2645', '#263256'],
-    ['#2b2d42', '#1a535c', '#372424', '#312437'],
-    ['#f5f5f5', '#d9d9d9', '#bfbfbf', '#9a9a9a'],
-    ['#636363', '#363636', '#313941', '#0d0d0d'],
   ],
   /* Which CSS variables to show in the first view of theme configurator */
   mainCssVars: ['primary', 'background', 'background-darker'],
@@ -121,8 +111,6 @@ const defaults = {
     SW_STATUS: 'serviceWorkerStatus',
     ERROR_LOG: 'errorLog',
   },
-  /* Amount of time to show splash screen, when enabled, in milliseconds */
-  splashScreenTime: 1000,
   /* Page meta-data, rendered in the header of each view */
   metaTagData: [{ name: 'description', content: "A simple static homepage for you're server" }],
   /* Default option for Toast messages */
@@ -214,7 +202,7 @@ const defaults = {
   sentryDsn: 'https://3138ea85f15a4fa883a5b27a4dc8ee28@o937511.ingest.sentry.io/5887934',
   /* Progressive Web App settings, used by Vue Config */
   pwa: {
-    name: 'Dashy',
+    name: 'moshi',
     manifestPath: './manifest.json',
     themeColor: '#00af87',
     msTileColor: '#0b1021',
@@ -223,8 +211,8 @@ const defaults = {
       manifestCrossorigin: 'use-credentials',
       favicon64: './web-icons/favicon-64x64.png',
       favicon32: './web-icons/favicon-32x32.png',
-      maskIcon: './web-icons/dashy-logo.png',
-      msTileImage: './web-icons/dashy-logo.png',
+      maskIcon: './web-icons/favicon-64x64.png',
+      msTileImage: './web-icons/favicon-64x64.png',
     },
   },
 };
@@ -233,9 +221,9 @@ export default defaults;
 export const {
   pageInfo, appConfig, language, startingView, iconSize, layout,
   theme, fontAwesomeKey, faviconApi, sortOrder, openingMethod, routePaths,
-  serviceEndpoints, builtInThemes, swatches, mainCssVars, visibleComponents,
+  serviceEndpoints, builtInThemes, mainCssVars, visibleComponents,
   hideFurnitureOn, localStorageKeys, sessionStorageKeys,
-  splashScreenTime, metaTagData, toastedOptions, tooltipOptions,
+  metaTagData, toastedOptions, tooltipOptions,
   faviconApiEndpoints, iconCdns,
   searchEngineUrls, defaultSearchEngine, defaultSearchOpeningMethod, searchBangs,
   sentryDsn, pwa,
