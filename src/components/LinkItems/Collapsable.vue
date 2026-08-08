@@ -1,10 +1,11 @@
 <template>
   <div
     v-bind:class="[
-    { 'is-open': isExpanded, 'full-height': cutToHeight },
-    `collapsable ${rowColSpanClass}`, sectionClassName
+      { 'is-open': isExpanded, 'full-height': cutToHeight },
+      `collapsable ${rowColSpanClass}`,
+      sectionClassName,
     ]"
-    :style="`${color ? 'background: '+color : ''}; ${sanitizeCustomStyles(customStyles)};`"
+    :style="`${color ? 'background: ' + color : ''}; ${sanitizeCustomStyles(customStyles)};`"
   >
     <input
       :id="sectionKey"
@@ -12,33 +13,48 @@
       type="checkbox"
       v-model="checkboxState"
       tabIndex="-1"
+    />
+    <label
+      :for="sectionKey"
+      class="lbl-toggle"
+      tabindex="-1"
+      @mouseup.right="openContextMenu"
+      @contextmenu.prevent
+      @long-press="openContextMenu"
+      v-longPress="500"
     >
-    <label :for="sectionKey" class="lbl-toggle" tabindex="-1"
-      @mouseup.right="openContextMenu" @contextmenu.prevent
-      @long-press="openContextMenu" v-longPress="500">
-      <Icon v-if="icon" :icon="icon" size="small" :url="title" class="section-icon" />
+      <Icon
+        v-if="icon"
+        :icon="icon"
+        size="small"
+        :url="title"
+        class="section-icon"
+      />
       <h3>{{ title }}</h3>
-      <OpenIcon @click.prevent.stop="openContextMenu" @contextmenu.prevent
-        class="open-icon" />
+      <OpenIcon
+        @click.prevent.stop="openContextMenu"
+        @contextmenu.prevent
+        class="open-icon"
+      />
     </label>
     <div class="collapsible-content">
       <div class="content-inner">
         <slot></slot>
-        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import longPress from '@/directives/LongPress';
-import { localStorageKeys } from '@/utils/defaults';
-import Icon from '@/components/LinkItems/ItemIcon.vue';
-import OpenIcon from '@/assets/interface-icons/config-open-settings.svg';
-import { useAppStore } from '@/store';
-import { defineComponent } from 'vue';
+import longPress from "@/directives/LongPress";
+import { localStorageKeys } from "@/utils/defaults";
+import Icon from "@/components/LinkItems/ItemIcon.vue";
+import OpenIcon from "@/assets/interface-icons/config-open-settings.svg";
+import { useAppStore } from "@/store/modules/appStore";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'CollapsableContainer',
+  name: "CollapsableContainer",
   props: {
     uniqueKey: String, // Generated unique ID
     title: String, // The section title
@@ -58,20 +74,22 @@ export default defineComponent({
     longPress,
   },
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     sectionKey() {
       return `collapsible-${this.uniqueKey}`;
     },
     collapseClass() {
-      return !this.isExpanded ? ' is-collapsed' : 'is-open';
+      return !this.isExpanded ? " is-collapsed" : "is-open";
     },
     rowColSpanClass() {
       const { rows, cols, checkSpanNum } = this;
-      return `${checkSpanNum(cols, 'col')} ${checkSpanNum(rows, 'row')}`;
+      return `${checkSpanNum(cols, "col")} ${checkSpanNum(rows, "row")}`;
     },
     sectionClassName() {
-      if (!this.title) return 'unnamed-section';
-      return `section_${this.title.replaceAll(' ', '-').toLowerCase()}`;
+      if (!this.title) return "unnamed-section";
+      return `section_${this.title.replaceAll(" ", "-").toLowerCase()}`;
     },
     /* Used to fetch initial collapse state, and set new collapse state on change */
     isExpanded: {
@@ -86,7 +104,10 @@ export default defineComponent({
       set(newState: boolean) {
         const collapseState = this.locallyStoredCollapseStates();
         collapseState[this.uniqueKey as string] = newState;
-        localStorage.setItem(localStorageKeys.COLLAPSE_STATE, JSON.stringify(collapseState));
+        localStorage.setItem(
+          localStorageKeys.COLLAPSE_STATE,
+          JSON.stringify(collapseState),
+        );
       },
     },
   },
@@ -113,33 +134,35 @@ export default defineComponent({
     checkSpanNum(span: string | number | undefined, classPrefix: string) {
       const maxSpan = 6;
       let numSpan = /^\d*$/.test(String(span)) ? parseInt(String(span), 10) : 1;
-      numSpan = (numSpan > maxSpan) ? maxSpan : numSpan;
+      numSpan = numSpan > maxSpan ? maxSpan : numSpan;
       return `${classPrefix}-${numSpan}`;
     },
     /* Removes all special characters, except those allowed in valid CSS */
     sanitizeCustomStyles(userCss: string | undefined) {
-      return userCss ? userCss.replace(/[^a-zA-Z0-9- :;.]/g, '') : '';
+      return userCss ? userCss.replace(/[^a-zA-Z0-9- :;.]/g, "") : "";
     },
     /* Returns local storage collapse state data, and if not yet set then initialized is */
     locallyStoredCollapseStates() {
       // If not yet set, then call initialize
       if (!localStorage[localStorageKeys.COLLAPSE_STATE]) {
-        localStorage.setItem(localStorageKeys.COLLAPSE_STATE, JSON.stringify({}));
+        localStorage.setItem(
+          localStorageKeys.COLLAPSE_STATE,
+          JSON.stringify({}),
+        );
         return {};
       }
       // Otherwise, return value of local storage
       return JSON.parse(localStorage[localStorageKeys.COLLAPSE_STATE]);
     },
     openContextMenu(e: MouseEvent) {
-      this.$emit('openContextMenu', e);
+      this.$emit("openContextMenu", e);
     },
   },
 });
 </script>
 
 <style scoped lang="scss">
-
-@use '@/styles/media-queries' as *;
+@use "@/styles/media-queries" as *;
 
 .collapsable {
   width: 100%;
@@ -153,28 +176,61 @@ export default defineComponent({
 
   /* Options allowing sections to SPAN multiple rows or columns */
   grid-row-start: span 1;
-  &.row-2 { grid-row-start: span 2; }
-  &.row-3 { grid-row-start: span 3; }
-  &.row-4 { grid-row-start: span 4; }
-  &.row-5 { grid-row-start: span 5; }
-  &.row-6 { grid-row-start: span 6; }
+  &.row-2 {
+    grid-row-start: span 2;
+  }
+  &.row-3 {
+    grid-row-start: span 3;
+  }
+  &.row-4 {
+    grid-row-start: span 4;
+  }
+  &.row-5 {
+    grid-row-start: span 5;
+  }
+  &.row-6 {
+    grid-row-start: span 6;
+  }
   grid-column-start: span 1;
   @include tablet-up {
-    &.col-2, &.col-3, &.col-4, &.col-5, &.col-6  { grid-column-start: span 2; }
+    &.col-2,
+    &.col-3,
+    &.col-4,
+    &.col-5,
+    &.col-6 {
+      grid-column-start: span 2;
+    }
   }
   @include laptop-up {
-    &.col-2 { grid-column-start: span 2; }
-    &.col-3, &.col-4, &.col-5,  &.col-6 { grid-column-start: span 3; }
+    &.col-2 {
+      grid-column-start: span 2;
+    }
+    &.col-3,
+    &.col-4,
+    &.col-5,
+    &.col-6 {
+      grid-column-start: span 3;
+    }
   }
   @include monitor-up {
-    &.col-2 { grid-column-start: span 2; }
-    &.col-3 { grid-column-start: span 3; }
-    &.col-4 { grid-column-start: span 4; }
-    &.col-5 { grid-column-start: span 5; }
-    &.col-6 { grid-column-start: span 6; }
+    &.col-2 {
+      grid-column-start: span 2;
+    }
+    &.col-3 {
+      grid-column-start: span 3;
+    }
+    &.col-4 {
+      grid-column-start: span 4;
+    }
+    &.col-5 {
+      grid-column-start: span 5;
+    }
+    &.col-6 {
+      grid-column-start: span 6;
+    }
   }
 
-  input[type='checkbox'] {
+  input[type="checkbox"] {
     display: none;
   }
 
@@ -200,13 +256,13 @@ export default defineComponent({
       color: var(--item-group-heading-text-color-hover);
     }
     &::before {
-      content: ' ';
+      content: " ";
       display: inline-block;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
       border-left: 5px solid currentColor;
       vertical-align: middle;
-      margin-right: .7rem;
+      margin-right: 0.7rem;
       transform: translateY(-2px);
       opacity: 0.3;
       transition: all 0.4s ease-in-out;
@@ -220,7 +276,7 @@ export default defineComponent({
   .collapsible-content {
     max-height: 0px;
     overflow: hidden;
-    transition: max-height .25s ease-in-out;
+    transition: max-height 0.25s ease-in-out;
     background: var(--item-group-background);
     border-radius: 0 0 var(--curve-factor) var(--curve-factor);
   }
@@ -253,7 +309,8 @@ export default defineComponent({
 
   /* On section hover, set interface icons to full visible */
   &:hover {
-    .open-icon, label.lbl-toggle::before {
+    .open-icon,
+    label.lbl-toggle::before {
       opacity: 1;
       transition: all 0.2s ease-out;
     }

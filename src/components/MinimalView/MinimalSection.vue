@@ -1,7 +1,9 @@
 <template>
-  <div :class="`minimal-section-inner ${selected ? 'selected' : ''} ${showAll ? 'show-all': ''}`">
+  <div
+    :class="`minimal-section-inner ${selected ? 'selected' : ''} ${showAll ? 'show-all' : ''}`"
+  >
     <div class="section-items" v-if="items && (selected || showAll)">
-      <template v-for="(item) in items">
+      <template v-for="item in items">
         <SubItemGroup
           v-if="item.subItems"
           :key="item.id"
@@ -24,7 +26,7 @@
       </template>
     </div>
     <div v-if="selected && !showAll && items.length < 1" class="empty-section">
-      <p>{{ $t('home.no-items-section') }}</p>
+      <p>{{ $t("home.no-items-section") }}</p>
     </div>
     <IframeModal
       :ref="`iframeModal-${groupId}`"
@@ -35,15 +37,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import Item from '@/components/LinkItems/Item.vue';
-import SubItemGroup from '@/components/LinkItems/SubItemGroup.vue';
-import IframeModal from '@/components/LinkItems/IframeModal.vue';
-import { useAppStore } from '@/store';
-import { Item as ItemType } from '@/types';
+import { defineComponent, PropType } from "vue";
+import Item from "@/components/LinkItems/Item.vue";
+import SubItemGroup from "@/components/LinkItems/SubItemGroup.vue";
+import IframeModal from "@/components/LinkItems/IframeModal.vue";
+import { useAppStore } from "@/store/modules/appStore";
+import { Item as ItemType } from "@/types/types";
 
 export default defineComponent({
-  name: 'ItemGroup',
+  name: "ItemGroup",
   props: {
     groupId: String,
     title: String,
@@ -63,7 +65,9 @@ export default defineComponent({
     showAll: Boolean,
   },
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     appConfig() {
       return this.appStore.appConfig;
     },
@@ -75,12 +79,15 @@ export default defineComponent({
   },
   methods: {
     selectSection(index: number) {
-      this.$emit('sectionSelected', index);
+      this.$emit("sectionSelected", index);
     },
     /* Returns a unique lowercase string, based on name, for section ID */
     makeId(str: string) {
-      if (!str) return 'unnamed-item';
-      return str.replace(/\s+/g, '-').replace(/[^a-zA-Z ]/g, '').toLowerCase();
+      if (!str) return "unnamed-item";
+      return str
+        .replace(/\s+/g, "-")
+        .replace(/[^a-zA-Z ]/g, "")
+        .toLowerCase();
     },
     /* Opens the iframe modal */
     triggerModal(url: string) {
@@ -102,8 +109,8 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@use '@/styles/media-queries' as *;
-@use '@/styles/style-helpers' as *;
+@use "@/styles/media-queries" as *;
+@use "@/styles/style-helpers" as *;
 
 .minimal-section-inner {
   height: 100%;
@@ -114,12 +121,24 @@ export default defineComponent({
   border-radius: 0 0 var(--curve-factor) var(--curve-factor);
   .section-items {
     display: grid;
-    @include phone { --minimal-col-count: 1; }
-    @include tablet { --minimal-col-count: 2; }
-    @include laptop { --minimal-col-count: 3; }
-    @include monitor { --minimal-col-count: 4; }
-    @include big-screen { --minimal-col-count: 5; }
-    @include big-screen-up { --minimal-col-count: 6; }
+    @include phone {
+      --minimal-col-count: 1;
+    }
+    @include tablet {
+      --minimal-col-count: 2;
+    }
+    @include laptop {
+      --minimal-col-count: 3;
+    }
+    @include monitor {
+      --minimal-col-count: 4;
+    }
+    @include big-screen {
+      --minimal-col-count: 5;
+    }
+    @include big-screen-up {
+      --minimal-col-count: 6;
+    }
     grid-template-columns: repeat(var(--minimal-col-count, 1), minmax(0, 1fr));
   }
   .empty-section {
@@ -133,11 +152,12 @@ export default defineComponent({
   &.selected {
     border: 1px solid var(--minimal-view-group-color);
     grid-column-start: span var(--col-count, 3);
-    &:not(.show-all) { min-height: 300px; }
+    &:not(.show-all) {
+      min-height: 300px;
+    }
   }
   &.show-all {
     border: none;
   }
 }
-
 </style>

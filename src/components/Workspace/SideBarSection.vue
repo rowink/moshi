@@ -27,12 +27,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import SideBarItem from '@/components/Workspace/SideBarItem.vue';
-import { Item as ItemType } from '@/types';
+import { defineComponent, PropType } from "vue";
+import SideBarItem from "@/components/Workspace/SideBarItem.vue";
+import { Item as ItemType } from "@/types/types";
 
 export default defineComponent({
-  name: 'SideBarSection',
+  name: "SideBarSection",
   props: {
     items: {
       type: Array as PropType<ItemType[]>,
@@ -44,15 +44,15 @@ export default defineComponent({
   },
   methods: {
     launchApp(options: Record<string, any>) {
-      this.$emit('launch-app', options);
+      this.$emit("launch-app", options);
     },
   },
 });
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/media-queries' as *;
-@use '@/styles/style-helpers' as *;
+@use "@/styles/media-queries" as *;
+@use "@/styles/style-helpers" as *;
 
 div.sub-side-bar {
   display: flex;
@@ -69,5 +69,4 @@ div.sub-side-bar {
     background: #00000033;
   }
 }
-
 </style>

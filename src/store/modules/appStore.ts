@@ -1,19 +1,19 @@
 /* eslint-disable no-param-reassign, prefer-destructuring */
-import { defineStore } from 'pinia';
-import axios from 'axios';
-import yaml from 'js-yaml';
-import ConfigAccumulator from '@/utils/ConfigAccumalator';
-import { componentVisibility } from '@/utils/ConfigHelpers';
-import ErrorHandler, { InfoHandler, InfoKeys } from '@/utils/ErrorHandler';
-import { localStorageKeys } from './utils/defaults';
-import { Item, Section } from '@/types';
+import { defineStore } from "pinia";
+import axios from "axios";
+import yaml from "js-yaml";
+import ConfigAccumulator from "@/utils/ConfigAccumalator";
+import { componentVisibility } from "@/utils/ConfigHelpers";
+import ErrorHandler, { InfoHandler, InfoKeys } from "@/utils/ErrorHandler";
+import { localStorageKeys } from "../../utils/defaults";
+import { Item, Section } from "@/types/types";
 
 interface SubPageInfo {
   pageId?: string;
   confPath?: string;
 }
 
-export const useAppStore = defineStore('app', {
+export const useAppStore = defineStore("app", {
   state: () => ({
     config: {} as Record<string, any>, // The current config, rendered to the UI
     remoteConfig: {} as Record<string, any>, // The configuration stored on the server
@@ -78,32 +78,37 @@ export const useAppStore = defineStore('app', {
       };
     },
     layout(state) {
-      return state.config.appConfig.layout || 'auto';
+      return state.config.appConfig.layout || "auto";
     },
     iconSize(state) {
-      return state.config.appConfig.iconSize || 'medium';
+      return state.config.appConfig.iconSize || "medium";
     },
   },
   actions: {
     /* Called when app first loaded. Reads config and sets state */
     async initializeConfig() {
       // Get the config file from the server and store it for use by the accumulator
-      this.setRemoteConfig(yaml.load((await axios.get('/conf.yml')).data) as Record<string, any>);
+      this.setRemoteConfig(
+        yaml.load((await axios.get("/conf.yml")).data) as Record<string, any>,
+      );
       const deepCopy = (json: unknown) => JSON.parse(JSON.stringify(json));
       const config = deepCopy(new ConfigAccumulator().config());
       this.setConfig(config);
     },
     /* Fetch config for a sub-page (sections and pageInfo only) */
     async initializeMultiPageConfig(configPath: string) {
-      axios.get(configPath).then((response) => {
-        const subConfig = yaml.load(response.data) as Record<string, any>;
-        const pageTheme = subConfig.appConfig?.theme;
-        subConfig.appConfig = this.config.appConfig; // Always use parent appConfig
-        if (pageTheme) subConfig.appConfig.theme = pageTheme; // Apply page theme override
-        this.setConfig(subConfig);
-      }).catch((err: unknown) => {
-        ErrorHandler(`Unable to load config from '${configPath}'`, err);
-      });
+      axios
+        .get(configPath)
+        .then((response) => {
+          const subConfig = yaml.load(response.data) as Record<string, any>;
+          const pageTheme = subConfig.appConfig?.theme;
+          subConfig.appConfig = this.config.appConfig; // Always use parent appConfig
+          if (pageTheme) subConfig.appConfig.theme = pageTheme; // Apply page theme override
+          this.setConfig(subConfig);
+        })
+        .catch((err: unknown) => {
+          ErrorHandler(`Unable to load config from '${configPath}'`, err);
+        });
     },
     setConfig(config: Record<string, any>) {
       if (!config.appConfig) config.appConfig = {};
@@ -124,16 +129,18 @@ export const useAppStore = defineStore('app', {
     },
     setItemLayout(layout: string) {
       this.config.appConfig.layout = layout;
-      InfoHandler('Layout updated', InfoKeys.VISUAL);
+      InfoHandler("Layout updated", InfoKeys.VISUAL);
     },
     setItemSize(iconSize: string) {
       this.config.appConfig.iconSize = iconSize;
-      InfoHandler('Item size updated', InfoKeys.VISUAL);
+      InfoHandler("Item size updated", InfoKeys.VISUAL);
     },
     setCurrentSubPage(subPageObject: SubPageInfo | undefined) {
       if (!subPageObject) {
         // Set theme back to primary when navigating to index page
-        const defaulTheme = localStorage.getItem(localStorageKeys.PRIMARY_THEME);
+        const defaulTheme = localStorage.getItem(
+          localStorageKeys.PRIMARY_THEME,
+        );
         if (defaulTheme) this.config.appConfig.theme = defaulTheme;
       }
       this.currentConfigInfo = subPageObject;

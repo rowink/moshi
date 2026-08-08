@@ -1,6 +1,7 @@
 <template ref="container">
   <div class="sub-item-wrapper">
-    <a @click="itemClicked"
+    <a
+      @click="itemClicked"
       @contextmenu.prevent
       @long-press="openContextMenu"
       @mouseup.right="openContextMenu"
@@ -8,13 +9,19 @@
       :href="hyperLinkHref"
       :target="anchorTarget"
       v-tooltip="subItemTooltip"
-      rel="noopener noreferrer" tabindex="0"
+      rel="noopener noreferrer"
+      tabindex="0"
       :id="`link-${id}`"
       class="sub-item-link item"
     >
       <!-- Item Icon -->
-      <Icon :icon="item.icon" :url="item.url"
-      size="small" v-bind:style="customStyles" class="sub-icon-img bounce" />
+      <Icon
+        :icon="item.icon"
+        :url="item.url"
+        size="small"
+        v-bind:style="customStyles"
+        class="sub-icon-img bounce"
+      />
     </a>
     <!-- Right-click context menu -->
     <ContextMenu
@@ -30,15 +37,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import Icon from '@/components/LinkItems/ItemIcon.vue';
-import ContextMenu from '@/components/LinkItems/ItemContextMenu.vue';
-import ItemMixin from '@/mixins/ItemMixin';
-import { SubItem } from '@/types';
+import { defineComponent, PropType } from "vue";
+import Icon from "@/components/LinkItems/ItemIcon.vue";
+import ContextMenu from "@/components/LinkItems/ItemContextMenu.vue";
+import ItemMixin from "@/mixins/ItemMixin";
+import { SubItem } from "@/types/types";
 // import { targetValidator } from '@/utils/ConfigHelpers';
 
 export default defineComponent({
-  name: 'Item',
+  name: "Item",
   mixins: [ItemMixin],
   props: {
     id: String, // The unique ID of a tile (e.g. 001)

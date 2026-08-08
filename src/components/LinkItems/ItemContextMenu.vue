@@ -1,31 +1,34 @@
 <template>
   <transition name="slide">
-    <div class="context-menu" v-if="show && !isMenuDisabled"
-      :style="posX && posY ? `top:${posY}px;left:${posX}px;` : ''">
+    <div
+      class="context-menu"
+      v-if="show && !isMenuDisabled"
+      :style="posX && posY ? `top:${posY}px;left:${posX}px;` : ''"
+    >
       <!-- Open Options -->
       <ul class="menu-section">
         <li class="section-title">
-          {{ $t('context-menus.item.open-section-title') }}
+          {{ $t("context-menus.item.open-section-title") }}
         </li>
         <li @click="launch('sametab')">
           <SameTabOpenIcon />
-          <span>{{ $t('context-menus.item.sametab') }}</span>
+          <span>{{ $t("context-menus.item.sametab") }}</span>
         </li>
         <li @click="launch('newtab')">
           <NewTabOpenIcon />
-          <span>{{ $t('context-menus.item.newtab') }}</span>
+          <span>{{ $t("context-menus.item.newtab") }}</span>
         </li>
         <li @click="launch('modal')">
           <IframeOpenIcon />
-          <span>{{ $t('context-menus.item.modal') }}</span>
+          <span>{{ $t("context-menus.item.modal") }}</span>
         </li>
         <li @click="launch('workspace')">
           <WorkspaceOpenIcon />
-          <span>{{ $t('context-menus.item.workspace') }}</span>
+          <span>{{ $t("context-menus.item.workspace") }}</span>
         </li>
         <li @click="launch('clipboard')">
           <ClipboardOpenIcon />
-          <span>{{ $t('context-menus.item.clipboard') }}</span>
+          <span>{{ $t("context-menus.item.clipboard") }}</span>
         </li>
       </ul>
     </div>
@@ -34,16 +37,16 @@
 
 <script lang="ts">
 // Import icons for each element
-import SameTabOpenIcon from '@/assets/interface-icons/open-current-tab.svg';
-import NewTabOpenIcon from '@/assets/interface-icons/open-new-tab.svg';
-import IframeOpenIcon from '@/assets/interface-icons/open-iframe.svg';
-import WorkspaceOpenIcon from '@/assets/interface-icons/open-workspace.svg';
-import ClipboardOpenIcon from '@/assets/interface-icons/open-clipboard.svg';
-import { useAppStore } from '@/store';
-import { defineComponent } from 'vue';
+import SameTabOpenIcon from "@/assets/interface-icons/open-current-tab.svg";
+import NewTabOpenIcon from "@/assets/interface-icons/open-new-tab.svg";
+import IframeOpenIcon from "@/assets/interface-icons/open-iframe.svg";
+import WorkspaceOpenIcon from "@/assets/interface-icons/open-workspace.svg";
+import ClipboardOpenIcon from "@/assets/interface-icons/open-clipboard.svg";
+import { useAppStore } from "@/store/modules/appStore";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'ContextMenu',
+  name: "ContextMenu",
   components: {
     SameTabOpenIcon,
     NewTabOpenIcon,
@@ -57,7 +60,9 @@ export default defineComponent({
     show: Boolean, // Should show or hide the menu
   },
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     isMenuDisabled() {
       return !!this.appStore.appConfig.disableContextMenu;
     },
@@ -66,14 +71,13 @@ export default defineComponent({
     /* Called on item click, emits an event up to Item */
     /* in order to launch the current app to a given target */
     launch(target: string) {
-      this.$emit('launchItem', target);
+      this.$emit("launchItem", target);
     },
   },
 });
 </script>
 
 <style lang="scss">
-
 div.context-menu {
   position: absolute;
   margin: 0;
@@ -112,8 +116,10 @@ div.context-menu {
       }
       svg {
         width: 1rem;
-         margin-right: 0.5rem;
-          path { fill: currentColor; }
+        margin-right: 0.5rem;
+        path {
+          fill: currentColor;
+        }
       }
     }
     &.disabled li:not(.section-title) {
@@ -127,10 +133,18 @@ div.context-menu {
 }
 
 // Define enter and leave transitions
-.slide-enter-active { animation: slide-in .1s; }
-.slide-leave-active { animation: slide-in .1s reverse; }
+.slide-enter-active {
+  animation: slide-in 0.1s;
+}
+.slide-leave-active {
+  animation: slide-in 0.1s reverse;
+}
 @keyframes slide-in {
-  0% { transform: scaleY(0.5) scaleX(0.8) translateY(-50px); }
-  100% { transform: scaleY(1) translateY(0) translateY(0); }
+  0% {
+    transform: scaleY(0.5) scaleX(0.8) translateY(-50px);
+  }
+  100% {
+    transform: scaleY(1) translateY(0) translateY(0);
+  }
 }
 </style>

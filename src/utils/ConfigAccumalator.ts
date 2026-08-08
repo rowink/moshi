@@ -5,20 +5,20 @@
  * The main config object is made up of three parts: appConfig, pageInfo and sections
  * For anything other than these three sections, please see @utils/ConfigHelpers.js
  */
-import yaml from 'js-yaml';
+import yaml from "js-yaml";
 import {
   localStorageKeys,
   appConfig as defaultAppConfig,
   pageInfo as defaultPageInfo,
   iconSize as defaultIconSize,
   layout as defaultLayout,
-} from '@/utils/defaults';
-import ErrorHandler from '@/utils/ErrorHandler';
-import { applyItemId } from '@/utils/SectionHelpers';
-import { pinia } from '@/pinia';
-import { useAppStore } from '@/store';
+} from "@/utils/defaults";
+import ErrorHandler from "@/utils/ErrorHandler";
+import { applyItemId } from "@/utils/SectionHelpers";
+import { pinia } from "@/store";
+import { useAppStore } from "@/store/modules/appStore";
 
-import buildConfRaw from '../../public/conf.yml?raw';
+import buildConfRaw from "../../public/conf.yml?raw";
 
 const buildConf = yaml.load(buildConfRaw) as Record<string, any> | null;
 
@@ -61,12 +61,14 @@ export default class ConfigAccumulator {
       usersAppConfig = appConfigFile;
     }
     // Some settings have their own local storage keys, apply them here
-    usersAppConfig.layout = localStorage[localStorageKeys.LAYOUT_ORIENTATION]
-      || appConfigFile.layout
-      || defaultLayout;
-    usersAppConfig.iconSize = localStorage[localStorageKeys.ICON_SIZE]
-      || appConfigFile.iconSize
-      || defaultIconSize;
+    usersAppConfig.layout =
+      localStorage[localStorageKeys.LAYOUT_ORIENTATION] ||
+      appConfigFile.layout ||
+      defaultLayout;
+    usersAppConfig.iconSize =
+      localStorage[localStorageKeys.ICON_SIZE] ||
+      appConfigFile.iconSize ||
+      defaultIconSize;
     // Don't let users modify users locally
     if (appConfigFile.auth) usersAppConfig.auth = appConfigFile.auth;
     // All done, return final appConfig object
@@ -78,10 +80,14 @@ export default class ConfigAccumulator {
     let localPageInfo = {};
     if (localStorage[localStorageKeys.PAGE_INFO]) {
       // eslint-disable-next-line brace-style
-      try { localPageInfo = JSON.parse(localStorage[localStorageKeys.PAGE_INFO]); }
-      catch (e) { ErrorHandler('Malformed pageInfo data in local storage'); }
+      try {
+        localPageInfo = JSON.parse(localStorage[localStorageKeys.PAGE_INFO]);
+      } catch (e) {
+        ErrorHandler("Malformed pageInfo data in local storage");
+      }
     }
-    const filePageInfo = (this.conf && this.conf.pageInfo) ? this.conf.pageInfo : {};
+    const filePageInfo =
+      this.conf && this.conf.pageInfo ? this.conf.pageInfo : {};
     return { ...defaultPageInfo, ...filePageInfo, ...localPageInfo };
   }
 
@@ -95,7 +101,7 @@ export default class ConfigAccumulator {
         const json = JSON.parse(localSections);
         if (json.length >= 1) sections = json;
       } catch (e) {
-        ErrorHandler('Malformed section data in local storage');
+        ErrorHandler("Malformed section data in local storage");
       }
     }
     // If sections were not set from local data, then use config file instead

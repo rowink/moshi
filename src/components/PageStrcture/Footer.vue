@@ -8,38 +8,44 @@
     </span>
     <span>
       <template v-if="authorName">
-        {{ $t('footer.dev-by') }} <a :href="authorUrl">{{authorName}}</a>.
+        {{ $t("footer.dev-by") }} <a :href="authorUrl">{{ authorName }}</a
+        >.
       </template>
       <template v-if="licenseUrl">
-        {{ $t('footer.licensed-under') }} <a :href="licenseUrl">{{license}}</a>
+        {{ $t("footer.licensed-under") }}
+        <a :href="licenseUrl">{{ license }}</a>
       </template>
-      <template v-if="showCopyright && date">© {{date}}.</template>
+      <template v-if="showCopyright && date">© {{ date }}.</template>
       <template v-if="repoUrl">
-        {{ $t('footer.get-the') }} <a :href="repoUrl">{{ $t('footer.source-code') }}</a>.
+        {{ $t("footer.get-the") }}
+        <a :href="repoUrl">{{ $t("footer.source-code") }}</a
+        >.
       </template>
     </span>
   </footer>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { shouldBeVisible } from '@/utils/SectionHelpers';
-import { useAppStore } from '@/store';
+import { defineComponent } from "vue";
+import { shouldBeVisible } from "@/utils/SectionHelpers";
+import { useAppStore } from "@/store/modules/appStore";
 
 export default defineComponent({
-  name: 'Footer',
+  name: "Footer",
   props: {
     text: String,
-    authorName: { type: String, default: '' },
-    authorUrl: { type: String, default: '' },
-    license: { type: String, default: 'MIT' },
-    licenseUrl: { type: String, default: '' },
+    authorName: { type: String, default: "" },
+    authorUrl: { type: String, default: "" },
+    license: { type: String, default: "MIT" },
+    licenseUrl: { type: String, default: "" },
     date: { type: String, default: `${new Date().getFullYear()}` },
     showCopyright: { type: Boolean, default: true },
-    repoUrl: { type: String, default: '' },
+    repoUrl: { type: String, default: "" },
   },
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     visible() {
       return shouldBeVisible(this.$route.name);
     },
@@ -48,7 +54,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@use '@/styles/media-queries' as *;
+@use "@/styles/media-queries" as *;
 
 footer {
   width: calc(100% - 0.5rem);
@@ -76,11 +82,10 @@ footer {
   }
 }
 
-footer a{
+footer a {
   color: var(--footer-text-color);
   &:hover {
     color: var(--footer-text-color-link);
   }
 }
-
 </style>

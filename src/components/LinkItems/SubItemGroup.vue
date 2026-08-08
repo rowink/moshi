@@ -12,9 +12,9 @@
 </template>
 
 <script lang="ts">
-import SubItem from '@/components/LinkItems/SubItem.vue';
-import { PropType, defineComponent } from 'vue';
-import { SubItem as SubItemType } from '@/types';
+import SubItem from "@/components/LinkItems/SubItem.vue";
+import { PropType, defineComponent } from "vue";
+import { SubItem as SubItemType } from "@/types/types";
 
 export default defineComponent({
   props: {
@@ -44,7 +44,7 @@ export default defineComponent({
   methods: {
     /* Pass open modal emit event up */
     triggerModal(url: string) {
-      this.$emit('triggerModal', url);
+      this.$emit("triggerModal", url);
     },
   },
 });

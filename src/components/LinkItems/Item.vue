@@ -1,6 +1,7 @@
 <template ref="container">
-  <div :class="`item-wrapper wrap-size-${size} span-${makeColumnCount}`" >
-    <a @click="itemClicked"
+  <div :class="`item-wrapper wrap-size-${size} span-${makeColumnCount}`">
+    <a
+      @click="itemClicked"
       @long-press="openContextMenu"
       @contextmenu.prevent
       @mouseup.right="openContextMenu"
@@ -9,28 +10,43 @@
       :target="anchorTarget"
       :class="`item ${makeClassList}`"
       v-tooltip="getTooltipOptions()"
-      rel="noopener noreferrer" tabindex="0"
+      rel="noopener noreferrer"
+      tabindex="0"
       :id="`link-${item.id}`"
       :style="customStyle"
     >
       <!-- Item Text -->
-      <div :class="`tile-title  ${!itemIcon? 'bounce no-icon': ''}`" :id="`tile-${item.id}`" >
+      <div
+        :class="`tile-title  ${!itemIcon ? 'bounce no-icon' : ''}`"
+        :id="`tile-${item.id}`"
+      >
         <span class="text">{{ item.title }}</span>
         <p class="description">{{ item.description }}</p>
       </div>
       <!-- Item Icon -->
-      <Icon :icon="itemIcon" :url="item.url" :size="size" :color="item.color"
-        v-bind:style="customStyles" class="bounce" />
+      <Icon
+        :icon="itemIcon"
+        :url="item.url"
+        :size="size"
+        :color="item.color"
+        v-bind:style="customStyles"
+        class="bounce"
+      />
       <!-- Small icon, showing opening method on hover -->
-      <ItemOpenMethodIcon class="opening-method-icon"
+      <ItemOpenMethodIcon
+        class="opening-method-icon"
         :isSmall="!itemIcon || size === 'small'"
-        :openingMethod="accumulatedTarget"  position="bottom right"
-        :hotkey="item.hotkey" />
+        :openingMethod="accumulatedTarget"
+        position="bottom right"
+        :hotkey="item.hotkey"
+      />
       <!-- Status indicator dot (if enabled) showing weather service is available -->
       <StatusIndicator
         class="status-indicator"
         v-if="enableStatusCheck"
-        :statusSuccess="statusResponse ? statusResponse.successStatus : undefined"
+        :statusSuccess="
+          statusResponse ? statusResponse.successStatus : undefined
+        "
         :statusText="statusResponse ? statusResponse.message : undefined"
       />
     </a>
@@ -47,24 +63,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import Icon from '@/components/LinkItems/ItemIcon.vue';
-import ItemOpenMethodIcon from '@/components/LinkItems/ItemOpenMethodIcon.vue';
-import StatusIndicator from '@/components/LinkItems/StatusIndicator.vue';
-import ContextMenu from '@/components/LinkItems/ItemContextMenu.vue';
-import ItemMixin, { ItemMixinItem } from '@/mixins/ItemMixin';
-import { useAppStore } from '@/store';
+import { defineComponent, PropType } from "vue";
+import Icon from "@/components/LinkItems/ItemIcon.vue";
+import ItemOpenMethodIcon from "@/components/LinkItems/ItemOpenMethodIcon.vue";
+import StatusIndicator from "@/components/LinkItems/StatusIndicator.vue";
+import ContextMenu from "@/components/LinkItems/ItemContextMenu.vue";
+import ItemMixin, { ItemMixinItem } from "@/mixins/ItemMixin";
+import { useAppStore } from "@/store/modules/appStore";
 
 export default defineComponent({
-  name: 'Item',
+  name: "Item",
   mixins: [ItemMixin],
   props: {
-    item: { type: Object as PropType<ItemMixinItem>, default: (): ItemMixinItem => ({}) },
+    item: {
+      type: Object as PropType<ItemMixinItem>,
+      default: (): ItemMixinItem => ({}),
+    },
     itemSize: String,
     parentSectionTitle: String, // Title of parent section (for add new)
     isAddNew: Boolean, // Only set if 'fake' item used as Add New button
     sectionWidth: Number, // Width of parent section
-    sectionDisplayData: { type: Object as PropType<Record<string, any>>, default: () => ({}) },
+    sectionDisplayData: {
+      type: Object as PropType<Record<string, any>>,
+      default: () => ({}),
+    },
   },
   components: {
     Icon,
@@ -73,13 +95,16 @@ export default defineComponent({
     ContextMenu,
   },
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     /* Returns either item.icon, or appConfig.defaultIcon, or null */
     itemIcon() {
       return this.item.icon || this.appStore.appConfig?.defaultIcon;
     },
     makeColumnCount() {
-      if ((this.sectionDisplayData || {}).itemCountX) return this.sectionDisplayData.itemCountX;
+      if ((this.sectionDisplayData || {}).itemCountX)
+        return this.sectionDisplayData.itemCountX;
       if (this.sectionWidth! < 380) return 1;
       if (this.sectionWidth! < 520) return 2;
       if (this.sectionWidth! < 730) return 3;
@@ -90,20 +115,30 @@ export default defineComponent({
     /* Based on item props, adjust class names */
     makeClassList() {
       const { isAddNew, size } = this;
-      return `size-${size} ${!this.itemIcon ? 'short' : ''} `
-        + `${isAddNew ? 'add-new' : ''}`;
+      return (
+        `size-${size} ${!this.itemIcon ? "short" : ""} ` +
+        `${isAddNew ? "add-new" : ""}`
+      );
     },
     /* Used by certain themes (material), to show animated CSS icon */
     unicodeOpeningIcon() {
       switch (this.accumulatedTarget) {
-        case 'newtab': return '"\\f360"';
-        case 'sametab': return '"\\f24d"';
-        case 'parent': return '"\\f3bf"';
-        case 'top': return '"\\f102"';
-        case 'modal': return '"\\f2d0"';
-        case 'workspace': return '"\\f0b1"';
-        case 'clipboard': return '"\\f0ea"';
-        default: return '"\\f054"';
+        case "newtab":
+          return '"\\f360"';
+        case "sametab":
+          return '"\\f24d"';
+        case "parent":
+          return '"\\f3bf"';
+        case "top":
+          return '"\\f102"';
+        case "modal":
+          return '"\\f2d0"';
+        case "workspace":
+          return '"\\f0b1"';
+        case "clipboard":
+          return '"\\f0ea"';
+        default:
+          return '"\\f054"';
       }
     },
   },
@@ -111,17 +146,21 @@ export default defineComponent({
     /* Returns configuration object for the tooltip */
     getTooltipOptions() {
       if (!this.item.description && !this.item.provider) return {}; // If no description, then skip
-      const description = this.item.description || '';
-      const providerText = this.item.provider ? `<b>Provider</b>: ${this.item.provider}` : '';
-      const lb1 = description && providerText ? '<br>' : '';
-      const hotkeyText = this.item.hotkey ? `<br>Press '${this.item.hotkey}' to launch` : '';
+      const description = this.item.description || "";
+      const providerText = this.item.provider
+        ? `<b>Provider</b>: ${this.item.provider}`
+        : "";
+      const lb1 = description && providerText ? "<br>" : "";
+      const hotkeyText = this.item.hotkey
+        ? `<br>Press '${this.item.hotkey}' to launch`
+        : "";
       const tooltipText = providerText + lb1 + description + hotkeyText;
       return {
         content: tooltipText,
-        trigger: 'hover focus',
+        trigger: "hover focus",
         hideOnTargetClick: true,
         html: true,
-        placement: this.statusResponse ? 'left' : 'auto',
+        placement: this.statusResponse ? "left" : "auto",
         delay: { show: 600, hide: 200 },
         classes: `item-description-tooltip tooltip-is-${this.size}`,
       };
@@ -133,7 +172,10 @@ export default defineComponent({
       this.checkWebsiteStatus();
       // If continious status checking is enabled, then start ever-lasting loop
       if (this.statusCheckInterval > 0) {
-        this.intervalId = window.setInterval(this.checkWebsiteStatus, this.statusCheckInterval * 1000);
+        this.intervalId = window.setInterval(
+          this.checkWebsiteStatus,
+          this.statusCheckInterval * 1000,
+        );
       }
     }
   },
@@ -145,7 +187,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-
 .item-wrapper {
   flex-grow: 1;
   flex-basis: 6rem;
@@ -154,14 +195,30 @@ export default defineComponent({
   }
   &.wrap-size-small {
     flex-grow: revert;
-    &.span-1 { min-width: 100%; }
-    &.span-2 { min-width: 50%; }
-    &.span-3 { min-width: 33%; }
-    &.span-4 { min-width: 25%; }
-    &.span-5 { min-width: 20%; }
-    &.span-6 { min-width: 16%; }
-    &.span-7 { min-width: 14%; }
-    &.span-8 { min-width: 12.5%; }
+    &.span-1 {
+      min-width: 100%;
+    }
+    &.span-2 {
+      min-width: 50%;
+    }
+    &.span-3 {
+      min-width: 33%;
+    }
+    &.span-4 {
+      min-width: 25%;
+    }
+    &.span-5 {
+      min-width: 20%;
+    }
+    &.span-6 {
+      min-width: 16%;
+    }
+    &.span-7 {
+      min-width: 14%;
+    }
+    &.span-8 {
+      min-width: 12.5%;
+    }
   }
 }
 
@@ -227,14 +284,15 @@ export default defineComponent({
 }
 
 /* Manage hover and focus actions */
-.item:hover, .item:focus {
+.item:hover,
+.item:focus {
   /* Show opening-method icon */
   .opening-method-icon {
     display: block;
   }
 
   /* Trigger text-marquee for text that doesn't fit */
-  .tile-title.is-overflowing{
+  .tile-title.is-overflowing {
     .overflow-dots {
       opacity: 0;
     }
@@ -244,7 +302,8 @@ export default defineComponent({
   }
 
   /* Apply transformation of icons on hover */
-  .tile-icon, .tile-svg  {
+  .tile-icon,
+  .tile-svg {
     filter: var(--item-icon-transform-hover);
   }
 }
@@ -329,19 +388,19 @@ p.description {
         display: block;
         white-space: pre-wrap;
         text-overflow: ellipsis;
-        font-size: .9em;
+        font-size: 0.9em;
         line-height: 1rem;
         height: 2rem;
       }
     }
   }
-  &:before { // Certain themes (e.g. material) show css animated fas icon on hover
+  &:before {
+    // Certain themes (e.g. material) show css animated fas icon on hover
     display: none;
     font-family: FontAwesome;
     content: var(--open-icon, "\f054") !important;
   }
 }
-
 </style>
 
 <!-- An un-scoped style tag, since tooltip is outside this DOM tree -->

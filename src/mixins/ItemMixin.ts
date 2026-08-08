@@ -1,17 +1,17 @@
 /** Reusable mixin for items */
-import { defineComponent, PropType } from 'vue';
-import axios from 'axios';
-import router from '@/router';
-import longPress from '@/directives/LongPress';
-import ErrorHandler from '@/utils/ErrorHandler';
+import { defineComponent, PropType } from "vue";
+import axios from "axios";
+import router from "../../router";
+import longPress from "@/directives/LongPress";
+import ErrorHandler from "@/utils/ErrorHandler";
 import {
   openingMethod as defaultOpeningMethod,
   serviceEndpoints,
   localStorageKeys,
   iconSize as defaultSize,
-} from '@/utils/defaults';
-import { useAppStore } from '@/store';
-import { Item, ItemTarget } from '@/types';
+} from "@/utils/defaults";
+import { useAppStore } from "@/store/modules/appStore";
+import { Item, ItemTarget } from "@/types/types";
 
 /* Extend the Item interface with optional fields only used by this mixin */
 export interface ItemMixinItem extends Item {
@@ -61,48 +61,61 @@ export default defineComponent({
     };
   },
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     appConfig() {
       return this.appStore.appConfig;
     },
     size() {
-      const validSizes = ['small', 'medium', 'large'];
-      if (this.itemSize && validSizes.includes(this.itemSize)) return this.itemSize;
+      const validSizes = ["small", "medium", "large"];
+      if (this.itemSize && validSizes.includes(this.itemSize))
+        return this.itemSize;
       return this.appStore.iconSize || defaultSize;
     },
     /* Determines if user has enabled online status checks */
     enableStatusCheck() {
       const globalPref = this.appConfig.statusCheck || false;
       const itemPref = this.item!.statusCheck;
-      return typeof itemPref === 'boolean' ? itemPref : globalPref;
+      return typeof itemPref === "boolean" ? itemPref : globalPref;
     },
     /* Determine how often to re-fire status checks */
     statusCheckInterval() {
-      let interval = this.item!.statusCheckInterval || this.appConfig.statusCheckInterval;
+      let interval =
+        this.item!.statusCheckInterval || this.appConfig.statusCheckInterval;
       if (!interval) return 0;
       if (interval > 60) interval = 60;
       if (interval < 1) interval = 0;
       return interval;
     },
     accumulatedTarget(): ItemTarget {
-      return this.item!.target || this.appConfig.defaultOpeningMethod || defaultOpeningMethod;
+      return (
+        this.item!.target ||
+        this.appConfig.defaultOpeningMethod ||
+        defaultOpeningMethod
+      );
     },
     /* Convert config target value, into HTML anchor target attribute */
     anchorTarget() {
       const target = this.accumulatedTarget;
       switch (target) {
-        case 'sametab': return '_self';
-        case 'newtab': return '_blank';
-        case 'parent': return '_parent';
-        case 'top': return '_top';
-        default: return undefined;
+        case "sametab":
+          return "_self";
+        case "newtab":
+          return "_blank";
+        case "parent":
+          return "_parent";
+        case "top":
+          return "_top";
+        default:
+          return undefined;
       }
     },
     /* Get href for anchor, if not opening in modal/ workspace */
     hyperLinkHref() {
-      const nothing = '#';
+      const nothing = "#";
       const url = this.url || this.item!.url || nothing;
-      const noAnchorNeeded = ['modal', 'workspace', 'clipboard'];
+      const noAnchorNeeded = ["modal", "workspace", "clipboard"];
       return noAnchorNeeded.includes(this.accumulatedTarget) ? nothing : url;
     },
     /* Pulls together all user options, returns URL + Get params for ping endpoint */
@@ -123,19 +136,30 @@ export default defineComponent({
       const urlToCheck = `?&url=${encode(String(statusCheckUrl || url))}`;
       // Get, stringify and encode any headers
       const headers = statusCheckHeaders
-        ? `&headers=${encode(JSON.stringify(statusCheckHeaders))}` : '';
+        ? `&headers=${encode(JSON.stringify(statusCheckHeaders))}`
+        : "";
       // Deterimine if user disabled security
-      const enableInsecure = statusCheckAllowInsecure ? '&enableInsecure=true' : '';
-      const acceptCodes = statusCheckAcceptCodes ? `&acceptCodes=${statusCheckAcceptCodes}` : '';
-      const maxRedirects = statusCheckMaxRedirects ? `&maxRedirects=${statusCheckMaxRedirects}` : '';
+      const enableInsecure = statusCheckAllowInsecure
+        ? "&enableInsecure=true"
+        : "";
+      const acceptCodes = statusCheckAcceptCodes
+        ? `&acceptCodes=${statusCheckAcceptCodes}`
+        : "";
+      const maxRedirects = statusCheckMaxRedirects
+        ? `&maxRedirects=${statusCheckMaxRedirects}`
+        : "";
       // Construct the full API endpoint's URL with GET params
-      return `${baseUrl}${serviceEndpoints.statusCheck}/${urlToCheck}`
-        + `${headers}${enableInsecure}${acceptCodes}${maxRedirects}`;
+      return (
+        `${baseUrl}${serviceEndpoints.statusCheck}/${urlToCheck}` +
+        `${headers}${enableInsecure}${acceptCodes}${maxRedirects}`
+      );
     },
     customStyle() {
-      return `--open-icon:${this.unicodeOpeningIcon};`
-        + `color:${this.item!.color};`
-        + `background:${this.item!.backgroundColor}`;
+      return (
+        `--open-icon:${this.unicodeOpeningIcon};` +
+        `color:${this.item!.color};` +
+        `background:${this.item!.backgroundColor}`
+      );
     },
     unicodeOpeningIcon() {
       return this.item!.unicodeOpeningIcon;
@@ -145,13 +169,15 @@ export default defineComponent({
     /* Checks if a given service is currently online */
     checkWebsiteStatus() {
       const endpoint = this.statusCheckApiUrl;
-      axios.get(endpoint)
+      axios
+        .get(endpoint)
         .then((response) => {
           if (response.data) this.statusResponse = response.data;
         })
-        .catch(() => { // Something went very wrong.
+        .catch(() => {
+          // Something went very wrong.
           this.statusResponse = {
-            statusText: 'Failed to make request',
+            statusText: "Failed to make request",
             statusSuccess: false,
           };
         });
@@ -162,19 +188,19 @@ export default defineComponent({
       // For certain opening methods, prevent default and manually navigate
       if (e.ctrlKey) {
         e.preventDefault();
-        window.open(url, '_blank');
-      } else if (e.altKey || this.accumulatedTarget === 'modal') {
+        window.open(url, "_blank");
+      } else if (e.altKey || this.accumulatedTarget === "modal") {
         e.preventDefault();
-        this.$emit('triggerModal', url);
-      } else if (this.accumulatedTarget === 'workspace') {
+        this.$emit("triggerModal", url);
+      } else if (this.accumulatedTarget === "workspace") {
         e.preventDefault();
-        router.push({ name: 'workspace', query: { url: url as string } });
-      } else if (this.accumulatedTarget === 'clipboard') {
+        router.push({ name: "workspace", query: { url: url as string } });
+      } else if (this.accumulatedTarget === "clipboard") {
         e.preventDefault();
         this.copyToClipboard(url);
       }
       // Emit event to clear search field, etc
-      this.$emit('itemClicked');
+      this.$emit("itemClicked");
       // Update the most/ last used ledger, for smart-sorting
       if (!this.appConfig.disableSmartSort) {
         this.incrementMostUsedCount(this.item!.id);
@@ -186,22 +212,23 @@ export default defineComponent({
       const url = link || this.item!.url;
       this.contextMenuOpen = false;
       switch (method) {
-        case 'newtab':
-          window.open(url, '_blank');
+        case "newtab":
+          window.open(url, "_blank");
           break;
-        case 'sametab':
-          window.open(url, '_self');
+        case "sametab":
+          window.open(url, "_self");
           break;
-        case 'modal':
-          this.$emit('triggerModal', url);
+        case "modal":
+          this.$emit("triggerModal", url);
           break;
-        case 'workspace':
-          router.push({ name: 'workspace', query: { url: url as string } });
+        case "workspace":
+          router.push({ name: "workspace", query: { url: url as string } });
           break;
-        case 'clipboard':
+        case "clipboard":
           this.copyToClipboard(url);
           break;
-        default: window.open(url, '_blank');
+        default:
+          window.open(url, "_blank");
       }
     },
     /* Open custom context menu, and set position */
@@ -223,28 +250,41 @@ export default defineComponent({
     copyToClipboard(content: string | undefined) {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(String(content));
-        this.$toasted.show(
-          this.$t('context-menus.item.copied-toast'),
-          { className: 'toast-success' },
-        );
+        this.$toasted.show(this.$t("context-menus.item.copied-toast"), {
+          className: "toast-success",
+        });
       } else {
-        ErrorHandler('Clipboard access requires HTTPS. See: https://bit.ly/3N5WuAA');
-        this.$toasted.show('Unable to copy, see log', { className: 'toast-error' });
+        ErrorHandler(
+          "Clipboard access requires HTTPS. See: https://bit.ly/3N5WuAA",
+        );
+        this.$toasted.show("Unable to copy, see log", {
+          className: "toast-error",
+        });
       }
     },
     /* Used for smart-sort when sorting items by most used apps */
     incrementMostUsedCount(itemId: string | undefined) {
-      const mostUsed = JSON.parse(localStorage.getItem(localStorageKeys.MOST_USED) || '{}');
+      const mostUsed = JSON.parse(
+        localStorage.getItem(localStorageKeys.MOST_USED) || "{}",
+      );
       let counter = mostUsed[itemId as string] || 0;
       counter += 1;
       mostUsed[itemId as string] = counter;
-      localStorage.setItem(localStorageKeys.MOST_USED, JSON.stringify(mostUsed));
+      localStorage.setItem(
+        localStorageKeys.MOST_USED,
+        JSON.stringify(mostUsed),
+      );
     },
     /* Used for smart-sort when sorting by last used apps */
     incrementLastUsedCount(itemId: string | undefined) {
-      const lastUsed = JSON.parse(localStorage.getItem(localStorageKeys.LAST_USED) || '{}');
+      const lastUsed = JSON.parse(
+        localStorage.getItem(localStorageKeys.LAST_USED) || "{}",
+      );
       lastUsed[itemId as string] = new Date().getTime();
-      localStorage.setItem(localStorageKeys.LAST_USED, JSON.stringify(lastUsed));
+      localStorage.setItem(
+        localStorageKeys.LAST_USED,
+        JSON.stringify(lastUsed),
+      );
     },
   },
 });

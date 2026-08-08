@@ -11,24 +11,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useAppStore } from '@/store';
+import { defineComponent } from "vue";
+import { useAppStore } from "@/store/modules/appStore";
 
 export default defineComponent({
-  name: 'PageTitle',
+  name: "PageTitle",
   props: {
-    title: { type: String, default: '' },
-    description: { type: String, default: '' },
-    logo: { type: String, default: '' },
+    title: { type: String, default: "" },
+    description: { type: String, default: "" },
+    logo: { type: String, default: "" },
   },
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
   },
 });
 </script>
 
 <style scoped lang="scss">
-@use '@/styles/media-queries' as *;
+@use "@/styles/media-queries" as *;
 
 .page-titles {
   display: flex;

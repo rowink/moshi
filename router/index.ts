@@ -46,8 +46,8 @@ const getStartingView = () => appConfig.startingView || startingView;
 const getStartingComponent = () => {
   const usersPreference = getStartingView();
   switch (usersPreference) {
-    case 'minimal': return () => import('./views/Minimal.vue');
-    case 'workspace': return () => import('./views/Workspace.vue');
+    case 'minimal': return () => import('../src/views/Minimal.vue');
+    case 'workspace': return () => import('../src/views/Workspace.vue');
     default: return Home;
   }
 };
@@ -93,14 +93,14 @@ const makeMultiPageRoutes = (userPages: Record<string, any>[]): RouteConfig[] =>
     multiPageRoutes.push({
       path: makePageSlug(page.name, 'workspace'),
       name: `${subPageInfo.subPageInfo.pageId}-workspace`,
-      component: () => import('./views/Workspace.vue'),
+      component: () => import('../src/views/Workspace.vue'),
       props: subPageInfo,
     });
     // Create route for the minimal view
     multiPageRoutes.push({
       path: makePageSlug(page.name, 'minimal'),
       name: `${subPageInfo.subPageInfo.pageId}-minimal`,
-      component: () => import('./views/Minimal.vue'),
+      component: () => import('../src/views/Minimal.vue'),
       props: subPageInfo,
     });
   });
@@ -136,25 +136,25 @@ const router = new Router({
     { // Workspace view page
       path: routePaths.workspace,
       name: 'workspace',
-      component: () => import('./views/Workspace.vue'),
+      component: () => import('../src/views/Workspace.vue'),
       meta: makeMetaTags('Workspace'),
     },
     { // Minimal view page
       path: routePaths.minimal,
       name: 'minimal',
-      component: () => import('./views/Minimal.vue'),
+      component: () => import('../src/views/Minimal.vue'),
       meta: makeMetaTags('Start Page'),
     },
     { // The about app page
       path: routePaths.about,
       name: 'about', // We lazy load the About page so as to not slow down the app
-      component: () => import('./views/About.vue'),
+      component: () => import('../src/views/About.vue'),
       meta: makeMetaTags('About moshi'),
     },
     { // Page not found, any non-defined routes will land here
       path: routePaths.notFound,
       name: '404',
-      component: () => import('./views/404.vue'),
+      component: () => import('../src/views/404.vue'),
       meta: makeMetaTags('404 Not Found'),
       beforeEnter: (to, from, next) => {
         if (to.redirectedFrom) { // Log error, if redirected here from another route

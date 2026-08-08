@@ -18,13 +18,16 @@
       </router-link>
     </div>
     <!-- Main content, section for each group of items -->
-    <div v-if="checkTheresData(sections)"
-      :class="`item-group-container `
-        + `orientation-${layout} `
-        + `item-size-${itemSizeBound} `
-        + (singleSectionView ? 'single-section-view ' : '')
-        + (colCount ? `col-count-${colCount} ` : '')"
-      >
+    <div
+      v-if="checkTheresData(sections)"
+      :class="
+        `item-group-container ` +
+        `orientation-${layout} ` +
+        `item-size-${itemSizeBound} ` +
+        (singleSectionView ? 'single-section-view ' : '') +
+        (colCount ? `col-count-${colCount} ` : '')
+      "
+    >
       <template v-for="(section, index) in filteredTiles">
         <Section
           :key="index"
@@ -39,31 +42,34 @@
           @itemClicked="finishedSearching()"
           @change-modal-visibility="updateModalVisibility"
           :class="
-          (searchValue && filterTiles(section.items, searchValue).length === 0) ? 'no-results' : ''"
+            searchValue && filterTiles(section.items, searchValue).length === 0
+              ? 'no-results'
+              : ''
+          "
         />
       </template>
     </div>
     <!-- Show message when there's no data to show -->
     <div v-if="checkIfResults()" class="no-data">
-      {{searchValue ? $t('home.no-results') : $t('home.no-data')}}
+      {{ searchValue ? $t("home.no-results") : $t("home.no-data") }}
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import HomeMixin from '@/mixins/HomeMixin';
-import SearchBar from '@/components/SearchBar.vue';
-import LayoutOptions from '@/components/LayoutOptions/LayoutOptions.vue';
-import Section from '@/components/LinkItems/Section.vue';
-import { localStorageKeys } from '@/utils/defaults';
-import ErrorHandler from '@/utils/ErrorHandler';
-import BackIcon from '@/assets/interface-icons/back-arrow.svg';
-import { useAppStore } from '@/store';
-import { Item, Section as SectionType } from '@/types';
+import { defineComponent } from "vue";
+import HomeMixin from "@/mixins/HomeMixin";
+import SearchBar from "@/components/SearchBar.vue";
+import LayoutOptions from "@/components/LayoutOptions/LayoutOptions.vue";
+import Section from "@/components/LinkItems/Section.vue";
+import { localStorageKeys } from "@/utils/defaults";
+import ErrorHandler from "@/utils/ErrorHandler";
+import BackIcon from "@/assets/interface-icons/back-arrow.svg";
+import { useAppStore } from "@/store/modules/appStore";
+import { Item, Section as SectionType } from "@/types/types";
 
 export default defineComponent({
-  name: 'home',
+  name: "home",
   mixins: [HomeMixin],
   components: {
     SearchBar,
@@ -72,17 +78,22 @@ export default defineComponent({
     BackIcon,
   },
   data: () => ({
-    layout: '',
-    itemSizeBound: '',
+    layout: "",
+    itemSizeBound: "",
   }),
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     /* Whether or not to show the search bar, based on user config */
     searchVisible() {
       return this.appStore.visibleComponents.searchBar;
     },
     singleSectionView() {
-      return this.findSingleSection(this.appStore.sections, this.$route.params.section);
+      return this.findSingleSection(
+        this.appStore.sections,
+        this.$route.params.section,
+      );
     },
     /* Get class for num columns, if specified by user */
     colCount(): number | null {
@@ -95,7 +106,9 @@ export default defineComponent({
     /* Return all sections, that match users search term */
     filteredTiles() {
       const sections = this.singleSectionView || this.sections;
-      return sections.filter((section: SectionType) => this.filterTiles(section.items, this.searchValue));
+      return sections.filter((section: SectionType) =>
+        this.filterTiles(section.items, this.searchValue),
+      );
     },
     /* Updates layout (when button clicked), and saves in local storage */
     layoutOrientation() {
@@ -126,16 +139,21 @@ export default defineComponent({
       return !section.displayData ? {} : section.displayData;
     },
     /* If on sub-route, and section exists, then return only that section */
-    findSingleSection: (allSections: SectionType[], sectionTitle: string): SectionType[] | undefined => {
+    findSingleSection: (
+      allSections: SectionType[],
+      sectionTitle: string,
+    ): SectionType[] | undefined => {
       if (!sectionTitle) return undefined;
       let sectionToReturn: SectionType[] | undefined;
-      const parse = (section: string) => section.replaceAll(' ', '-').toLowerCase().trim();
+      const parse = (section: string) =>
+        section.replaceAll(" ", "-").toLowerCase().trim();
       allSections.forEach((section) => {
-        if (parse(sectionTitle) === parse(section.name || '')) {
+        if (parse(sectionTitle) === parse(section.name || "")) {
           sectionToReturn = [section];
         }
       });
-      if (!sectionToReturn) ErrorHandler(`No section named '${sectionTitle}' was found`);
+      if (!sectionToReturn)
+        ErrorHandler(`No section named '${sectionTitle}' was found`);
       return sectionToReturn;
     },
   },
@@ -149,8 +167,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/media-queries' as *;
-@use '@/styles/style-helpers' as *;
+@use "@/styles/media-queries" as *;
+@use "@/styles/style-helpers" as *;
 
 .home {
   padding-bottom: 1px;
@@ -164,7 +182,9 @@ export default defineComponent({
   padding: 0.25rem;
   margin: 0.25rem;
   @extend .svg-button;
-  svg { margin-right: 0.5rem; }
+  svg {
+    margin-right: 0.5rem;
+  }
   text-decoration: none;
 }
 
@@ -205,39 +225,83 @@ export default defineComponent({
       flex-direction: row;
     }
   }
-  &.orientation-horizontal, &.orientation-vertical, &.single-section-view {
-    @include phone { --content-max-width: 100%; }
-    @include tablet { --content-max-width: 98%; }
-    @include laptop { --content-max-width: 90%; }
-    @include monitor { --content-max-width: 85%; }
-    @include big-screen { --content-max-width: 80%; }
-    @include big-screen-up { --content-max-width: 60%; }
+  &.orientation-horizontal,
+  &.orientation-vertical,
+  &.single-section-view {
+    @include phone {
+      --content-max-width: 100%;
+    }
+    @include tablet {
+      --content-max-width: 98%;
+    }
+    @include laptop {
+      --content-max-width: 90%;
+    }
+    @include monitor {
+      --content-max-width: 85%;
+    }
+    @include big-screen {
+      --content-max-width: 80%;
+    }
+    @include big-screen-up {
+      --content-max-width: 60%;
+    }
     max-width: var(--content-max-width, 90%);
   }
 
   /* Specify number of columns, based on screen size or user preference */
-  @include phone { --col-count: 1; }
-  @include tablet { --col-count: 2; }
-  @include laptop { --col-count: 2; }
-  @include monitor { --col-count: 3; }
-  @include big-screen { --col-count: 4; }
-  @include big-screen-up { --col-count: 5; }
+  @include phone {
+    --col-count: 1;
+  }
+  @include tablet {
+    --col-count: 2;
+  }
+  @include laptop {
+    --col-count: 2;
+  }
+  @include monitor {
+    --col-count: 3;
+  }
+  @include big-screen {
+    --col-count: 4;
+  }
+  @include big-screen-up {
+    --col-count: 5;
+  }
 
   @include tablet-up {
-    &.col-count-1 { --col-count: 1; }
-    &.col-count-2 { --col-count: 2; }
-    &.col-count-3 { --col-count: 3; }
-    &.col-count-4 { --col-count: 4; }
-    &.col-count-5 { --col-count: 5; }
-    &.col-count-6 { --col-count: 6; }
-    &.col-count-7 { --col-count: 7; }
-    &.col-count-8 { --col-count: 8; }
+    &.col-count-1 {
+      --col-count: 1;
+    }
+    &.col-count-2 {
+      --col-count: 2;
+    }
+    &.col-count-3 {
+      --col-count: 3;
+    }
+    &.col-count-4 {
+      --col-count: 4;
+    }
+    &.col-count-5 {
+      --col-count: 5;
+    }
+    &.col-count-6 {
+      --col-count: 6;
+    }
+    &.col-count-7 {
+      --col-count: 7;
+    }
+    &.col-count-8 {
+      --col-count: 8;
+    }
   }
 
   grid-template-columns: repeat(var(--col-count, 2), minmax(0, 1fr));
 
   /* Hide when search term returns nothing */
-  .no-results { display: none !important; }
+  .no-results {
+    display: none !important;
+  }
 
   /* When in single-section view mode */
   &.single-section-view {
@@ -247,13 +311,12 @@ export default defineComponent({
 
 /* Custom styles only applied when there is no sections in config */
 .no-data {
-    font-size: 2rem;
-    color: var(--background);
-    background: #ffffffeb;
-    width: fit-content;
-    margin: 2rem auto;
-    padding: 0.5rem 1rem;
-    border-radius: var(--curve-factor);
+  font-size: 2rem;
+  color: var(--background);
+  background: #ffffffeb;
+  width: fit-content;
+  margin: 2rem auto;
+  padding: 0.5rem 1rem;
+  border-radius: var(--curve-factor);
 }
-
 </style>

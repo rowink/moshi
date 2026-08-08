@@ -11,26 +11,32 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import HomeMixin from '@/mixins/HomeMixin';
-import SideBar from '@/components/Workspace/SideBar.vue';
-import WebContent from '@/components/Workspace/WebContent.vue';
-import MultiTaskingWebComtent from '@/components/Workspace/MultiTaskingWebComtent.vue';
-import Defaults from '@/utils/defaults';
-import { GetTheme, ApplyLocalTheme, ApplyCustomVariables } from '@/utils/ThemeHelper';
-import { useAppStore } from '@/store';
+import { defineComponent } from "vue";
+import HomeMixin from "@/mixins/HomeMixin";
+import SideBar from "@/components/Workspace/SideBar.vue";
+import WebContent from "@/components/Workspace/WebContent.vue";
+import MultiTaskingWebComtent from "@/components/Workspace/MultiTaskingWebComtent.vue";
+import Defaults from "@/utils/defaults";
+import {
+  GetTheme,
+  ApplyLocalTheme,
+  ApplyCustomVariables,
+} from "@/utils/ThemeHelper";
+import { useAppStore } from "@/store/modules/appStore";
 
 export default defineComponent({
-  name: 'Workspace',
+  name: "Workspace",
   mixins: [HomeMixin],
   data: () => ({
-    url: '',
+    url: "",
     GetTheme,
     ApplyLocalTheme,
     ApplyCustomVariables,
   }),
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     sections() {
       return this.appStore.sections;
     },
@@ -48,16 +54,19 @@ export default defineComponent({
   },
   methods: {
     launchApp(options: Record<string, any>) {
-      if (options.target === 'newtab') {
-        window.open(options.url, '_blank');
+      if (options.target === "newtab") {
+        window.open(options.url, "_blank");
       } else {
         this.url = options.url;
       }
     },
     initiateFontAwesome() {
-      const fontAwesomeScript = document.createElement('script');
+      const fontAwesomeScript = document.createElement("script");
       const faKey = this.appConfig.fontAwesomeKey || Defaults.fontAwesomeKey;
-      fontAwesomeScript.setAttribute('src', `https://kit.fontawesome.com/${faKey}.js`);
+      fontAwesomeScript.setAttribute(
+        "src",
+        `https://kit.fontawesome.com/${faKey}.js`,
+      );
       document.head.appendChild(fontAwesomeScript);
     },
     /* Returns a service URL, if set as a URL param, or if user has specified landing URL */
@@ -77,7 +86,6 @@ export default defineComponent({
     this.url = this.getInitialUrl();
   },
 });
-
 </script>
 
 <style scoped lang="scss">

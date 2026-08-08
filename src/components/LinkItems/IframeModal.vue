@@ -1,28 +1,41 @@
 <template>
-  <modal :name="name" :resizable="true" width="80%" height="80%" @closed="modalClosed()"
-    classes="dashy-modal">
+  <modal
+    :name="name"
+    :resizable="true"
+    width="80%"
+    height="80%"
+    @closed="modalClosed()"
+    classes="dashy-modal"
+  >
     <div slot="top-right" @click="hide()">Close</div>
     <a @click="hide()" class="close-button" title="Close">x</a>
-    <iframe v-if="url" :src="url" @keydown.esc="close" class="frame"
-      allow="fullscreen; clipboard-write" />
+    <iframe
+      v-if="url"
+      :src="url"
+      @keydown.esc="close"
+      class="frame"
+      allow="fullscreen; clipboard-write"
+    />
     <div v-else class="no-url">No URL Specified</div>
   </modal>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useAppStore } from '@/store';
+import { defineComponent } from "vue";
+import { useAppStore } from "@/store/modules/appStore";
 
 export default defineComponent({
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
   },
-  name: 'IframeModal',
+  name: "IframeModal",
   props: {
     name: String,
   },
   data: () => ({
-    url: '#',
+    url: "#",
   }),
   methods: {
     show(url: string) {
@@ -45,7 +58,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-
 .frame {
   width: 100%;
   height: 100%;
@@ -77,7 +89,5 @@ export default defineComponent({
     background: var(--background);
     color: var(--primary);
   }
-
 }
-
 </style>

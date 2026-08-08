@@ -1,40 +1,42 @@
 <template>
-    <div class="nav-outer" v-if="allLinks && allLinks.length > 0">
-      <IconBurger
-        :class="`burger ${!navVisible ? 'visible' : ''}`"
-        @click="navVisible = !navVisible"
-      />
-      <nav id="nav" v-if="navVisible">
-        <!-- Render either router-link or anchor, depending if internal / external link -->
-        <template v-for="(link, index) in allLinks">
-          <router-link v-if="!isUrl(link.path)"
-            :key="index"
-            :to="link.path"
-            class="nav-item"
-          >{{link.title}}
-          </router-link>
-          <a v-else
-            :key="index"
-            :href="link.path"
-            :target="determineTarget(link)"
-            class="nav-item"
-            rel="noopener noreferrer"
-          >{{link.title}}
-          </a>
-        </template>
-      </nav>
-    </div>
+  <div class="nav-outer" v-if="allLinks && allLinks.length > 0">
+    <IconBurger
+      :class="`burger ${!navVisible ? 'visible' : ''}`"
+      @click="navVisible = !navVisible"
+    />
+    <nav id="nav" v-if="navVisible">
+      <!-- Render either router-link or anchor, depending if internal / external link -->
+      <template v-for="(link, index) in allLinks">
+        <router-link
+          v-if="!isUrl(link.path)"
+          :key="index"
+          :to="link.path"
+          class="nav-item"
+          >{{ link.title }}
+        </router-link>
+        <a
+          v-else
+          :key="index"
+          :href="link.path"
+          :target="determineTarget(link)"
+          class="nav-item"
+          rel="noopener noreferrer"
+          >{{ link.title }}
+        </a>
+      </template>
+    </nav>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import IconBurger from '@/assets/interface-icons/burger-menu.svg';
-import { makePageSlug } from '@/utils/ConfigHelpers';
-import { useAppStore } from '@/store';
-import { NavLink as NavLinkType } from '@/types';
+import { defineComponent, PropType } from "vue";
+import IconBurger from "@/assets/interface-icons/burger-menu.svg";
+import { makePageSlug } from "@/utils/ConfigHelpers";
+import { useAppStore } from "@/store/modules/appStore";
+import { NavLink as NavLinkType } from "@/types/types";
 
 export default defineComponent({
-  name: 'Nav',
+  name: "Nav",
   components: {
     IconBurger,
   },
@@ -49,13 +51,17 @@ export default defineComponent({
     isMobile: false,
   }),
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     /* Get links to sub-pages, and combine with nav-links */
     allLinks() {
-      const subPages = this.appStore.pages.map((subPage: Record<string, any>) => ({
-        path: makePageSlug(subPage.name, 'home'),
-        title: subPage.name,
-      }));
+      const subPages = this.appStore.pages.map(
+        (subPage: Record<string, any>) => ({
+          path: makePageSlug(subPage.name, "home"),
+          title: subPage.name,
+        }),
+      );
       const navLinks = this.links || [];
       return [...navLinks, ...subPages];
     },
@@ -69,15 +75,21 @@ export default defineComponent({
       const screenWidth = document.body.clientWidth;
       return !!(screenWidth && screenWidth < 600);
     },
-    isUrl: (str: string | undefined) => new RegExp(/(http|https):\/\/(\S+)(:[0-9]+)?/).test(str as string),
+    isUrl: (str: string | undefined) =>
+      new RegExp(/(http|https):\/\/(\S+)(:[0-9]+)?/).test(str as string),
     determineTarget(link: NavLinkType) {
-      if (!link.target) return '_blank';
+      if (!link.target) return "_blank";
       switch (link.target) {
-        case 'sametab': return '_self';
-        case 'newtab': return '_blank';
-        case 'parent': return '_parent';
-        case 'top': return '_top';
-        default: return undefined;
+        case "sametab":
+          return "_self";
+        case "newtab":
+          return "_blank";
+        case "parent":
+          return "_parent";
+        case "top":
+          return "_top";
+        default:
+          return undefined;
       }
     },
   },
@@ -85,8 +97,8 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@use '@/styles/style-helpers' as *;
-@use '@/styles/media-queries' as *;
+@use "@/styles/style-helpers" as *;
+@use "@/styles/media-queries" as *;
 
 .nav-outer {
   nav {
@@ -106,7 +118,8 @@ export default defineComponent({
       background: var(--nav-link-background-color);
       border: 1px solid var(--nav-link-border-color);
       text-decoration: none;
-      &.router-link-active, &:hover {
+      &.router-link-active,
+      &:hover {
         color: var(--nav-link-text-color-hover);
         background: var(--nav-link-background-color-hover);
         border: 1px solid var(--nav-link-border-color-hover);
@@ -118,13 +131,18 @@ export default defineComponent({
   @extend .svg-button;
   @include phone {
     width: 100%;
-    nav { flex-wrap: wrap; }
+    nav {
+      flex-wrap: wrap;
+    }
   }
   .burger {
     display: none;
-    &.visible { display: block; }
-    @include phone { display: block; }
+    &.visible {
+      display: block;
+    }
+    @include phone {
+      display: block;
+    }
   }
 }
-
 </style>

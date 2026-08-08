@@ -7,10 +7,14 @@
       </router-link>
       <MinimalSearch
         @user-is-searchin="handleSearchInput"
-        :active="!modalOpen" ref="filterComp" />
+        :active="!modalOpen"
+        ref="filterComp"
+      />
     </div>
-    <div v-if="checkTheresData(sections)"
-      :class="`item-group-container ${!tabbedView ? 'showing-all' : ''}`">
+    <div
+      v-if="checkTheresData(sections)"
+      :class="`item-group-container ${!tabbedView ? 'showing-all' : ''}`"
+    >
       <!-- Section heading buttons -->
       <MinimalHeading
         v-for="(section, index) in getSections(sections)"
@@ -40,24 +44,24 @@
         @change-modal-visibility="updateModalVisibility"
       />
       <div v-if="checkIfResults()" class="no-data">
-        {{searchValue ? $t('home.no-results') : $t('home.no-data')}}
+        {{ searchValue ? $t("home.no-results") : $t("home.no-data") }}
       </div>
     </div>
-    <div v-else class="no-data"> {{ $t('home.no-data') }} </div>
+    <div v-else class="no-data">{{ $t("home.no-data") }}</div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import HomeMixin from '@/mixins/HomeMixin';
-import MinimalSection from '@/components/MinimalView/MinimalSection.vue';
-import MinimalHeading from '@/components/MinimalView/MinimalHeading.vue';
-import MinimalSearch from '@/components/MinimalView/MinimalSearch.vue';
-import { localStorageKeys } from '@/utils/defaults';
-import { Section as SectionType } from '@/types';
+import { defineComponent } from "vue";
+import HomeMixin from "@/mixins/HomeMixin";
+import MinimalSection from "@/components/MinimalView/MinimalSection.vue";
+import MinimalHeading from "@/components/MinimalView/MinimalHeading.vue";
+import MinimalSearch from "@/components/MinimalView/MinimalSearch.vue";
+import { localStorageKeys } from "@/utils/defaults";
+import { Section as SectionType } from "@/types/types";
 
 export default defineComponent({
-  name: 'home',
+  name: "home",
   mixins: [HomeMixin],
   components: {
     MinimalSection,
@@ -65,7 +69,7 @@ export default defineComponent({
     MinimalSearch,
   },
   data: () => ({
-    layout: '',
+    layout: "",
     selectedSection: 0, // The index of currently selected section
     tabbedView: true, // By default use tabs, when searching then show all instead
   }),
@@ -118,7 +122,7 @@ export default defineComponent({
       if (this.appConfig && this.appConfig.backgroundImg) {
         return `background: url('${this.appConfig.backgroundImg}') no-repeat center fixed;background-size:cover;`;
       }
-      return '';
+      return "";
     },
   },
   mounted() {
@@ -130,8 +134,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/media-queries' as *;
-@use '@/styles/style-helpers' as *;
+@use "@/styles/media-queries" as *;
+@use "@/styles/style-helpers" as *;
 
 .minimal-home {
   display: flex;
@@ -175,20 +179,20 @@ export default defineComponent({
   }
 }
 
- @include phone {
-   .item-group-container {
+@include phone {
+  .item-group-container {
     display: flex;
     flex-direction: column;
-   }
+  }
 }
 
 .no-data {
-    font-size: 2rem;
-    color: var(--minimal-view-background-color);
-    background: #ffffffeb;
-    width: fit-content;
-    margin: 2rem auto;
-    padding: 0.5rem 1rem;
-    border-radius: var(--curve-factor);
+  font-size: 2rem;
+  color: var(--minimal-view-background-color);
+  background: #ffffffeb;
+  width: fit-content;
+  margin: 2rem auto;
+  padding: 0.5rem 1rem;
+  border-radius: var(--curve-factor);
 }
 </style>

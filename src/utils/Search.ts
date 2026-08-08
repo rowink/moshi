@@ -1,8 +1,8 @@
 /* moshi: Licensed under MIT, (C) 2021 */
 
 /* Tile filtering utility */
-import ErrorHandler from '@/utils/ErrorHandler';
-import type { Item } from '@/types';
+import ErrorHandler from "@/utils/ErrorHandler";
+import type { Item } from "@/types/types";
 
 /**
  * Extracts the site name from domain
@@ -10,10 +10,11 @@ import type { Item } from '@/types';
  * @returns The hostname from URL
  */
 const getDomainFromUrl = (url?: string): string => {
-  if (!url) return '';
-  const urlPattern = /^(?:https?:\/\/)?(?:w{3}\.)?([a-z\d.-]+)\.(?:[a-z.]{2,10})(?:[/\w.-]*)*/;
+  if (!url) return "";
+  const urlPattern =
+    /^(?:https?:\/\/)?(?:w{3}\.)?([a-z\d.-]+)\.(?:[a-z.]{2,10})(?:[/\w.-]*)*/;
   const domainPattern = urlPattern.exec(url);
-  return domainPattern ? domainPattern[1] : '';
+  return domainPattern ? domainPattern[1] : "";
 };
 
 /**
@@ -25,8 +26,16 @@ const getDomainFromUrl = (url?: string): string => {
  */
 const filterHelper = (compareStr: unknown, searchStr: string): boolean => {
   if (!compareStr) return false;
-  const process = (input: unknown) => (input ? input.toString().toLowerCase().replace(/[^\w\s]/gi, '') : '');
-  return process(searchStr).split(/\s/).every(word => process(compareStr).includes(word));
+  const process = (input: unknown) =>
+    input
+      ? input
+          .toString()
+          .toLowerCase()
+          .replace(/[^\w\s]/gi, "")
+      : "";
+  return process(searchStr)
+    .split(/\s/)
+    .every((word) => process(compareStr).includes(word));
 };
 
 /**
@@ -41,19 +50,22 @@ export const searchTiles = (allTiles: Item[], searchTerm: string): Item[] => {
   if (!searchTerm) return allTiles; // If no search term, then return all
   if (!allTiles) return []; // If no data, then skip
   return allTiles.filter((tile) => {
-    const {
-      title, description, provider, url, tags,
-    } = tile;
-    return filterHelper(title, searchTerm)
-      || filterHelper(provider, searchTerm)
-      || filterHelper(description, searchTerm)
-      || filterHelper(tags, searchTerm)
-      || filterHelper(getDomainFromUrl(url), searchTerm);
+    const { title, description, provider, url, tags } = tile;
+    return (
+      filterHelper(title, searchTerm) ||
+      filterHelper(provider, searchTerm) ||
+      filterHelper(description, searchTerm) ||
+      filterHelper(tags, searchTerm) ||
+      filterHelper(getDomainFromUrl(url), searchTerm)
+    );
   });
 };
 
 /* From a list of search bangs, return the URL associated with it */
-export const getSearchEngineFromBang = (searchQuery: string, bangList: Record<string, string>): string | undefined => {
+export const getSearchEngineFromBang = (
+  searchQuery: string,
+  bangList: Record<string, string>,
+): string | undefined => {
   const bangNames = Object.keys(bangList);
   const foundBang = bangNames.find((bang) => searchQuery.includes(bang));
   return foundBang ? bangList[foundBang] : undefined;
@@ -65,20 +77,29 @@ export const findUrlForSearchEngine = (
   availableSearchEngines: Record<string, string>,
 ): string | undefined => {
   // If missing search engine, report error return false
-  if (!searchEngine) { ErrorHandler('No search engine specified'); return undefined; }
+  if (!searchEngine) {
+    ErrorHandler("No search engine specified");
+    return undefined;
+  }
   // If search engine is already a URL, then return it
-  if ((/(http|https):\/\/[^]*/).test(searchEngine)) return searchEngine;
+  if (/(http|https):\/\/[^]*/.test(searchEngine)) return searchEngine;
   // If search engine was found successfully, return the URL
-  if (availableSearchEngines[searchEngine]) return availableSearchEngines[searchEngine];
+  if (availableSearchEngines[searchEngine])
+    return availableSearchEngines[searchEngine];
   // Otherwise, there's been an error, log it and return false
   ErrorHandler(`Specified Search Engine was not Found: '${searchEngine}'`);
   return undefined;
 };
 
 /* Removes all known bangs from a search query */
-export const stripBangs = (searchQuery: string, bangList?: Record<string, string>): string => {
+export const stripBangs = (
+  searchQuery: string,
+  bangList?: Record<string, string>,
+): string => {
   const bangNames = Object.keys(bangList || {});
   let q = searchQuery;
-  bangNames.forEach((bang) => { q = q.replace(bang, ''); });
+  bangNames.forEach((bang) => {
+    q = q.replace(bang, "");
+  });
   return q.trim();
 };

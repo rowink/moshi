@@ -13,15 +13,15 @@
 </template>
 
 <script lang="ts">
-import LayoutSelector from '@/components/LayoutOptions/LayoutSelector.vue';
-import IconSizeSelector from '@/components/LayoutOptions/IconSizeSelector.vue';
-import ViewSwitcher from '@/components/LayoutOptions/ViewSwitcher.vue';
-import IconViewMode from '@/assets/interface-icons/application-change-view.svg';
-import { useAppStore } from '@/store';
-import { defineComponent } from 'vue';
+import LayoutSelector from "@/components/LayoutOptions/LayoutSelector.vue";
+import IconSizeSelector from "@/components/LayoutOptions/IconSizeSelector.vue";
+import ViewSwitcher from "@/components/LayoutOptions/ViewSwitcher.vue";
+import IconViewMode from "@/assets/interface-icons/application-change-view.svg";
+import { useAppStore } from "@/store/modules/appStore";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'LayoutOptions',
+  name: "LayoutOptions",
   components: {
     LayoutSelector,
     IconSizeSelector,
@@ -32,11 +32,17 @@ export default defineComponent({
     viewSwitcherOpen: false,
   }),
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     /* Current layout orientation, from app config */
-    displayLayout() { return this.appStore.layout; },
+    displayLayout() {
+      return this.appStore.layout;
+    },
     /* Current item size, from app config */
-    iconSize() { return this.appStore.iconSize; },
+    iconSize() {
+      return this.appStore.iconSize;
+    },
   },
   methods: {
     openChangeViewMenu() {
@@ -46,14 +52,13 @@ export default defineComponent({
       this.viewSwitcherOpen = false;
     },
     tooltip(content: string) {
-      return { content, trigger: 'hover focus', delay: 250 };
+      return { content, trigger: "hover focus", delay: 250 };
     },
   },
 });
 </script>
 
 <style scoped lang="scss">
-
 .layout-options {
   display: flex;
   flex-direction: row;
@@ -72,11 +77,12 @@ export default defineComponent({
     border: 1px solid currentColor;
     border-radius: var(--curve-factor);
     cursor: pointer;
-    path { fill: var(--settings-text-color); }
+    path {
+      fill: var(--settings-text-color);
+    }
     &:hover {
       opacity: 0.7;
     }
   }
 }
-
 </style>

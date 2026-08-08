@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span class="options-label">{{ $t('settings.item-size-label') }}</span>
+    <span class="options-label">{{ $t("settings.item-size-label") }}</span>
     <div class="display-options">
       <IconSmall
         @click="updateIconSize('small')"
@@ -25,17 +25,19 @@
 </template>
 
 <script lang="ts">
-import IconSmall from '@/assets/interface-icons/icon-size-small.svg';
-import IconMedium from '@/assets/interface-icons/icon-size-medium.svg';
-import IconLarge from '@/assets/interface-icons/icon-size-large.svg';
-import { useAppStore } from '@/store';
-import { defineComponent } from 'vue';
+import IconSmall from "@/assets/interface-icons/icon-size-small.svg";
+import IconMedium from "@/assets/interface-icons/icon-size-medium.svg";
+import IconLarge from "@/assets/interface-icons/icon-size-large.svg";
+import { useAppStore } from "@/store/modules/appStore";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
   },
-  name: 'IconSizeSelector',
+  name: "IconSizeSelector",
   props: {
     iconSize: String,
   },
@@ -49,14 +51,13 @@ export default defineComponent({
       this.appStore.setItemSize(iconSize);
     },
     tooltip(content: string) {
-      return { content, trigger: 'hover focus', delay: 250 };
+      return { content, trigger: "hover focus", delay: 250 };
     },
   },
 });
 </script>
 
 <style scoped lang="scss">
-
 span.options-label {
   color: var(--settings-text-color);
 }
@@ -76,11 +77,13 @@ span.options-label {
     border: 1px solid currentColor;
     border-radius: var(--curve-factor);
     cursor: pointer;
-    &:hover, &.selected {
+    &:hover,
+    &.selected {
       background: var(--settings-text-color);
-      path { fill: var(--background); }
+      path {
+        fill: var(--background);
+      }
     }
   }
 }
-
 </style>

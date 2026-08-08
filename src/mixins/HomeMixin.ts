@@ -1,12 +1,16 @@
 /**
  * Mixin for all homepages (default home, minimal home, workspace, etc)
  */
-import { defineComponent, PropType } from 'vue';
-import Defaults, { localStorageKeys, iconCdns } from '@/utils/defaults';
-import { searchTiles } from '@/utils/Search';
-import { GetTheme, ApplyLocalTheme, ApplyCustomVariables } from '@/utils/ThemeHelper';
-import { useAppStore } from '@/store';
-import { Item, Section } from '@/types';
+import { defineComponent, PropType } from "vue";
+import Defaults, { localStorageKeys, iconCdns } from "@/utils/defaults";
+import { searchTiles } from "@/utils/Search";
+import {
+  GetTheme,
+  ApplyLocalTheme,
+  ApplyCustomVariables,
+} from "@/utils/ThemeHelper";
+import { useAppStore } from "@/store/modules/appStore";
+import { Item, Section } from "@/types/types";
 
 interface SubPageInfo {
   pageId?: string;
@@ -20,7 +24,9 @@ const HomeMixin = defineComponent({
     },
   },
   computed: {
-    appStore() { return useAppStore(); },
+    appStore() {
+      return useAppStore();
+    },
     sections() {
       return this.appStore.sections;
     },
@@ -34,11 +40,13 @@ const HomeMixin = defineComponent({
       return this.appStore.modalOpen;
     },
     pageId() {
-      return (this.subPageInfo && this.subPageInfo.pageId) ? this.subPageInfo.pageId : 'home';
+      return this.subPageInfo && this.subPageInfo.pageId
+        ? this.subPageInfo.pageId
+        : "home";
     },
   },
   data: () => ({
-    searchValue: '',
+    searchValue: "",
   }),
   async mounted() {
     await this.getConfigForRoute();
@@ -54,15 +62,17 @@ const HomeMixin = defineComponent({
     async getConfigForRoute() {
       this.appStore.setCurrentSubPage(this.subPageInfo);
       const confPath = this.subPageInfo && this.subPageInfo.confPath;
-      if (confPath) { // Get config for sub-page
+      if (confPath) {
+        // Get config for sub-page
         await this.appStore.initializeMultiPageConfig(confPath);
-      } else { // Otherwise, use main config
+      } else {
+        // Otherwise, use main config
         this.appStore.useMainConfig();
       }
     },
     /* TEMPORARY: If on sub-page, check if custom theme is set and return it */
     getSubPageTheme(): string | null {
-      if (!this.pageId || this.pageId === 'home') {
+      if (!this.pageId || this.pageId === "home") {
         return null;
       } else {
         const themeStoreKey = `${localStorageKeys.THEME}-${this.pageId}`;
@@ -79,12 +89,15 @@ const HomeMixin = defineComponent({
     },
     /* Updates local data with search value, triggered from filter comp */
     searching(searchValue: string) {
-      this.searchValue = searchValue || '';
+      this.searchValue = searchValue || "";
     },
     /* Returns true if there is one or more sections in the config */
     checkTheresData(sections: Section[] | undefined) {
       const localSections = localStorage[localStorageKeys.CONF_SECTIONS];
-      return (sections && sections.length >= 1) || (localSections && localSections.length >= 1);
+      return (
+        (sections && sections.length >= 1) ||
+        (localSections && localSections.length >= 1)
+      );
     },
     /* Returns only the tiles that match the users search query */
     filterTiles(allTiles: Item[] | undefined, _searchTerm?: string): Item[] {
@@ -98,7 +111,8 @@ const HomeMixin = defineComponent({
       if (!this.sections) return false;
       let isNeeded = false; // Will be set to true if prefix found in icon name
       this.sections.forEach((section: Section) => {
-        if (section && section.icon && section.icon.includes(prefix)) isNeeded = true;
+        if (section && section.icon && section.icon.includes(prefix))
+          isNeeded = true;
         if (section && section.items) {
           section.items.forEach((item: Item) => {
             if (item.icon && item.icon.includes(prefix)) isNeeded = true;
@@ -111,17 +125,17 @@ const HomeMixin = defineComponent({
     checkIfFontAwesomeNeeded() {
       if (this.appConfig.enableFontAwesome === false) return false;
       if (this.appConfig.enableFontAwesome) return true;
-      let isNeeded = this.checkIfIconLibraryNeeded('fa-');
+      let isNeeded = this.checkIfIconLibraryNeeded("fa-");
       const currentTheme = localStorage[localStorageKeys.THEME]; // Some themes require FA
-      if (['material', 'material-dark'].includes(currentTheme)) isNeeded = true;
+      if (["material", "material-dark"].includes(currentTheme)) isNeeded = true;
       return isNeeded;
     },
     /* Injects font-awesome's script tag, only if needed */
     initiateFontAwesome() {
       if (this.checkIfFontAwesomeNeeded()) {
-        const fontAwesomeScript = document.createElement('script');
+        const fontAwesomeScript = document.createElement("script");
         const faKey = this.appConfig.fontAwesomeKey || Defaults.fontAwesomeKey;
-        fontAwesomeScript.setAttribute('src', `${iconCdns.fa}/${faKey}.js`);
+        fontAwesomeScript.setAttribute("src", `${iconCdns.fa}/${faKey}.js`);
         document.head.appendChild(fontAwesomeScript);
       }
     },
@@ -129,14 +143,14 @@ const HomeMixin = defineComponent({
     checkIfMdiNeeded() {
       const userOverride = this.appConfig.enableMaterialDesignIcons;
       if (userOverride === false) return false;
-      return userOverride || this.checkIfIconLibraryNeeded('mdi-');
+      return userOverride || this.checkIfIconLibraryNeeded("mdi-");
     },
     /* Injects Material Design Icons, only if needed */
     initiateMaterialDesignIcons() {
       if (this.checkIfMdiNeeded()) {
-        const mdiStylesheet = document.createElement('link');
-        mdiStylesheet.setAttribute('rel', 'stylesheet');
-        mdiStylesheet.setAttribute('href', iconCdns.mdi);
+        const mdiStylesheet = document.createElement("link");
+        mdiStylesheet.setAttribute("rel", "stylesheet");
+        mdiStylesheet.setAttribute("href", iconCdns.mdi);
         document.head.appendChild(mdiStylesheet);
       }
     },
@@ -146,7 +160,8 @@ const HomeMixin = defineComponent({
       else {
         let itemsFound = true;
         this.sections.forEach((section: Section) => {
-          if (this.filterTiles(section.items, this.searchValue).length > 0) itemsFound = false;
+          if (this.filterTiles(section.items, this.searchValue).length > 0)
+            itemsFound = false;
         });
         return itemsFound;
       }
@@ -156,14 +171,15 @@ const HomeMixin = defineComponent({
       if (this.appConfig && this.appConfig.backgroundImg) {
         return `background: url('${this.appConfig.backgroundImg}') no-repeat center fixed;background-size:cover;`;
       }
-      return '';
+      return "";
     },
     /* Extracts the site name from domain, used for the searching functionality */
     getDomainFromUrl(url: string) {
-      if (!url) return '';
-      const urlPattern = /^(?:https?:\/\/)?(?:w{3}\.)?([a-z\d.-]+)\.(?:[a-z.]{2,10})(?:[/\w.-]*)*/;
+      if (!url) return "";
+      const urlPattern =
+        /^(?:https?:\/\/)?(?:w{3}\.)?([a-z\d.-]+)\.(?:[a-z.]{2,10})(?:[/\w.-]*)*/;
       const domainPattern = url.match(urlPattern);
-      return domainPattern ? domainPattern[1] : '';
+      return domainPattern ? domainPattern[1] : "";
     },
   },
 });
