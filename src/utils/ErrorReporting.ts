@@ -9,8 +9,8 @@
 
 /* eslint-disable global-require */
 
-import ConfigAccumulator from "@/utils/ConfigAccumalator";
-import { sentryDsn } from "@/utils/defaults";
+import ConfigAccumulator from "@/config/ConfigAccumalator";
+import { sentryDsn } from "@/config/defaults";
 import type { App } from "vue";
 import type { Router } from "vue-router";
 

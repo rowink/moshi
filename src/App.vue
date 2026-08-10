@@ -16,7 +16,7 @@ import ErrorHandler from "@/utils/ErrorHandler";
 import {
   localStorageKeys,
   language as defaultLanguage,
-} from "@/utils/defaults";
+} from "@/config/defaults";
 
 const appStore = useAppStore();
 const { availableLocales } = useI18n();

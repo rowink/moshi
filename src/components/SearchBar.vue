@@ -35,7 +35,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import router from "../router";
 import ArrowKeyNavigation from "@/utils/ArrowKeyNavigation";
 import ErrorHandler from "@/utils/ErrorHandler";
-import { getCustomKeyShortcuts } from "@/utils/ConfigHelpers";
+import { getCustomKeyShortcuts } from "@/config/ConfigHelpers";
 import { useAppStore } from "@/store/modules/appStore";
 import {
   getSearchEngineFromBang,
@@ -47,7 +47,7 @@ import {
   defaultSearchEngine,
   defaultSearchOpeningMethod,
   searchBangs as defaultSearchBangs,
-} from "@/utils/defaults";
+} from "@/config/defaults";
 
 defineProps({
   minimalSearch: Boolean, // If true, then keep it simple

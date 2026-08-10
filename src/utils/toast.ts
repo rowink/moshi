@@ -2,7 +2,7 @@
  * Lightweight toast notification provider.
  * Replaces vue-toasted, which is not compatible with Vue 3.
  */
-import { toastedOptions } from "@/utils/defaults";
+import { toastedOptions } from "@/config/defaults";
 
 const toastDuration = toastedOptions.duration || 2500;
 

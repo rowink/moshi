@@ -57,7 +57,7 @@ import { useHome } from "@/composables/useHome";
 import MinimalSection from "@/components/MinimalView/MinimalSection.vue";
 import MinimalHeading from "@/components/MinimalView/MinimalHeading.vue";
 import MinimalSearch from "@/components/MinimalView/MinimalSearch.vue";
-import { localStorageKeys } from "@/utils/defaults";
+import { localStorageKeys } from "@/config/defaults";
 import { Section as SectionType } from "@/types/types";
 
 const {

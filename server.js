@@ -30,7 +30,7 @@ const corsProxy = require('./services/cors-proxy'); // Enables API requests to C
 
 /* Helper functions, and default config */
 const printMessage = require('./services/print-message'); // Function to print welcome msg on start
-const ENDPOINTS = require('./src/utils/defaults').serviceEndpoints; // API endpoint URL paths
+const ENDPOINTS = require('./src/config/defaults').serviceEndpoints; // API endpoint URL paths
 
 /* Checks if app is running within a container, from env var */
 const isDocker = !!process.env.IS_DOCKER;
@@ -74,6 +74,13 @@ const app = express()
   // Serves up static files
   .use(express.static(path.join(__dirname, 'dist')))
   .use(express.static(path.join(__dirname, 'public')))
+  // Serve config YAML files from src/config (they moved out of public/)
+  .get('/:configName.yml', (req, res) => {
+    const safeName = req.params.configName.replace(/[^a-zA-Z0-9-_]/g, '');
+    res.sendFile(path.join(__dirname, 'src', 'config', `${safeName}.yml`), (err) => {
+      if (err) res.status(404).end();
+    });
+  })
   // Load middlewares for parsing JSON, and supporting HTML5 history routing
   .use(express.json({ limit: '1mb' }))
   .use(history())

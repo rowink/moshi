@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { ref, computed, PropType } from "vue";
 import IconBurger from "@/assets/interface-icons/burger-menu.svg";
-import { makePageSlug } from "@/utils/ConfigHelpers";
+import { makePageSlug } from "@/config/ConfigHelpers";
 import { useAppStore } from "@/store/modules/appStore";
 import { NavLink as NavLinkType } from "@/types/types";
 

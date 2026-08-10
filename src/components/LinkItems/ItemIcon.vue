@@ -24,7 +24,7 @@ import {
   faviconApi as defaultFaviconApi,
   faviconApiEndpoints,
   iconCdns,
-} from "@/utils/defaults";
+} from "@/config/defaults";
 import { useAppStore } from "@/store/modules/appStore";
 import { computed, ref } from "vue";
 

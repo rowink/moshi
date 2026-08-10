@@ -1,6 +1,6 @@
 /* Helper functions for Sections and Items */
 
-import { hideFurnitureOn } from "@/utils/defaults";
+import { hideFurnitureOn } from "@/config/defaults";
 import type { Section } from "@/types/types";
 
 /* Returns false if page furniture should be hidden on said route */

@@ -1,14 +1,14 @@
-import ConfigAccumulator from "@/utils/ConfigAccumalator";
-import { languages } from "@/utils/languages";
+﻿import ConfigAccumulator from "@/config/ConfigAccumalator";
+import { languages } from "@/config/languages";
 import {
   visibleComponents,
   localStorageKeys,
   theme as defaultTheme,
   language as defaultLanguage,
-} from "@/utils/defaults";
+} from "@/config/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
-import ConfigSchema from "@/utils/ConfigSchema.json";
-import type { Language } from "@/utils/languages";
+import ConfigSchema from "@/config/ConfigSchema.json";
+import type { Language } from "@/config/languages";
 
 /* Given a page name, converts to lowercase, removes special characters and extension */
 export const makePageName = (pageName?: string): string => {

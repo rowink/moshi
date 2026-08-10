@@ -62,7 +62,7 @@ import { useHome } from "@/composables/useHome";
 import SearchBar from "@/components/SearchBar.vue";
 import LayoutOptions from "@/components/LayoutOptions/LayoutOptions.vue";
 import Section from "@/components/LinkItems/Section.vue";
-import { localStorageKeys } from "@/utils/defaults";
+import { localStorageKeys } from "@/config/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 import BackIcon from "@/assets/interface-icons/back-arrow.svg";
 import { Section as SectionType } from "@/types/types";

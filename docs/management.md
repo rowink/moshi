@@ -30,11 +30,11 @@ _The following article is a primer on managing self-hosted apps. It covers every
 
 Although not essential, you will most likely want to provide several assets to your running app.
 
-This is easy to do using [Docker Volumes](https://docs.docker.com/storage/volumes/), which lets you share a file or directory between your host system, and the container. Volumes are specified in the Docker run command, or Docker compose file, using the `--volume` or `-v` flags. The value of which consists of the path to the file / directory on your host system, followed by the destination path within the container. Fields are separated by a colon (`:`), and must be in the correct order. For example: `-v ~/alicia/my-local-conf.yml:/app/public/conf.yml`
+This is easy to do using [Docker Volumes](https://docs.docker.com/storage/volumes/), which lets you share a file or directory between your host system, and the container. Volumes are specified in the Docker run command, or Docker compose file, using the `--volume` or `-v` flags. The value of which consists of the path to the file / directory on your host system, followed by the destination path within the container. Fields are separated by a colon (`:`), and must be in the correct order. For example: `-v ~/alicia/my-local-conf.yml:/app/src/config/conf.yml`
 
 In Dashy, commonly configured resources include:
 
-- `./public/conf.yml` - Your main application config file
+- `./src/config/conf.yml` - Your main application config file
 - `./public/item-icons` - A directory containing your own icons. This allows for offline access, and better performance than fetching from a CDN
 - Also within `./public` you'll find standard website assets, including `favicon.ico`, `manifest.json`, `robots.txt`, etc. There's no need to pass these in, but you can do so if you wish
 - `/src/styles/user-defined-themes.scss` - A stylesheet for applying custom CSS to your app. You can also write your own themes here.
@@ -276,7 +276,7 @@ services:
     container_name: Dashy
     image: lissy93/dashy
     volumes:
-      - /root/my-config.yml:/app/public/conf.yml
+      - /root/my-config.yml:/app/src/config/conf.yml
     ports:
       - 4000:80
     environment:
@@ -702,13 +702,13 @@ You can specify that a specific volume should be read-only by appending `:ro` to
 ```bash
 docker run -d \
   -p 8080:80 \
-  -v ~/dashy-conf.yml:/app/public/conf.yml \
+  -v ~/dashy-conf.yml:/app/src/config/conf.yml \
   -v ~/dashy-icons:/app/public/item-icons:ro \
   -v ~/dashy-theme.scss:/app/src/styles/user-defined-themes.scss:ro \
   lissy93/dashy:latest
 ```
 
-You can also prevent a container from writing any changes to volumes on your host's disk, using the `--read-only` flag. Although, for Dashy, you will not be able to write config changes to disk, when edited through the UI with this method. You could make this work, by specifying the config directory as a temp write location, with `--tmpfs /app/public/conf.yml` - but  that this will not write the volume back to your host.
+You can also prevent a container from writing any changes to volumes on your host's disk, using the `--read-only` flag. Although, for Dashy, you will not be able to write config changes to disk, when edited through the UI with this method. You could make this work, by specifying the config directory as a temp write location, with `--tmpfs /app/src/config/conf.yml` - but  that this will not write the volume back to your host.
 
 ### Set the Logging Level
 

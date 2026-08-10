@@ -11,14 +11,14 @@ import Moshi from "@/App.vue"; // Main moshi Vue app
 import router from "./router"; // Router, for navigation
 import { pinia } from "@/store"; // Pinia, for local state management
 import serviceWorker from "@/utils/InitServiceWorker"; // Service worker initialization
-import { messages } from "@/utils/languages"; // Language texts
+import { messages } from "@/config/languages"; // Language texts
 import ErrorReporting from "@/utils/ErrorReporting"; // Error reporting initializer (off)
 import clickOutside from "@/directives/ClickOutside"; // Directive for closing popups, modals, etc
 import { showToast } from "@/utils/toast";
 import {
   tooltipOptions,
   language as defaultLanguage,
-} from "@/utils/defaults";
+} from "@/config/defaults";
 
 // Setup i18n translations
 const i18n = createI18n({

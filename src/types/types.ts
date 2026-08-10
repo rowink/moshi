@@ -1,4 +1,4 @@
-/* Types aligned with the JSON schema in src/utils/ConfigSchema.json. All fields optional, as the config is user-customizable. */
+/* Types aligned with the JSON schema in src/config/ConfigSchema.json. All fields optional, as the config is user-customizable. */
 
 export type ItemTarget = "newtab" | "sametab" | "parent" | "top" | "modal" | "workspace" | "clipboard";
 export type NavLinkTarget = "newtab" | "sametab" | "parent" | "top";

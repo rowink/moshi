@@ -12,22 +12,39 @@ const pkg = require('./package.json');
 
 const base = process.env.BASE_URL || '/';
 
-// conf.yml must stay in public/ (Docker volume mount + runtime server
-// reads/writes), but Vite forbids importing from the public dir. Resolve
-// `?raw` imports of it to a virtual module reading the file directly.
-const loadPublicConfigRaw = () => ({
-  name: 'load-public-config-raw',
+// conf.yml lives in src/config/ (the runtime server reads/writes it there).
+// Resolve `?raw` imports of it to a virtual module reading the file directly.
+const loadConfigRaw = () => ({
+  name: 'load-config-raw',
   enforce: 'pre',
   resolveId(source) {
     if (source.endsWith('conf.yml?raw') && !source.startsWith('\0')) {
-      return '\0public-conf.yml';
+      return '\0config-conf.yml';
     }
     return null;
   },
   load(id) {
-    if (id !== '\0public-conf.yml') return null;
-    const file = path.resolve(__dirname, 'public', 'conf.yml');
+    if (id !== '\0config-conf.yml') return null;
+    const file = path.resolve(__dirname, 'src', 'config', 'conf.yml');
     return `export default ${JSON.stringify(fs.readFileSync(file, 'utf-8'))}`;
+  },
+});
+
+// The config YAML files moved out of public/ (to src/config/), so the dev
+// server no longer serves them statically. This plugin mirrors the server.js
+// route so runtime axios.get('/xxx.yml') calls keep working in dev.
+const serveConfigYml = () => ({
+  name: 'serve-config-yml',
+  configureServer(server) {
+    server.middlewares.use((req, res, next) => {
+      const match = req.url.match(/^\/([A-Za-z0-9-_]+)\.yml(\?.*)?$/);
+      if (!match) return next();
+      const safeName = match[1].replace(/[^a-zA-Z0-9-_]/g, '');
+      const file = path.resolve(__dirname, 'src', 'config', `${safeName}.yml`);
+      if (!fs.existsSync(file)) return next();
+      res.setHeader('Content-Type', 'text/yaml');
+      return res.end(fs.readFileSync(file, 'utf-8'));
+    });
   },
 });
 
@@ -36,7 +53,8 @@ module.exports = defineConfig(({ mode }) => ({
   plugins: [
     vue(),
     svgLoader(),
-    loadPublicConfigRaw(),
+    loadConfigRaw(),
+    serveConfigYml(),
     VitePWA({
       filename: 'service-worker.js',
       injectRegister: false, // moshi registers the SW itself in InitServiceWorker.js

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Reads the users config from `conf.yml`, and combines it with any local preferences
  * Also ensures that any missing attributes are populated with defaults, and the
  * object is structurally sound, to avoid any error if the user is missing something
@@ -12,13 +12,13 @@ import {
   pageInfo as defaultPageInfo,
   iconSize as defaultIconSize,
   layout as defaultLayout,
-} from "@/utils/defaults";
+} from "@/config/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 import { applyItemId } from "@/utils/SectionHelpers";
 import { pinia } from "@/store";
 import { useAppStore } from "@/store/modules/appStore";
 
-import buildConfRaw from "../../public/conf.yml?raw";
+import buildConfRaw from "../config/conf.yml?raw";
 
 const buildConf = yaml.load(buildConfRaw) as Record<string, any> | null;
 

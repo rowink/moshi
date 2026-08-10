@@ -1,4 +1,4 @@
-// Locales - Import translation files here
+﻿// Locales - Import translation files here
 import en from "@/assets/locales/en.json";
 
 export interface Language {
@@ -14,7 +14,7 @@ export const languages: Language[] = [
     name: "English",
     code: "en",
     locale: en,
-    flag: "🇬🇧",
+    flag: "馃嚞馃嚙",
   },
 ];
 

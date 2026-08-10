@@ -1,6 +1,6 @@
 import ErrorHandler from "@/utils/ErrorHandler";
-import { getTheme, getCustomColors } from "@/utils/ConfigHelpers";
-import { mainCssVars } from "@/utils/defaults";
+import { getTheme, getCustomColors } from "@/config/ConfigHelpers";
+import { mainCssVars } from "@/config/defaults";
 
 /* Returns users current theme */
 export const GetTheme = (): string => getTheme();

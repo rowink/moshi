@@ -17,7 +17,7 @@ import useHome from "@/composables/useHome";
 import SideBar from "@/components/Workspace/SideBar.vue";
 import WebContent from "@/components/Workspace/WebContent.vue";
 import MultiTaskingWebComtent from "@/components/Workspace/MultiTaskingWebComtent.vue";
-import Defaults from "@/utils/defaults";
+import Defaults from "@/config/defaults";
 
 const route = useRoute();
 const { appConfig, sections, setTheme } = useHome();

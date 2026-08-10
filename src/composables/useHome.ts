@@ -4,7 +4,7 @@
  */
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import Defaults, { localStorageKeys, iconCdns } from "@/utils/defaults";
+import Defaults, { localStorageKeys, iconCdns } from "@/config/defaults";
 import { searchTiles } from "@/utils/Search";
 import {
   GetTheme,
