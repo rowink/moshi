@@ -2,7 +2,7 @@
   <div class="indicator"
     v-tooltip="{
       content: statusText || otherStatusText,
-      classes: ['status-tooltip', `tip-${color()}`],
+      popperClass: ['status-tooltip', `tip-${color()}`],
       delay: { show: 0, hide: 150 }
     }">
     <div :class="`dot dot-${color()}`">
@@ -113,20 +113,19 @@ onMounted(() => {
 </style>
 
 <style lang="scss">
-.status-tooltip {
-  background: var(--status-check-tooltip-background) !important;
-  color: var(--status-check-tooltip-color);
-  font-size: 1rem;
+.v-popper__popper.status-tooltip {
   z-index: 10;
   &.tip-grey { --status-color: var(--medium-grey); }
   &.tip-green { --status-color: var(--success); }
   &.tip-yellow { --status-color: var(--warning); }
   &.tip-red { --status-color: var(--danger); }
-  .tooltip-inner {
+  .v-popper__inner {
+    background: var(--status-check-tooltip-background) !important;
     border: 1px solid var(--status-color);
-    // color: var(--status-color);
+    color: var(--status-check-tooltip-color);
+    font-size: 1rem;
   }
-  .tooltip-arrow {
+  .v-popper__arrow-outer {
     --description-tooltip-color: var(--status-color);
   }
 }

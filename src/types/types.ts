@@ -1,6 +1,6 @@
 /* Types aligned with the JSON schema in src/config/ConfigSchema.json. All fields optional, as the config is user-customizable. */
 
-export type ItemTarget = "newtab" | "sametab" | "parent" | "top" | "modal" | "workspace" | "clipboard";
+export type ItemTarget = "newtab" | "sametab" | "parent" | "top" | "modal" | "clipboard";
 export type NavLinkTarget = "newtab" | "sametab" | "parent" | "top";
 export type ItemSize = "small" | "medium" | "large";
 export type SectionLayout = "grid" | "auto";
@@ -103,8 +103,6 @@ export interface AppConfig {
   iconSize?: ItemSize;
   colCount?: number;
   routingMode?: "hash" | "history";
-  workspaceLandingUrl?: string;
-  enableMultiTasking?: boolean;
   webSearch?: WebSearchConfig;
   enableFontAwesome?: boolean;
   enableMaterialDesignIcons?: boolean;

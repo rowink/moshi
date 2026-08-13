@@ -1,4 +1,4 @@
-﻿import ConfigAccumulator from "@/config/ConfigAccumalator";
+import ConfigAccumulator from "@/config/ConfigAccumalator";
 import { languages } from "@/config/languages";
 import {
   visibleComponents,

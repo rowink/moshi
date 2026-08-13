@@ -26,7 +26,6 @@ appConfig:
   statusCheck: true
   statusCheckInterval: 0
   defaultOpeningMethod: modal
-  enableMultiTasking: true
   webSearch:
     disableWebSearch: true
   enableFontAwesome: true

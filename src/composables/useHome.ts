@@ -1,6 +1,5 @@
 /**
- * Composable version of the HomeMixin, for all homepages
- * (default home, minimal home, workspace, etc)
+ * Composable version of the HomeMixin, for the home page
  */
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";

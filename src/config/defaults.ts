@@ -1,4 +1,4 @@
-﻿const defaults = {
+const defaults = {
   /* Default pageInfo object, used if user does not specify their own */
   pageInfo: {
     title: "moshi",
@@ -29,8 +29,6 @@
   /* The page paths for each route within the app for the router */
   routePaths: {
     home: "/home",
-    minimal: "/minimal",
-    workspace: "/workspace",
     about: "/about",
     notFound: "/404",
   },
@@ -89,7 +87,7 @@
     footer: true,
   },
   /* A list of route names that page furniture (header, footer, etc) should be hidden on */
-  hideFurnitureOn: ["minimal"],
+  hideFurnitureOn: [],
   /* Key names for local storage identifiers */
   localStorageKeys: {
     LANGUAGE: "language",

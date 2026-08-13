@@ -4,7 +4,6 @@
  */
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import axios from "axios";
-import router from "@/router";
 import { useI18n } from "vue-i18n";
 import ErrorHandler from "@/utils/ErrorHandler";
 import { showToast } from "@/utils/toast";
@@ -105,11 +104,11 @@ export const useItem = (props: ItemComposableProps, emit: (event: string, ...arg
     }
   });
 
-  /* Get href for anchor, if not opening in modal/ workspace */
+  /* Get href for anchor, if not opening in modal/ clipboard */
   const hyperLinkHref = computed(() => {
     const nothing = "#";
     const url = props.url || props.item?.url || nothing;
-    const noAnchorNeeded = ["modal", "workspace", "clipboard"];
+    const noAnchorNeeded = ["modal", "clipboard"];
     return noAnchorNeeded.includes(accumulatedTarget.value) ? nothing : url;
   });
 
@@ -187,9 +186,6 @@ export const useItem = (props: ItemComposableProps, emit: (event: string, ...arg
     } else if (e.altKey || accumulatedTarget.value === "modal") {
       e.preventDefault();
       emit("triggerModal", url);
-    } else if (accumulatedTarget.value === "workspace") {
-      e.preventDefault();
-      router.push({ name: "workspace", query: { url: url as string } });
     } else if (accumulatedTarget.value === "clipboard") {
       e.preventDefault();
       copyToClipboard(url);
@@ -216,9 +212,6 @@ export const useItem = (props: ItemComposableProps, emit: (event: string, ...arg
         break;
       case "modal":
         emit("triggerModal", url);
-        break;
-      case "workspace":
-        router.push({ name: "workspace", query: { url: url as string } });
         break;
       case "clipboard":
         copyToClipboard(url);

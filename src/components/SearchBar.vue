@@ -1,7 +1,7 @@
 <template>
   <form
     @submit.prevent="searchSubmitted"
-    :class="minimalSearch ? 'minimal' : 'normal'"
+    class="normal"
   >
     <label for="filter-tiles">{{ $t("search.search-label") }}</label>
     <div class="search-wrap">
@@ -32,7 +32,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import router from "../router";
 import ArrowKeyNavigation from "@/utils/ArrowKeyNavigation";
 import ErrorHandler from "@/utils/ErrorHandler";
 import { getCustomKeyShortcuts } from "@/config/ConfigHelpers";
@@ -48,10 +47,6 @@ import {
   defaultSearchOpeningMethod,
   searchBangs as defaultSearchBangs,
 } from "@/config/defaults";
-
-defineProps({
-  minimalSearch: Boolean, // If true, then keep it simple
-});
 
 const emit = defineEmits(["user-is-searchin"]);
 
@@ -116,9 +111,6 @@ function launchWebSearch(url: string, method: string) {
     case "sametab":
       window.open(url, "_self");
       break;
-    case "workspace":
-      router.push({ name: "workspace", query: { url } });
-      break;
     default:
       ErrorHandler(`Unknown opening method: ${method}`);
       window.open(url, "_blank");
@@ -180,7 +172,7 @@ form.normal {
     p.web-search-note {
       margin: 0 0.5rem;
       font-size: 0.8rem;
-      color: var(--minimal-view-search-color);
+      color: var(--settings-text-color);
       opacity: var(--dimming-factor);
     }
   }
@@ -240,60 +232,6 @@ form.normal {
     text-align: center;
     padding: 0.25rem 0;
     display: block;
-  }
-}
-
-form.minimal {
-  display: flex;
-  align-items: center;
-  label {
-    display: none;
-  }
-  .search-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    p.web-search-note {
-      margin: 0;
-      color: var(--minimal-view-search-color);
-      opacity: var(--dimming-factor);
-    }
-  }
-  input {
-    display: inline-block;
-    width: 80%;
-    max-width: 400px;
-    font-size: 1.2rem;
-    padding: 0.5rem 1rem;
-    margin: 1rem auto;
-    outline: none;
-    border: 1px solid var(--outline-color);
-    border-radius: var(--curve-factor);
-    background: var(--minimal-view-search-background);
-    color: var(--minimal-view-search-color);
-    &:focus {
-      border-color: var(--minimal-view-search-color);
-      opacity: var(--dimming-factor);
-    }
-  }
-  .clear-search {
-    color: var(--minimal-view-search-color);
-    padding: 0.15rem 0.5rem 0.2rem 0.5rem;
-    font-style: normal;
-    font-size: 1rem;
-    opacity: var(--dimming-factor);
-    border-radius: 50px;
-    cursor: pointer;
-    right: 0.5rem;
-    top: 1rem;
-    border: 1px solid var(--minimal-view-search-color);
-    margin: 0.5rem;
-    &:hover {
-      opacity: 1;
-      color: var(--minimal-view-search-background);
-      background: var(--minimal-view-search-color);
-    }
   }
 }
 </style>

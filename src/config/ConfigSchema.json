@@ -103,12 +103,10 @@
           "title": "Starting View",
           "type": "string",
           "enum": [
-            "default",
-            "minimal",
-            "workspace"
+            "default"
           ],
           "default": "default",
-          "description": "Which page to load by default, and on the base page or domain root. You can still switch to different views from within the UI"
+          "description": "Which page to load by default, and on the base page or domain root."
         },
         "defaultOpeningMethod": {
           "title": "Default Opening Method",
@@ -119,7 +117,6 @@
             "parent",
             "top",
             "modal",
-            "workspace",
             "clipboard"
           ],
           "default": "newtab",
@@ -238,17 +235,6 @@
           "default": "history",
           "description": "The Vue routing mode to use, history mode will remove the annoying hash from the URL, but requires some extra config on some systems"
         },
-        "workspaceLandingUrl": {
-          "title": "Workspace Landing URL",
-          "type": "string",
-          "description": "The URL of an app, service or website to render when the Workspace view is opened"
-        },
-        "enableMultiTasking": {
-          "title": "Enable Multi-Tasking",
-          "type": "boolean",
-          "default": false,
-          "description": "If set to true, will keep apps opened in the workspace open in the background. Useful for switching between sites, but comes at the cost of performance"
-        },
         "webSearch": {
           "title": "Web Search",
           "type": "object",
@@ -294,8 +280,7 @@
               "enum": [
                 "newtab",
                 "sametab",
-                "modal",
-                "workspace"
+                "modal"
               ],
               "default": "newtab",
               "description": "Set where you would like search results to open to"
@@ -623,7 +608,6 @@
                     "parent",
                     "top",
                     "modal",
-                    "workspace",
                     "clipboard"
                   ],
                   "default": "newtab",

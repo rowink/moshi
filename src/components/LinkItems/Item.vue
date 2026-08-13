@@ -146,8 +146,6 @@ const unicodeOpeningIcon = computed(() => {
       return "\"\\f102\"";
     case "modal":
       return "\"\\f2d0\"";
-    case "workspace":
-      return "\"\\f0b1\"";
     case "clipboard":
       return "\"\\f0ea\"";
     default:
@@ -175,12 +173,12 @@ function getTooltipOptions() {
   const tooltipText = providerText + lb1 + description + hotkeyText;
   return {
     content: tooltipText,
-    trigger: "hover focus",
-    hideOnTargetClick: true,
+    triggers: ["hover", "focus"],
+    autoHide: true,
     html: true,
     placement: statusResponse.value ? "left" : "auto",
     delay: { show: 600, hide: 200 },
-    classes: `item-description-tooltip tooltip-is-${size.value}`,
+    popperClass: `item-description-tooltip tooltip-is-${size.value}`,
   };
 }
 </script>
@@ -407,7 +405,7 @@ p.description {
 .disabled-link {
   pointer-events: none;
 }
-.tooltip.item-description-tooltip {
+.v-popper__popper.item-description-tooltip {
   z-index: 7;
 }
 </style>

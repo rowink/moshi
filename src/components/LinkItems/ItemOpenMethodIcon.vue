@@ -4,7 +4,6 @@
       <NewTabOpenIcon v-if="openingMethod === 'newtab'" />
       <SameTabOpenIcon v-else-if="openingMethod === 'sametab'" />
       <IframeOpenIcon v-else-if="openingMethod === 'modal'" />
-      <WorkspaceOpenIcon v-else-if="openingMethod === 'workspace'" />
       <ParentOpenIcon v-else-if="openingMethod === 'parent'" />
       <TopOpenIcon v-else-if="openingMethod === 'top'" />
       <ClipboardOpenIcon v-else-if="openingMethod === 'clipboard'" />
@@ -23,14 +22,13 @@
 import NewTabOpenIcon from "@/assets/interface-icons/open-new-tab.svg";
 import SameTabOpenIcon from "@/assets/interface-icons/open-current-tab.svg";
 import IframeOpenIcon from "@/assets/interface-icons/open-iframe.svg";
-import WorkspaceOpenIcon from "@/assets/interface-icons/open-workspace.svg";
 import ParentOpenIcon from "@/assets/interface-icons/open-parent.svg";
 import TopOpenIcon from "@/assets/interface-icons/open-top.svg";
 import ClipboardOpenIcon from "@/assets/interface-icons/open-clipboard.svg";
 import UnknownIcon from "@/assets/interface-icons/unknown-icon.svg";
 
 defineProps({
-  openingMethod: String, // newtab | sametab | parent | top | modal | workspace
+  openingMethod: String, // newtab | sametab | parent | top | modal | clipboard
   isSmall: Boolean, // If true, will apply small class
   position: String, // Position classes: top, bottom, left, right
   isTransparent: Boolean, // If true, will apply opacity

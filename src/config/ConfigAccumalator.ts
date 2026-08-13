@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Reads the users config from `conf.yml`, and combines it with any local preferences
  * Also ensures that any missing attributes are populated with defaults, and the
  * object is structurally sound, to avoid any error if the user is missing something

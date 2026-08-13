@@ -1,4 +1,4 @@
-﻿// Locales - Import translation files here
+// Locales - Import translation files here
 import en from "@/assets/locales/en.json";
 
 export interface Language {

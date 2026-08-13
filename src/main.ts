@@ -5,6 +5,7 @@ import { createI18n, type I18nOptions } from "vue-i18n";
 
 // Import component Vue plugins, used throughout the app
 import VTooltip from "v-tooltip"; // A Vue directive for Popper.js, tooltip component
+import "v-tooltip/dist/v-tooltip.css"; // Base styles for v-tooltip v4 (floating-vue)
 
 // Import base moshi components and utils
 import Moshi from "@/App.vue"; // Main moshi Vue app

@@ -47,16 +47,9 @@ const getStartingView = () => (appConfig as { startingView?: string }).startingV
 
 /**
  * Returns the component that should be rendered at the base path,
- * Defaults to Home, but the user can change this to Workspace or Minimal
+ * Defaults to Home
  */
-const getStartingComponent = () => {
-  const usersPreference = getStartingView();
-  switch (usersPreference) {
-    case "minimal": return () => import("../views/Minimal.vue");
-    case "workspace": return () => import("../views/Workspace.vue");
-    default: return Home;
-  }
-};
+const getStartingComponent = () => Home;
 
 /* Returns the meta tags for each route */
 const makeMetaTags = (defaultTitle: string) => ({
@@ -75,7 +68,7 @@ interface UserPage {
   path?: string;
 }
 
-/* For each additional config file, create routes for home, minimal and workspace views */
+/* For each additional config file, create a route for the home view */
 const makeMultiPageRoutes = (userPages: unknown[]): RouteRecordRaw[] => {
   // If no multi pages specified, or is not array, then return nothing
   if (!userPages || !Array.isArray(userPages)) return [];
@@ -99,20 +92,6 @@ const makeMultiPageRoutes = (userPages: unknown[]): RouteRecordRaw[] => {
       path: makePageSlug(userPage.name as string, "home"),
       name: `${subPageInfo.subPageInfo.pageId}-home`,
       component: Home,
-      props: subPageInfo,
-    });
-    // Create route for the workspace view
-    multiPageRoutes.push({
-      path: makePageSlug(userPage.name as string, "workspace"),
-      name: `${subPageInfo.subPageInfo.pageId}-workspace`,
-      component: () => import("../views/Workspace.vue"),
-      props: subPageInfo,
-    });
-    // Create route for the minimal view
-    multiPageRoutes.push({
-      path: makePageSlug(userPage.name as string, "minimal"),
-      name: `${subPageInfo.subPageInfo.pageId}-minimal`,
-      component: () => import("../views/Minimal.vue"),
       props: subPageInfo,
     });
   });
@@ -150,18 +129,6 @@ const router = createRouter({
       name: "home-section",
       component: Home,
       meta: makeMetaTags("Home Page"),
-    },
-    { // Workspace view page
-      path: routePaths.workspace,
-      name: "workspace",
-      component: () => import("../views/Workspace.vue"),
-      meta: makeMetaTags("Workspace"),
-    },
-    { // Minimal view page
-      path: routePaths.minimal,
-      name: "minimal",
-      component: () => import("../views/Minimal.vue"),
-      meta: makeMetaTags("Start Page"),
     },
     { // The about app page
       path: routePaths.about,
