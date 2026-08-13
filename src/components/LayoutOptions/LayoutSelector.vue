@@ -52,7 +52,7 @@ span.options-label {
 .display-options {
   color: var(--settings-text-color);
   svg {
-    path {
+    :deep(path) {
       fill: var(--settings-text-color);
     }
     width: 1rem;
@@ -67,7 +67,7 @@ span.options-label {
     &:hover,
     &.selected {
       background: var(--settings-text-color);
-      path {
+      :deep(path) {
         fill: var(--background);
       }
     }
