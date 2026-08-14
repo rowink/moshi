@@ -93,6 +93,6 @@ module.exports = defineConfig(({ mode }) => ({
     'process.env.VUE_APP_DOMAIN': JSON.stringify(process.env.VUE_APP_DOMAIN || ''),
   },
   server: {
-    port: 8080,
+    port: 2333,
   },
 }));
