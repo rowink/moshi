@@ -10,20 +10,21 @@ import ErrorHandler from "@/utils/ErrorHandler";
 import ConfigSchema from "@/config/ConfigSchema.json";
 import type { Language } from "@/config/languages";
 
-/* Given a page name, converts to lowercase, removes special characters and extension */
+/* Given a page name, converts to lowercase and removes special characters, whitespace and hyphens */
 export const makePageName = (pageName?: string): string => {
   if (!pageName) return "unnamed-page";
-  return pageName
+  const formattedName = pageName
     .toLowerCase()
-    .replaceAll(" ", "-")
     .replace(".yml", "")
-    .replace(/[^\w\s-]/gi, "");
+    .replace(/[^\w\s-]/gi, "")
+    .replace(/[\s-]+/g, "");
+  return formattedName || "unnamed-page";
 };
 
-/* For a given sub-page, and page type, return the URL */
-export const makePageSlug = (pageName: string, pageType: string): string => {
+/* For a given sub-page, return the URL */
+export const makePageSlug = (pageName: string): string => {
   const formattedName = makePageName(pageName);
-  return `/${pageType}/${formattedName}`;
+  return `/${formattedName}`;
 };
 
 /**

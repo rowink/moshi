@@ -48,13 +48,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, type PropType } from "vue";
 import { useHome } from "@/composables/useHome";
 import SearchBar from "@/components/SearchBar.vue";
 import LayoutOptions from "@/components/LayoutOptions/LayoutOptions.vue";
 import Section from "@/components/LinkItems/Section.vue";
 import { localStorageKeys } from "@/config/defaults";
 import { Section as SectionType } from "@/types/types";
+
+const props = defineProps({
+  subPageInfo: {
+    type: Object as PropType<{ confPath?: string; pageId?: string; pageTitle?: string }>,
+    default: undefined,
+  },
+});
 
 const {
   appStore,
@@ -70,7 +77,7 @@ const {
   getBackgroundImage,
   initiateFontAwesome,
   initiateMaterialDesignIcons,
-} = useHome();
+} = useHome(props.subPageInfo);
 
 const layout = ref("");
 const itemSizeBound = ref("");

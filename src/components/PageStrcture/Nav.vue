@@ -48,7 +48,7 @@ const isMobile = ref(false);
 /* Get links to sub-pages, and combine with nav-links */
 const allLinks = computed(() => {
   const subPages = appStore.pages.map((subPage: Record<string, any>) => ({
-    path: makePageSlug(subPage.name, "home"),
+    path: makePageSlug(subPage.name),
     title: subPage.name,
   }));
   return [...(props.links || []), ...subPages];

@@ -89,7 +89,7 @@ const makeMultiPageRoutes = (userPages: unknown[]): RouteRecordRaw[] => {
     };
     // Create route for default homepage
     multiPageRoutes.push({
-      path: makePageSlug(userPage.name as string, "home"),
+      path: makePageSlug(userPage.name as string),
       name: `${subPageInfo.subPageInfo.pageId}-home`,
       component: Home,
       props: subPageInfo,
