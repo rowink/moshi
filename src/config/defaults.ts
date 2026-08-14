@@ -205,13 +205,6 @@ const defaults = {
     themeColor: "#00af87",
     msTileColor: "#0b1021",
     mode: "production",
-    iconPaths: {
-      manifestCrossorigin: "use-credentials",
-      favicon64: "./web-icons/favicon-64x64.png",
-      favicon32: "./web-icons/favicon-32x32.png",
-      maskIcon: "./web-icons/favicon-64x64.png",
-      msTileImage: "./web-icons/favicon-64x64.png",
-    },
   },
 };
 
