@@ -124,18 +124,6 @@ const router = createRouter({
       component: Home,
       meta: makeMetaTags("Home Page"),
     },
-    { // View only single section
-      path: `${routePaths.home}/:section`,
-      name: "home-section",
-      component: Home,
-      meta: makeMetaTags("Home Page"),
-    },
-    { // The about app page
-      path: routePaths.about,
-      name: "about", // We lazy load the About page so as to not slow down the app
-      component: () => import("../views/About.vue"),
-      meta: makeMetaTags("About moshi"),
-    },
     { // Page not found, any non-defined routes will land here
       path: routePaths.notFound,
       name: "404",

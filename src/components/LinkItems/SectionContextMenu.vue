@@ -7,10 +7,6 @@
     >
       <!-- Open Options -->
       <ul class="menu-section">
-        <li @click="openSection()">
-          <SameTabOpenIcon />
-          <span>{{ $t("context-menus.section.open-section") }}</span>
-        </li>
         <li @click="expandCollapseSection">
           <ExpandCollapseIcon />
           <span>{{ $t("context-menus.section.expand-collapse") }}</span>
@@ -22,7 +18,6 @@
 
 <script setup lang="ts">
 // Import icons for each element
-import SameTabOpenIcon from "@/assets/interface-icons/open-current-tab.svg";
 import ExpandCollapseIcon from "@/assets/interface-icons/section-expand-collapse.svg";
 import { useAppStore } from "@/store/modules/appStore";
 import { computed, getCurrentInstance } from "vue";
@@ -32,16 +27,11 @@ const props = defineProps({
   posY: Number, // The Y coordinate for positioning
   show: Boolean, // Should show or hide the menu
 });
-const emit = defineEmits(["navigateToSection", "expandCollapseSection"]);
+const emit = defineEmits(["expandCollapseSection"]);
 
 const appStore = useAppStore();
 const isMenuDisabled = computed(() => !!appStore.appConfig.disableContextMenu);
 
-/* Called on item click, emits an event up to Item */
-/* in order to launch the current app to a given target */
-function openSection() {
-  emit("navigateToSection");
-}
 function expandCollapseSection() {
   emit("expandCollapseSection");
 }

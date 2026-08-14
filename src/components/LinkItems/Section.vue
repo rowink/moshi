@@ -59,7 +59,6 @@
       :posY="contextPos.posY"
       :id="`context-menu-${groupId}`"
       v-click-outside="closeContextMenu"
-      @navigateToSection="navigateToSection"
       @expandCollapseSection="expandCollapseSection"
     />
   </Collapsable>
@@ -74,7 +73,6 @@ import {
   ref,
   type PropType,
 } from "vue";
-import { useRouter } from "vue-router";
 import Item from "@/components/LinkItems/Item.vue";
 import SubItemGroup from "@/components/LinkItems/SubItemGroup.vue";
 import Collapsable from "@/components/LinkItems/Collapsable.vue";
@@ -102,7 +100,6 @@ const props = defineProps({
 });
 const emit = defineEmits(["itemClicked"]);
 
-const router = useRouter();
 const appStore = useAppStore();
 const appConfig = computed(() => appStore.appConfig);
 
@@ -209,18 +206,6 @@ function sortRandomly(items: ItemType[]) {
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value);
 }
-/* Navigate to the section's single-section view page */
-function navigateToSection() {
-  if (!props.title) {
-    ErrorHandler("Cannot open section without a valid name");
-    return;
-  }
-  const parse = (section: string) =>
-    section.replace(" ", "-").toLowerCase().trim();
-  const sectionIdentifier = parse(props.title);
-  router.push({ path: `/home/${sectionIdentifier}` });
-  closeContextMenu();
-}
 /* Toggle sections collapse state */
 function expandCollapseSection() {
   if (collapsableRef.value) collapsableRef.value.toggle();
@@ -310,7 +295,7 @@ onBeforeUnmount(() => {
     grid-template-columns: repeat(var(--item-col-count, 2), minmax(0, 1fr));
   }
 }
-.orientation-horizontal:not(.single-section-view) {
+.orientation-horizontal {
   display: flex;
   flex-direction: column;
   .there-are-items {

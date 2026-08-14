@@ -104,10 +104,7 @@ export const useHome = (subPageInfo?: SubPageInfo) => {
   const checkIfFontAwesomeNeeded = () => {
     if (appConfig.value.enableFontAwesome === false) return false;
     if (appConfig.value.enableFontAwesome) return true;
-    let isNeeded = checkIfIconLibraryNeeded("fa-");
-    const currentTheme = localStorage[localStorageKeys.THEME]; // Some themes require FA
-    if (["material", "material-dark"].includes(currentTheme)) isNeeded = true;
-    return isNeeded;
+    return checkIfIconLibraryNeeded("fa-");
   };
 
   /* Injects font-awesome's script tag, only if needed */

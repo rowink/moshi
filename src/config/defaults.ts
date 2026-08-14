@@ -17,7 +17,7 @@ const defaults = {
   /* Default layout to be applied on initial load */
   layout: "auto",
   /* Default theme to be applied on initial load */
-  theme: "default",
+  theme: "glow",
   /* Default Font-Awesome API key, for FA icons (if used) */
   fontAwesomeKey: "0821c65656",
   /* Default API to use for fetching of user service favicon icons (if enabled) */
@@ -29,7 +29,6 @@ const defaults = {
   /* The page paths for each route within the app for the router */
   routePaths: {
     home: "/home",
-    about: "/about",
     notFound: "/404",
   },
   /* Server Endpoints */
@@ -38,43 +37,7 @@ const defaults = {
   },
   /* List of built-in themes, to be displayed within the theme-switcher dropdown */
   builtInThemes: [
-    "default",
-    "callisto",
-    "material",
-    "material-dark",
-    "docs",
-    "colorful",
-    "dracula",
-    "one-dark",
-    "lissy",
-    "cherry-blossom",
-    "nord-frost",
-    "nord",
-    "argon",
-    "fallout",
-    "whimsy",
-    "oblivion",
-    "adventure",
-    "crayola",
-    "deep-ocean",
-    "minimal-dark",
-    "minimal-light",
-    "thebe",
-    "matrix",
-    "matrix-red",
-    "color-block",
-    "raspberry-jam",
-    "bee",
-    "tiger",
     "glow",
-    "vaporware",
-    "cyberpunk",
-    "material-original",
-    "material-dark-original",
-    "high-contrast-dark",
-    "high-contrast-light",
-    "adventure-basic",
-    "basic",
   ],
   /* Which CSS variables to show in the first view of theme configurator */
   mainCssVars: ["primary", "background", "background-darker"],

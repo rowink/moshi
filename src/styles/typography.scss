@@ -1,11 +1,6 @@
 
 /* Fonts used by the default theme, and bundled within the app */
 @font-face {
-  font-family: 'Inconsolata';
-  src: url('../assets/fonts/Inconsolata-Light.ttf');
-}
-
-@font-face {
   font-family: 'Raleway';
   src: url('../assets/fonts/Raleway-Variable.ttf');
 }
@@ -17,7 +12,7 @@
 
 html {
   --font-body: 'Raleway', 'Trebuchet MS', sans-serif;
-  --font-headings: 'Inconsolata', 'Georgia', sans-serif;
+  --font-headings: 'Sniglet', 'Georgia', sans-serif;
   --font-monospace: 'PTMono', 'Courier New', monospace;
 
   font-size: 1rem;
@@ -43,35 +38,7 @@ html {
 }
 /* Optional fonts for specific themes */
 /* These fonts are loaded from ./public so not bundled within dist */
-@font-face { // Used by body text in Matrix and Hacker themes. Credit to the late Vernon Adams, RIP
-  font-family: 'Cutive Mono';
-  src: url('/fonts/CutiveMono-Regular.ttf');
-}
-@font-face { // Heading text in Material and Material Dark. Credit to Vernon Adams
-  font-family: 'Francois One';
-  src: url('/fonts/FrancoisOne-Regular.ttf');
-}
-@font-face { // Heading text in Colorful theme. Credit to Cyreal
-  font-family: 'Podkova';
-  src: url('/fonts/Podkova-Medium.ttf');
-}
-@font-face { // Standard body text in material original. Credit to Christian Robertson
-  font-family: 'Roboto';
-  src: url('/fonts/Roboto-Light.ttf');
-}
-@font-face { // Heading text in Jam, Bee and Tiger themes. Credit to Haley Fiege
+@font-face { // Heading text in the Glow theme. Credit to Haley Fiege
   font-family: 'Sniglet';
   src: url('/fonts/Sniglet-Regular.ttf');
-}
-@font-face { // Used by heading text in Matrix and Hacker themes. Credit to Peter Hull
-  font-family: 'VT323';
-  src: url('/fonts/VT323-Regular.ttf');
-}
-@font-face { // Used by cyberpunk theme. Credit to Astigmatic
-  font-family: 'Audiowide';
-  src: url('/fonts/Audiowide-Regular.ttf');
-}
-@font-face { // Used by Dracula, Lissy themes. Credit to Jonny Pinhorn
-  font-family: 'Shrikhand';
-  src: url('/fonts/Shrikhand-Regular.ttf');
 }

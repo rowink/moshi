@@ -10,13 +10,6 @@
       />
       <LayoutOptions />
     </div>
-    <!-- Show back button, when on single-section view -->
-    <div v-if="singleSectionView">
-      <router-link to="/home" class="back-to-all-link">
-        <BackIcon />
-        <span>Back to All</span>
-      </router-link>
-    </div>
     <!-- Main content, section for each group of items -->
     <div
       v-if="checkTheresData(sections)"
@@ -24,7 +17,6 @@
         `item-group-container ` +
         `orientation-${layout} ` +
         `item-size-${itemSizeBound} ` +
-        (singleSectionView ? 'single-section-view ' : '') +
         (colCount ? `col-count-${colCount} ` : '')
       "
     >
@@ -57,17 +49,13 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { useRoute } from "vue-router";
 import { useHome } from "@/composables/useHome";
 import SearchBar from "@/components/SearchBar.vue";
 import LayoutOptions from "@/components/LayoutOptions/LayoutOptions.vue";
 import Section from "@/components/LinkItems/Section.vue";
 import { localStorageKeys } from "@/config/defaults";
-import ErrorHandler from "@/utils/ErrorHandler";
-import BackIcon from "@/assets/interface-icons/back-arrow.svg";
 import { Section as SectionType } from "@/types/types";
 
-const route = useRoute();
 const {
   appStore,
   sections,
@@ -91,10 +79,6 @@ const filterComp = ref<InstanceType<typeof SearchBar> | null>(null);
 /* Whether or not to show the search bar, based on user config */
 const searchVisible = computed(() => appStore.visibleComponents.searchBar);
 
-const singleSectionView = computed(() =>
-  findSingleSection(sections.value, route.params.section as string),
-);
-
 /* Get class for num columns, if specified by user */
 const colCount = computed<number | null>(() => {
   let { colCount: userColCount } = appConfig.value;
@@ -105,12 +89,11 @@ const colCount = computed<number | null>(() => {
 });
 
 /* Return all sections, that match users search term */
-const filteredTiles = computed(() => {
-  const currentSections = singleSectionView.value || sections.value;
-  return currentSections.filter((section: SectionType) =>
+const filteredTiles = computed(() =>
+  sections.value.filter((section: SectionType) =>
     filterTiles(section.items, searchValue.value),
-  );
-});
+  ),
+);
 
 /* Updates layout (when button clicked), and saves in local storage */
 const layoutOrientation = computed(() => appStore.layout);
@@ -138,25 +121,6 @@ const getDisplayData = (section: SectionType) => {
   return !section.displayData ? {} : section.displayData;
 };
 
-/* If on sub-route, and section exists, then return only that section */
-const findSingleSection = (
-  allSections: SectionType[],
-  sectionTitle: string,
-): SectionType[] | undefined => {
-  if (!sectionTitle) return undefined;
-  let sectionToReturn: SectionType[] | undefined;
-  const parse = (section: string) =>
-    section.replaceAll(" ", "-").toLowerCase().trim();
-  allSections.forEach((section) => {
-    if (parse(sectionTitle) === parse(section.name || "")) {
-      sectionToReturn = [section];
-    }
-  });
-  if (!sectionToReturn)
-    ErrorHandler(`No section named '${sectionTitle}' was found`);
-  return sectionToReturn;
-};
-
 initiateFontAwesome();
 initiateMaterialDesignIcons();
 layout.value = layoutOrientation.value;
@@ -173,20 +137,7 @@ itemSizeBound.value = iconSize.value;
   min-height: calc(99.9vh - var(--footer-height));
 }
 
-.back-to-all-link {
-  display: flex;
-  align-items: center;
-  padding: 0.25rem;
-  margin: 0.25rem;
-  @extend .svg-button;
-  svg {
-    margin-right: 0.5rem;
-  }
-  text-decoration: none;
-}
-
-/* Toolbar row containing search bar and layout options */
-.home-toolbar {
+/* Toolbar row containing search bar and layout options */.home-toolbar {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -223,8 +174,7 @@ itemSizeBound.value = iconSize.value;
     }
   }
   &.orientation-horizontal,
-  &.orientation-vertical,
-  &.single-section-view {
+  &.orientation-vertical {
     @include phone {
       --content-max-width: 100%;
     }
@@ -298,11 +248,6 @@ itemSizeBound.value = iconSize.value;
   /* Hide when search term returns nothing */
   .no-results {
     display: none !important;
-  }
-
-  /* When in single-section view mode */
-  &.single-section-view {
-    display: block;
   }
 }
 

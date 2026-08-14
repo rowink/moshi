@@ -142,30 +142,10 @@
         "theme": {
           "title": "Theme",
           "type": "string",
-          "default": "callisto",
+          "default": "glow",
           "description": "A theme to be applied by default on first load",
           "examples": [
-            "callisto",
-            "thebe",
-            "dracula",
-            "material",
-            "material-dark",
-            "colorful",
-            "nord",
-            "nord-frost",
-            "minimal-dark",
-            "minimal-light",
-            "matrix",
-            "matrix-red",
-            "hacker-girl",
-            "raspberry-jam",
-            "bee",
-            "tiger",
-            "material-original",
-            "material-dark-original",
-            "vaporware",
-            "high-contrast-dark",
-            "high-contrast-light"
+            "glow"
           ]
         },
         "backgroundImg": {
