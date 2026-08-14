@@ -60,7 +60,7 @@ function detectMobile() {
 }
 
 function isUrl(str: string | undefined) {
-  return new RegExp(/(http|https):\/\/(\S+)(:[0-9]+)?/).test(str as string);
+  return /(http|https):\/\/(\S+)(:[0-9]+)?/.test(str as string);
 }
 
 function determineTarget(link: NavLinkType) {

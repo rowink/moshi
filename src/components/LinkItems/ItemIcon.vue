@@ -88,9 +88,7 @@ function getIconPath(img: string | undefined, url: string | undefined) {
 }
 /* Check if a string is in a URL format. Used to identify tile icon source */
 function isUrl(str: string) {
-  const pattern = new RegExp(
-    /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-/]))?/,
-  );
+  const pattern = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-/]))?/;
   return pattern.test(str);
 }
 /* Returns true if the input is a path to an image file */

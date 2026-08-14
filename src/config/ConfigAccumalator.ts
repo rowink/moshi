@@ -28,7 +28,7 @@ const buildConf = yaml.load(buildConfRaw) as Record<string, any> | null;
 const getRemoteConfig = (): Record<string, any> => {
   try {
     return useAppStore(pinia).remoteConfig;
-  } catch (e) {
+  } catch {
     return {};
   }
 };
@@ -82,7 +82,7 @@ export default class ConfigAccumulator {
       // eslint-disable-next-line brace-style
       try {
         localPageInfo = JSON.parse(localStorage[localStorageKeys.PAGE_INFO]);
-      } catch (e) {
+      } catch {
         ErrorHandler("Malformed pageInfo data in local storage");
       }
     }
@@ -100,7 +100,7 @@ export default class ConfigAccumulator {
       try {
         const json = JSON.parse(localSections);
         if (json.length >= 1) sections = json;
-      } catch (e) {
+      } catch {
         ErrorHandler("Malformed section data in local storage");
       }
     }
