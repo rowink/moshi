@@ -7,7 +7,7 @@ import {
   language as defaultLanguage,
 } from "@/utils/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
-import ConfigSchema from "@/types/ConfigSchema.json";
+import ConfigSchema from "@/template/ConfigSchema.json";
 import type { Language } from "@/i18n";
 
 /* Given a page name, converts to lowercase and removes special characters, whitespace and hyphens */
