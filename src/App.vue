@@ -124,7 +124,6 @@ const applyLanguage = () => {
 @use "@/styles/global-styles";
 @use "@/styles/color-palette";
 @use "@/styles/dimensions";
-@use "@/styles/color-themes";
 @use "@/styles/typography";
 @use "@/styles/user-defined-themes";
 </style>
