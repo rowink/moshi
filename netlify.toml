@@ -1,5 +1,16 @@
 # Minimal Netlify config for moshi
-# Build is auto-detected by Netlify (pnpm-lock.yaml -> pnpm build, dist -> publish dir)
+
+[build]
+  command = "pnpm build"
+  publish = "dist"
+  functions = "services/serverless-functions"
+
+# Redirect the status-check endpoint to the serverless function
+[[redirects]]
+  from = "/status-check"
+  to = "/.netlify/functions/cloud-status-check"
+  status = 301
+  force = true
 
 # For router history mode, ensure all paths land on index.html
 [[redirects]]
