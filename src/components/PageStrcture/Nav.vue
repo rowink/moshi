@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { ref, computed, PropType } from "vue";
 import IconBurger from "@/assets/interface-icons/burger-menu.svg";
-import { makePageSlug } from "@/utils/ConfigHelpers";
+import { makePageRoute } from "@/utils/ConfigHelpers";
 import { useAppStore } from "@/store/modules/appStore";
 import { NavLink as NavLinkType } from "@/types/types";
 
@@ -48,7 +48,7 @@ const isMobile = ref(false);
 /* Get links to sub-pages, and combine with nav-links */
 const allLinks = computed(() => {
   const subPages = appStore.pages.map((subPage: Record<string, any>) => ({
-    path: makePageSlug(subPage.name),
+    path: makePageRoute(subPage),
     title: subPage.name,
   }));
   return [...(props.links || []), ...subPages];

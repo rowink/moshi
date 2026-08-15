@@ -28,6 +28,40 @@ export const makePageSlug = (pageName: string): string => {
 };
 
 /**
+ * Given a sub-page config entry, resolve the route path.
+ * Priority: explicit `route` field > conf-* convention on the config file > name-based slug
+ * @param userPage The sub-page config entry
+ * @returns The route path, always starting with "/"
+ */
+export const makePageRoute = (userPage: { name?: string; path?: string; route?: string }): string => {
+  // 1. Explicit route field wins
+  if (userPage.route) {
+    return userPage.route.startsWith("/") ? userPage.route : `/${userPage.route}`;
+  }
+  // 2. conf-* convention: conf.yml -> "/", conf-dev.yml -> "/dev"
+  const configFile = userPage.path || "";
+  const baseName = configFile.replace(/\.ya?ml$/i, "");
+  if (baseName === "conf") return "/";
+  if (baseName.startsWith("conf-")) return `/${baseName.slice(5)}`;
+  // 3. Fall back to name-based slug
+  return makePageSlug(userPage.name || "");
+};
+
+/**
+ * Given a sub-page config entry, resolve a stable page id.
+ * Falls back to the config file name when the page name produces "unnamed-page"
+ * @param userPage The sub-page config entry
+ * @returns A page id string
+ */
+export const makePageId = (userPage: { name?: string; path?: string }): string => {
+  const nameId = makePageName(userPage.name);
+  if (nameId !== "unnamed-page") return nameId;
+  const configFile = userPage.path || "";
+  const baseName = configFile.replace(/\.ya?ml$/i, "");
+  return makePageName(baseName);
+};
+
+/**
  * Initiates the Accumulator class and generates a complete config object
  * Self-executing function, returns the full user config as a JSON object
  */

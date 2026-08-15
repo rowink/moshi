@@ -21,7 +21,7 @@ import yaml from "js-yaml";
 import Home from "@/views/Home.vue";
 
 // Import helper functions, config data and defaults
-import { makePageSlug, makePageName } from "@/utils/ConfigHelpers";
+import { makePageRoute, makePageId } from "@/utils/ConfigHelpers";
 import { metaTagData, startingView, routePaths } from "@/utils/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 
@@ -66,6 +66,7 @@ const makeSubConfigPath = (rawPath: string) => {
 interface UserPage {
   name?: string;
   path?: string;
+  route?: string;
 }
 
 /* For each additional config file, create a route for the home view */
@@ -83,13 +84,13 @@ const makeMultiPageRoutes = (userPages: unknown[]): RouteRecordRaw[] => {
     const subPageInfo = {
       subPageInfo: {
         confPath: makeSubConfigPath(userPage.path as string),
-        pageId: makePageName(userPage.name as string),
+        pageId: makePageId(userPage),
         pageTitle: userPage.name,
       },
     };
     // Create route for default homepage
     multiPageRoutes.push({
-      path: makePageSlug(userPage.name as string),
+      path: makePageRoute(userPage),
       name: `${subPageInfo.subPageInfo.pageId}-home`,
       component: Home,
       props: subPageInfo,

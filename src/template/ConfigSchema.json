@@ -24,6 +24,11 @@
             "title": "Path",
             "type": "string",
             "description": "The file name, or path. If in public directory, use just `file-name.yml`"
+          },
+          "route": {
+            "title": "Route",
+            "type": "string",
+            "description": "Optional explicit route path for this page. If omitted, the route is derived from the config file name (conf-* convention) or the page name"
           }
         }
       }
