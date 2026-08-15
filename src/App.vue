@@ -36,6 +36,18 @@ const appConfig = computed(() => appStore.appConfig);
 const pageInfo = computed(() => appStore.pageInfo);
 const visibleComponents = computed(() => appStore.visibleComponents);
 
+/* Keep the document title in sync with the current config's page title.
+ * The router sets a title from the build-time config on navigation, but
+ * sub-page configs (e.g. doc-conf.yml) load asynchronously and carry their
+ * own pageInfo.title, so the title is updated here once they arrive. */
+watch(
+  () => pageInfo.value?.title,
+  (title) => {
+    if (title) document.title = title;
+  },
+  { immediate: true },
+);
+
 const subPageClassName = computed(() => {
   const currentSubPage = appStore.currentConfigInfo;
   return currentSubPage && currentSubPage.pageId ? currentSubPage.pageId : "";
