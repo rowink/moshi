@@ -1,5 +1,5 @@
 import ConfigAccumulator from "@/config/ConfigAccumalator";
-import { languages } from "@/config/languages";
+import { languages } from "@/i18n";
 import {
   visibleComponents,
   localStorageKeys,
@@ -8,7 +8,7 @@ import {
 } from "@/config/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 import ConfigSchema from "@/config/ConfigSchema.json";
-import type { Language } from "@/config/languages";
+import type { Language } from "@/i18n";
 
 /* Given a page name, converts to lowercase and removes special characters, whitespace and hyphens */
 export const makePageName = (pageName?: string): string => {

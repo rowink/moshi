@@ -1,7 +1,6 @@
 /* eslint-disable no-multi-spaces */
 // Import core framework and essential utils
 import { createApp } from "vue";
-import { createI18n, type I18nOptions } from "vue-i18n";
 
 // Import component Vue plugins, used throughout the app
 import VTooltip from "v-tooltip"; // A Vue directive for Popper.js, tooltip component
@@ -12,23 +11,11 @@ import Moshi from "@/App.vue"; // Main moshi Vue app
 import router from "./router"; // Router, for navigation
 import { pinia } from "@/store"; // Pinia, for local state management
 import serviceWorker from "@/utils/InitServiceWorker"; // Service worker initialization
-import { messages } from "@/config/languages"; // Language texts
+import i18n from "@/i18n"; // vue-i18n instance and language registry
 import ErrorReporting from "@/utils/ErrorReporting"; // Error reporting initializer (off)
 import clickOutside from "@/directives/ClickOutside"; // Directive for closing popups, modals, etc
 import { showToast } from "@/utils/toast";
-import {
-  tooltipOptions,
-  language as defaultLanguage,
-} from "@/config/defaults";
-
-// Setup i18n translations
-const i18n = createI18n({
-  legacy: false, // Use Composition API mode, so useI18n() works in <script setup>
-  globalInjection: true, // Exposes $t etc. to templates, for legacy-style usage
-  locale: defaultLanguage,
-  fallbackLocale: defaultLanguage,
-  messages: messages as unknown as I18nOptions["messages"],
-});
+import { tooltipOptions } from "@/config/defaults";
 
 // Create the Vue 3 app
 const app = createApp(Moshi);
