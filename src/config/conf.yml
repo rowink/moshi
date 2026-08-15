@@ -5,19 +5,19 @@ pageInfo:
   title: moshi
   description: 开发者的工具收集小站
   navLinks:
-  - title: Lab
-    path: https://exi.software
-  - title: GitHub
-    path: https://github.com/Exisi
+    - title: Lab
+      path: https://exi.software
+    - title: GitHub
+      path: https://github.com/Exisi
   footerText: (ﾉ´ヮ´)ﾉ*:･ﾟ✧
-  
+
 pages:
-- name: 〜
-  path: 'conf.yml'
-- name: 📃 DocKit
-  path: 'doc-conf.yml'
-- name: 🎈 TrendKit
-  path: 'trend-conf.yml'
+  - name: 〜
+    path: "conf.yml"
+  - name: 📃 DocKit
+    path: "doc-conf.yml"
+  - name: 🎈 TrendKit
+    path: "trend-conf.yml"
 
 # Optional app settings and configuration
 appConfig:
@@ -29,329 +29,311 @@ appConfig:
   webSearch:
     disableWebSearch: true
   enableFontAwesome: true
-  
+
 # Main content - An array of sections, each containing an array of items
 sections:
-- name: 即时运行
-  icon: fas fa-bug
-  items:
-  - title: Runcode
-    description: 在线运行，在线编辑, 代码格式化, 在线运行代码，C++、C、Java、Rust、Nodejs、Go、C#、Python3、php、Typescript 代码
-    icon: https://image.xjq.icu/runcode/2023-09-15/assets/study.def7917b.ico
-    url: https://r.xjq.icu/
+  - name: 强化搜索
+    icon: fas fa-search
+    items:
+      - title: Saveweb Search
+        description: A full- search engine for blog posts
+        icon: https://search.save-web.org/neosearch.svg
+        url: https://search.saveweb.org/
+      - title: ImageDash
+        description: Reverse search with an image, URL, or text to find what you're looking for across the web's top image search engines.
+        icon: https://image-dash.itea.dev/favicon.ico
+        url: https://image-dash.itea.dev/
 
+  - name: 来源标记
+    icon: fa fa-location-arrow
+    items:
+      - title: IP.orz.tools
+        description: What's My IP?
+        icon: https://ip.orz.tools/assets/favicon.17e50649.svg
+        url: https://ip.orz.tools/
+      - title: dnscheck.tools
+        description: A tool to test for DNS leaks, DNSSEC validation, and more
+        icon: https://dnscheck.tools/favicon.svg
+        url: https://dnscheck.tools/
 
-- name: 强化搜索
-  icon: fas fa-search
-  items:
-  - title: 微书签
-    description: 不求人快搜 - IT综合
-    icon: https://bookmark.bqrdh.com/favicon.ico
-    url: https://bookmark.bqrdh.com/fs/it
-  - title: Saveweb Search
-    description: A full- search engine for blog posts
-    icon: https://search.save-web.org/neosearch.svg
-    url: https://search.saveweb.org/
-  - title: ImageDash
-    description: Reverse search with an image, URL, or text to find what you're looking for across the web's top image search engines.
-    icon: https://image-dash.itea.dev/favicon.ico
-    url: https://image-dash.itea.dev/
+  - name: 站源详情
+    icon: fas fa-rocket
+    items:
+      - title: Built With
+        description: 了解网站是用什么构建的
+        icon: https://d28rh9vvmrd65v.cloudfront.net/img/favicon.ico
+        url: https://builtwith.com
+      - title: Ping.Sx
+        description: Ping any server from 132 global locations in parallel.
+        icon: https://ping.sx/favicon.ico
+        url: https://ping.sx/
+      - title: Pingdom
+        description: Use this free Website Speed Test to analyze the load speed of your websites, and learn how to make them faster.
+        icon: https://tools.pingdom.com/favicon.ico
+        url: https://tools.pingdom.com/
+      - title: Domainstack
+        description: Unlock full domain intelligence in one tool. Instantly view registration history, DNS and SSL records, HTTP headers, hosting & email details, and live SEO signals — all in one clean, fast interface.
+        icon: https://domainstack.io/favicon.ico?favicon.a5ce54ee.ico
+        url: https://domainstack.io
+      - title: MetaThief
+        description: Enter a URL to quickly get metadata, icons, and social media preview data for any website.
+        icon: https://meta-thief.vercel.app/favicon.ico
+        url: https://meta-thief.itea.dev/
 
-- name: 来源标记
-  icon: fa fa-location-arrow
-  items:
-  - title: IP.orz.tools
-    description: What's My IP?
-    icon: https://ip.orz.tools/assets/favicon.17e50649.svg
-    url: https://ip.orz.tools/
-  - title: dnscheck.tools 
-    description: A tool to test for DNS leaks, DNSSEC validation, and more
-    icon: https://dnscheck.tools/favicon.svg
-    url: https://dnscheck.tools/
-    
-- name: 站源详情
-  icon: fas fa-rocket
-  items:
-  - title: Built With
-    description: 了解网站是用什么构建的
-    icon: https://d28rh9vvmrd65v.cloudfront.net/img/favicon.ico
-    url: https://builtwith.com
-  - title: Ping.Sx
-    description: Ping any server from 132 global locations in parallel.
-    icon: https://ping.sx/favicon.ico
-    url: https://ping.sx/
-  - title: Pingdom
-    description: Use this free Website Speed Test to analyze the load speed of your websites, and learn how to make them faster.
-    icon: https://tools.pingdom.com/favicon.ico
-    url: https://tools.pingdom.com/
-  - title: Domainstack
-    description: Unlock full domain intelligence in one tool. Instantly view registration history, DNS and SSL records, HTTP headers, hosting & email details, and live SEO signals — all in one clean, fast interface.
-    icon: https://domainstack.io/favicon.ico?favicon.a5ce54ee.ico
-    url: https://domainstack.io
-  - title: MetaThief
-    description: Enter a URL to quickly get metadata, icons, and social media preview data for any website.
-    icon: https://meta-thief.vercel.app/favicon.ico
-    url: https://meta-thief.itea.dev/
+  - name: 原站概览
+    icon: fas fa-binoculars
+    items:
+      - title: Screenshot Guru
+        description: With Screenshot Guru, you can capture beautiful, full-length high-resolution (retina display) PNG screenshot images of web pages, tweets and any public website. It works every on your desktop, Android mobile phone, iPhone or iPad.
+        icon: https://screenshot.guru/favicon.ico
+        url: https://screenshot.guru/
+      - title: Screen Guru
+        description: Take clean screenshot of any websites
+        icon: https://screen.guru/favicon.ico
+        url: https://screen.guru/
 
-  
-- name: 原站概览
-  icon: fas fa-binoculars
-  items:
-  - title: Screenshot Guru
-    description: With Screenshot Guru, you can capture beautiful, full-length high-resolution (retina display) PNG screenshot images of web pages, tweets and any public website. It works every on your desktop, Android mobile phone, iPhone or iPad.
-    icon: https://screenshot.guru/favicon.ico
-    url: https://screenshot.guru/
-  - title: Screen Guru
-    description: Take clean screenshot of any websites
-    icon: https://screen.guru/favicon.ico
-    url: https://screen.guru/
+  - name: 原站描述
+    icon: fas fa-info
+    items:
+      - title: OGCOPS
+        description: Design beautiful OG images with 120+ templates. Free, no login required.
+        icon: https://og.codercops.com/favicon.svg
+        url: https://og.codercops.com/create
+      - title: Favicon Generator
+        description: Favicon InBrowser.App is a tool to generate favicon. Fully runs in your browser. No server-side code.
+        icon: https://favicon.inbrowser.app/favicon.svg
+        url: https://favicon.inbrowser.app/tools/favicon-generator
+      - title: IconKitchen
+        description: Cook up app icons for any platform
+        icon: https://icon.kitchen/favicon.ico
+        url: https://icon.kitchen/
 
+  - name: 点站检查
+    icon: fas fa-check-circle
+    items:
+      - title: Free Website Cookie Checker
+        description: Get a free cookie audit of your website instantly and determine your site’s compliance with GDPR cookie laws.
+        icon: https://d1pnnwteuly8z3.cloudfront.net/images/b90d3589-b2f5-4e75-bf91-c0fba9e89952/ab7c5148-a228-4aad-998a-7131f21222f2.svg
+        url: https://complydog.com/free-cookie-checker-tool
+      - title: Link Checker
+        description: Check all links on a website, identify broken links, and analyze different links.
+        icon: https://link-checker-zeta.vercel.app/favicon.ico
+        url: https://link-checker.itea.dev/
+      - title: dqmainer
+        description: Free online domain WHOIS lookup tool. Query domain registration details including registrar, expiration date, name servers, and more using RDAP/WHOIS protocols.
+        icon: https://dqmainer.itea.dev/favicon.png
+        url: https://dqmainer.itea.dev/
 
-- name: 原站描述
-  icon: fas fa-info
-  items:
-  - title: OGCOPS
-    description: Design beautiful OG images with 120+ templates. Free, no login required.
-    icon: https://og.codercops.com/favicon.svg
-    url: https://og.codercops.com/create
-  - title: Favicon Generator
-    description: Favicon InBrowser.App is a tool to generate favicon. Fully runs in your browser. No server-side code.
-    icon: https://favicon.inbrowser.app/favicon.svg
-    url: https://favicon.inbrowser.app/tools/favicon-generator
-  - title: IconKitchen
-    description: Cook up app icons for any platform
-    icon: https://icon.kitchen/favicon.ico
-    url: https://icon.kitchen/
+  - name: 通用工具
+    icon: fas fa-toolbox
+    items:
+      - title: CyberChef
+        description: 网络瑞士军刀 - 用于加密、编码、压缩和数据分析的网络应用程序
+        icon: https://gchq.github.io/CyberChef/assets/aecc661b69309290f600.ico
+        url: https://gchq.github.io/CyberChef/
+      - title: It-Tools
+        description: Collection of handy online tools for developers, with great UX. IT Tools is a free and open-source collection of handy online tools for developers & people working in IT.
+        icon: https://it-tools.tech/favicon.ico
+        url: https://it-tools.tech/
+      - title: Dev Utilities
+        description: Jam exists to make developers lives easier. Here are fast, free, open source, ad-free tools. Simplify your coding tasks with utilities like Base64 encode/decode, URL encode/decode, HEX to RGB converter, Timestamp to Date converter, and more.
+        icon: https://jam.dev/favicon.ico
+        url: https://jam.dev/utilities
+      - title: 极速箱
+        description: 提供高效开发工具集成平台，程序员必备在线工具箱，包含JSON处理、编码转换、加密解密、时间转换等提升编程效率的神器
+        icon: https://www.jisuxiang.com/favicon.ico
+        url: https://www.jisuxiang.com/
+      - title: delphitools
+        description: A collection of small, low stakes and low effort tools. No logins, no registration, no data collection. Everything runs locally in your browser.
+        icon: https://delphi.tools/delphi-lowlod.png
+        url: https://delphi.tools/
 
-- name: 点站检查
-  icon: fas fa-check-circle
-  items:
-  - title: Free Website Cookie Checker
-    description: Get a free cookie audit of your website instantly and determine your site’s compliance with GDPR cookie laws.
-    icon: https://d1pnnwteuly8z3.cloudfront.net/images/b90d3589-b2f5-4e75-bf91-c0fba9e89952/ab7c5148-a228-4aad-998a-7131f21222f2.svg
-    url: https://complydog.com/free-cookie-checker-tool
-  - title: Link Checker
-    description: Check all links on a website, identify broken links, and analyze different links.
-    icon: https://link-checker-zeta.vercel.app/favicon.ico
-    url: https://link-checker.itea.dev/
-  - title: dqmainer
-    description: Free online domain WHOIS lookup tool. Query domain registration details including registrar, expiration date, name servers, and more using RDAP/WHOIS protocols.
-    icon: https://dqmainer.itea.dev/favicon.png
-    url: https://dqmainer.itea.dev/
-    
-- name: 通用工具
-  icon: fas fa-toolbox
-  items:
-  - title: CyberChef
-    description: 网络瑞士军刀 - 用于加密、编码、压缩和数据分析的网络应用程序
-    icon: https://gchq.github.io/CyberChef/assets/aecc661b69309290f600.ico
-    url: https://gchq.github.io/CyberChef/
-  - title: It-Tools
-    description: Collection of handy online tools for developers, with great UX. IT Tools is a free and open-source collection of handy online tools for developers & people working in IT.
-    icon: https://it-tools.tech/favicon.ico
-    url: https://it-tools.tech/
-  - title: Dev Utilities
-    description: Jam exists to make developers lives easier. Here are fast, free, open source, ad-free tools. Simplify your coding tasks with utilities like Base64 encode/decode, URL encode/decode, HEX to RGB converter, Timestamp to Date converter, and more.
-    icon: https://jam.dev/favicon.ico
-    url: https://jam.dev/utilities
-  - title: 极速箱
-    description: 提供高效开发工具集成平台，程序员必备在线工具箱，包含JSON处理、编码转换、加密解密、时间转换等提升编程效率的神器
-    icon: https://www.jisuxiang.com/favicon.ico
-    url: https://www.jisuxiang.com/
-  - title: delphitools
-    description: A collection of small, low stakes and low effort tools. No logins, no registration, no data collection. Everything runs locally in your browser.
-    icon: https://delphi.tools/delphi-lowlod.png
-    url: https://delphi.tools/
+  - name: 数据处理
+    icon: fas fa-code
+    items:
+      - title: Transform
+        description: A polyglot web converter that's going to save you a lot of time.
+        icon: https://transform.tools//static/favicon.png
+        url: https://transform.tools/
+      - title: Jsont
+        description: json,json在线解析,json格式化,json格式验证,json压缩,json转义,json在线,JSON校验
+        icon: https://www.jsont.run/favicon.ico?v=2
+        url: https://www.jsont.run
+      - title: Json Crack
+        description: 创新的开源可视化应用程序，可将 JSON、YAML、XML、CSV 等各种数据格式转换为交互式图表。
+        icon: https://jsoncrack.com/favicon.ico
+        url: https://jsoncrack.com/editor
+      - title: JSON For You
+        description: 在线JSON预览、格式化/美化、最小化、校验、比较。同时支持用图预览JSON数据，语义化/结构化比较两个JSON数据的差异，将JSON转换成CSV，将CSV转换成JSON，支持在线使用jq
+        icon: https://json4u.cn/icon.svg
+        url: https://json4u.cn/editor
+      - title: JSON Hero
+        description: JSON Hero makes reading and understand JSON files easy by giving you a clean and beautiful UI packed with extra features.
+        icon: https://jsonhero.io/favicon.ico
+        url: https://jsonhero.io
+      - title: Debuggex
+        description: 通过使用实时编辑器可视化正则表达式来测试它。JavaScript、Python和PCRE。
+        icon: https://www.debuggex.com/static/img/favicon.ico
+        url: https://www.debuggex.com
+      - title: Regex Vis
+        description: Regex visualizer & editor, make the regular expression easier.
+        icon: https://regex-vis.com/favicon.png
+        url: https://regex-vis.com/
 
-- name: 数据处理
-  icon: fas fa-code
-  items:
-  - title: Transform
-    description: A polyglot web converter that's going to save you a lot of time.
-    icon: https://transform.tools//static/favicon.png
-    url: https://transform.tools/
-  - title: Jsont
-    description: json,json在线解析,json格式化,json格式验证,json压缩,json转义,json在线,JSON校验
-    icon: https://www.jsont.run/favicon.ico?v=2
-    url: https://www.jsont.run
-  - title: Json Crack
-    description: 创新的开源可视化应用程序，可将 JSON、YAML、XML、CSV 等各种数据格式转换为交互式图表。
-    icon: https://jsoncrack.com/favicon.ico
-    url: https://jsoncrack.com/editor
-  - title: JSON For You
-    description: 在线JSON预览、格式化/美化、最小化、校验、比较。同时支持用图预览JSON数据，语义化/结构化比较两个JSON数据的差异，将JSON转换成CSV，将CSV转换成JSON，支持在线使用jq
-    icon: https://json4u.cn/icon.svg
-    url: https://json4u.cn/editor
-  - title: JSON Hero
-    description: JSON Hero makes reading and understand JSON files easy by giving you a clean and beautiful UI packed with extra features.
-    icon: https://jsonhero.io/favicon.ico
-    url: https://jsonhero.io
-  - title: Debuggex
-    description: 通过使用实时编辑器可视化正则表达式来测试它。JavaScript、Python和PCRE。
-    icon: https://www.debuggex.com/static/img/favicon.ico
-    url: https://www.debuggex.com
-  - title: Regex Vis
-    description: Regex visualizer & editor, make the regular expression easier.
-    icon: https://regex-vis.com/favicon.png
-    url: https://regex-vis.com/
+  - name: 文本工具
+    icon: fas fa-paste
+    items:
+      - title: minifier
+        description: Online web formats minifier
+        icon: https://go.tacodewolff.nl/favicon-32x32.png
+        url: https://go.tacodewolff.nl/minify
+      - title: 变量命名工具
+        description: 这是一款简洁好用的在线的代码命名、方法命名工具、变量命名规则库，使用它可以让您轻松摆脱翻译软件的困扰，快速选择合适的变量名称用于开发工作中
+        icon: https://tool.h234.cn/assets/favicon.ico
+        url: https://tool.h234.cn/rcode/index.html
+      - title: Little Differ
+        description: A simple and free diff tool by Appfigures
+        icon: https://www.littlediffer.com/icon.png
+        url: https://www.littlediffer.com/
+      - title: HTML To Markdown 转换工具
+        description: 在线把 HTML 转化为 Markdown，在线把 URL 转化为 Markdown。免费无广告并实时转换，支持代码、表格等多种复杂格式。Table to Markdown 转换利器。支持为 LLM 等 AI 工具读取网站内容
+        icon: https://devtool.tech/favicon.ico
+        url: https://devtool.tech/html-md
+      - title: Link Extractor
+        description: Free online link extraction tool. Batch extract URLs from text or files, validate links, export to TXT/JSON/CSV. Fully client-side, no data uploaded to servers.
+        icon: https://link-extractor.itea.dev/favicon.png
+        url: https://link-extractor.itea.dev/
 
-- name: 文本工具
-  icon: fas fa-paste
-  items:
-  - title: minifier
-    description: Online web formats minifier
-    icon: https://go.tacodewolff.nl/favicon-32x32.png
-    url: https://go.tacodewolff.nl/minify
-  - title: 变量命名工具
-    description: 这是一款简洁好用的在线的代码命名、方法命名工具、变量命名规则库，使用它可以让您轻松摆脱翻译软件的困扰，快速选择合适的变量名称用于开发工作中
-    icon: https://tool.h234.cn/assets/favicon.ico
-    url: https://tool.h234.cn/rcode/index.html
-  - title: Little Differ
-    description: A simple and free diff tool by Appfigures
-    icon: https://www.littlediffer.com/icon.png
-    url: https://www.littlediffer.com/
-  - title: HTML To Markdown 转换工具
-    description: 在线把 HTML 转化为 Markdown，在线把 URL 转化为 Markdown。免费无广告并实时转换，支持代码、表格等多种复杂格式。Table to Markdown 转换利器。支持为 LLM 等 AI 工具读取网站内容
-    icon: https://devtool.tech/favicon.ico
-    url: https://devtool.tech/html-md
-  - title: Link Extractor
-    description: Free online link extraction tool. Batch extract URLs from text or files, validate links, export to TXT/JSON/CSV. Fully client-side, no data uploaded to servers.
-    icon: https://link-extractor.itea.dev/favicon.png
-    url: https://link-extractor.itea.dev/
+  - name: 终端工具
+    icon: fas fa-terminal
+    items:
+      - title: Crontab
+        description: Cronitor 的 cron 计划表达式快速简单的编辑器
+        icon: https://crontab.guru/favicon.ico
+        url: https://crontab.guru
+      - title: Crontab Generator
+        description: 为 Unix/Linux 系统命令中追加生成可用的 Cron
+        icon: https://crontab-generator.org/favicon.ico
+        url: https://crontab-generator.org
+      - title: composerize
+        description: Say goodbye to sprawling docker commands and say hello to docker-compose up :)
+        icon: https://www.composerize.com/favicon.ico
+        url: https://www.composerize.com
+      - title: Compose It
+        description: docker run to compose, docker compose generator, homelab tools, docker command converter, docker run to compose converter, docker compose converter
+        icon: https://compose-it.top/favicon.ico
+        url: https://compose-it.top/
 
-- name: 终端工具
-  icon: fas fa-terminal
-  items:
-  - title: Crontab
-    description: Cronitor 的 cron 计划表达式快速简单的编辑器
-    icon: https://crontab.guru/favicon.ico
-    url: https://crontab.guru
-  - title: Crontab Generator
-    description: 为 Unix/Linux 系统命令中追加生成可用的 Cron
-    icon: https://crontab-generator.org/favicon.ico
-    url: https://crontab-generator.org
-  - title: composerize
-    description: Say goodbye to sprawling docker commands and say hello to docker-compose up :)
-    icon: https://www.composerize.com/favicon.ico
-    url: https://www.composerize.com
-  - title: Compose It
-    description: docker run to compose, docker compose generator, homelab tools, docker command converter, docker run to compose converter, docker compose converter
-    icon: https://compose-it.top/favicon.ico
-    url: https://compose-it.top/
+  - name: 代码卡片
+    icon: fas fa-meteor
+    items:
+      - title: ray.so
+        description: 将您的代码变成美丽的图像。从一系列语法颜色中进行选择，隐藏或显示背景，以及在深色和浅色窗口之间切换。
+        icon: https://ray.so/favicon.png
+        url: https://ray.so
+      - title: Chalk.ist
+        description: Turn your source code into beautiful images
+        icon: https://chalk.ist/favicon.ico
+        url: https://chalk.ist/
+      - title: Code to Image
+        description: Transform your code into visually appealing images effortlessly with our tool.
+        icon: /favicon.ico
+        url: https://code-to-image-converter.vercel.app/
 
-- name: 代码卡片
-  icon: fas fa-meteor
-  items:
-  - title: ray.so
-    description: 将您的代码变成美丽的图像。从一系列语法颜色中进行选择，隐藏或显示背景，以及在深色和浅色窗口之间切换。
-    icon: https://ray.so/favicon.png
-    url: https://ray.so
-  - title: Chalk.ist
-    description: Turn your source code into beautiful images
-    icon: https://chalk.ist/favicon.ico
-    url: https://chalk.ist/
-  - title: Code to Image
-    description: Transform your code into visually appealing images effortlessly with our tool.
-    icon: /favicon.ico
-    url: https://code-to-image-converter.vercel.app/
+  - name: 图文卡片
+    icon: fas fa-magic
+    items:
+      - title: CoverView
+        description: CoverView is an open-source tool to create cover images for your blogs quickly and easily. Customize with different themes, colors, fonts and more.
+        icon: https://coverview.lruihao.cn/logo.png
+        url: https://coverview.lruihao.cn/editor
+      - title: BrowserFrame
+        description: The easiest way to wrap screenshots in browser frames. Supports multiple browsers, operating systems, and themes
+        icon: https://browserframe.com/favicon-32x32.png
+        url: https://browserframe.com/
+      - title: Screenshot.Rocks
+        description: Create mobile or browser mockups from screenshots in seconds. Screenshot.rocks turns ordinary browser screenshots into beautiful mockups
+        icon: https://screenshot.rocks/favicon.ico
+        url: https://screenshot.rocks/app#!
+      - title: PostSpark
+        description: Quickly create stunning screenshots for social media with customizable backgrounds, browser frames, aspect ratios, borders, and more. Enhance your posts in just a few clicks!
+        icon: https://postspark.app/favicon.ico
+        url: https://postspark.app/screenshot
+      - title: ReadPo
+        description: 使用 Markdown 灵活的编辑，实时预览，支持导出为图片。支持多种 ReadPo 海报模板和主题。提供一个免费的海报渲染 API，可以集成到你的网站、Bot、ChatGPT、Coze 等平台。
+        icon: https://readpo.com/favicon.ico
+        url: https://readpo.com/poster
+      - title: Cardify 卡片工坊
+        description: A beautiful markdown editor with live preview
+        icon: https://cardify.godsbee.com/favicon.ico
+        url: https://cardify.godsbee.com/editor
+      - title: Screenshot Studio
+        description: Free screenshot editor and mockup maker online — add gradient backgrounds, Safari and Chrome browser mockups, shadows, 3D effects, and animations to your screenshots. Import tweets and generate code snippets as images. Better free alternative to Pika Style and Shots.so. Export as PNG, JPG, or video. No signup needed.
+        icon: https://www.screenshot-studio.com/favicon-96x96.png
+        url: https://www.screenshot-studio.com/
 
-- name: 图文卡片
-  icon: fas fa-magic
-  items:
-  - title: CoverView
-    description:  CoverView is an open-source tool to create cover images for your blogs quickly and easily. Customize with different themes, colors, fonts and more.
-    icon: https://coverview.lruihao.cn/logo.png
-    url: https://coverview.lruihao.cn/editor
-  - title: BrowserFrame
-    description: The easiest way to wrap screenshots in browser frames. Supports multiple browsers, operating systems, and themes
-    icon: https://browserframe.com/favicon-32x32.png
-    url: https://browserframe.com/
-  - title: Screenshot.Rocks
-    description: Create mobile or browser mockups from screenshots in seconds. Screenshot.rocks turns ordinary browser screenshots into beautiful mockups
-    icon: https://screenshot.rocks/favicon.ico
-    url: https://screenshot.rocks/app#!
-  - title: PostSpark
-    description: Quickly create stunning screenshots for social media with customizable backgrounds, browser frames, aspect ratios, borders, and more. Enhance your posts in just a few clicks!
-    icon: https://postspark.app/favicon.ico
-    url: https://postspark.app/screenshot
-  - title: ReadPo
-    description: 使用 Markdown 灵活的编辑，实时预览，支持导出为图片。支持多种 ReadPo 海报模板和主题。提供一个免费的海报渲染 API，可以集成到你的网站、Bot、ChatGPT、Coze 等平台。
-    icon: https://readpo.com/favicon.ico
-    url: https://readpo.com/poster
-  - title: Cardify 卡片工坊
-    description: A beautiful markdown editor with live preview
-    icon: https://cardify.godsbee.com/favicon.ico
-    url: https://cardify.godsbee.com/editor
-  - title: Screenshot Studio
-    description: Free screenshot editor and mockup maker online — add gradient backgrounds, Safari and Chrome browser mockups, shadows, 3D effects, and animations to your screenshots. Import tweets and generate code snippets as images. Better free alternative to Pika Style and Shots.so. Export as PNG, JPG, or video. No signup needed.
-    icon: https://www.screenshot-studio.com/favicon-96x96.png
-    url: https://www.screenshot-studio.com/
+  - name: 图片处理
+    icon: fas fa-images
+    items:
+      - title: Image Converter
+        description: Drag and drop images here or click to select files
+        icon: https://amirthfultehrani.github.io/favicon.ico
+        url: https://amirthfultehrani.github.io/Browser-Image-Converter/
+      - title: VTracer
+        description: Raster to Vector Graphics Converter built on top of visioncortex
+        icon: https://www.visioncortex.org/vtracer/assets/apple-icon.png
+        url: https://www.visioncortex.org/vtracer/
+      - title: Waifu2x
+        description: Waifu2x 图像缩放器将增强您的图像并将分辨率提高两倍
+        icon: https://waifu2x.booru.pics/favicon.ico
+        statusCheckAcceptCodes: 403
+        url: https://waifu2x.booru.pics
+      - title: Squoosh
+        description: Squoosh 是终极图像优化器，允许您在浏览器中压缩和比较不同编解码器的图像。
+        icon: https://squoosh.app/c/favicon-c9cf50ef.ico
+        url: https://squoosh.app
+      - title: Caesium
+        description: Cesium是一款免费、开源、在线的照片和图像（JPG、PNG）压缩工具，支持批量、预览等功能。 Cesium 可以节省空间并使上传速度更快。
+        icon: https://caesium.app/images/logo.png
+        url: https://caesium.app
+      - title: Pic Smaller
+        description: Pic Smaller – Compress JPEG, PNG, WEBP, AVIF, SVG and GIF images intelligently
+        icon: https://picsmaller.com/logo.svg
+        url: https://picsmaller.com/
+      - title: SVGOMG
+        description: Easy & visual compression of SVG images.
+        icon: https://jakearchibald.github.io/svgomg/imgs/icon.png
+        url: https://jakearchibald.github.io/svgomg/
+      - title: GifStudio
+        description: Client-side GIF creation and editing studio with frame manipulation, timing controls, effects, and export tools.
+        icon:
+        url: https://sysadmindoc.github.io/GifStudio/
 
+  - name: 画布
+    icon: fas fa-pencil-ruler
+    items:
+      - title: Excalidraw
+        description: Excalidraw 是一款虚拟协作白板工具，可让您轻松绘制具有手绘感觉的图表。
+        icon: https://excalidraw.com/favicon.ico
+        url: https://excalidraw.com/
+      - title: Drawnix
+        description: Drawnix 是一款强大的开源白板工具（https://github.com/plait-board/drawnix），集成思维导图、流程图等功能。基于 Plait 框架开发，支持插件扩展，提供自动保存、无限画布等特性。Draw Beyond, Rise Above.
+        icon: https://drawnix.com/favicon.ico
+        url: https://drawnix.com/
+      - title: mind-map
+        description: 一个还算强大的Web思维导图。
+        icon: https://wanglin2.github.io/mind-map/dist/logo.ico
+        url: https://wanglin2.github.io/mind-map/#/
+      - title: markmap
+        description: Try the markmap REPL here.
+        icon: https://markmap.js.org/favicon.png
+        url: https://markmap.js.org/repl
+      - title: drawDB
+        description: Online database entity-realtionship diagram editor and SQL generator. Design, visualize, and export scripts without an account and completely free of charge.
+        icon: https://drawdb.vercel.app/favicon.ico
+        url: https://drawdb.vercel.app/editor
 
-- name: 图片处理
-  icon: fas fa-images
-  items:
-  - title: Image Converter
-    description: Drag and drop images here or click to select files
-    icon: https://amirthfultehrani.github.io/favicon.ico
-    url: https://amirthfultehrani.github.io/Browser-Image-Converter/
-  - title: VTracer
-    description: Raster to Vector Graphics Converter built on top of visioncortex
-    icon: https://www.visioncortex.org/vtracer/assets/apple-icon.png
-    url: https://www.visioncortex.org/vtracer/
-  - title: Waifu2x
-    description: Waifu2x 图像缩放器将增强您的图像并将分辨率提高两倍
-    icon: https://waifu2x.booru.pics/favicon.ico
-    statusCheckAcceptCodes: 403
-    url: https://waifu2x.booru.pics
-  - title: Squoosh
-    description: Squoosh 是终极图像优化器，允许您在浏览器中压缩和比较不同编解码器的图像。
-    icon: https://squoosh.app/c/favicon-c9cf50ef.ico
-    url: https://squoosh.app
-  - title: Caesium
-    description: Cesium是一款免费、开源、在线的照片和图像（JPG、PNG）压缩工具，支持批量、预览等功能。 Cesium 可以节省空间并使上传速度更快。
-    icon: https://caesium.app/images/logo.png
-    url: https://caesium.app
-  - title: Pic Smaller
-    description: Pic Smaller – Compress JPEG, PNG, WEBP, AVIF, SVG and GIF images intelligently
-    icon: https://picsmaller.com/logo.svg
-    url: https://picsmaller.com/
-  - title: SVGOMG
-    description: Easy & visual compression of SVG images.
-    icon: https://jakearchibald.github.io/svgomg/imgs/icon.png
-    url: https://jakearchibald.github.io/svgomg/
-  - title: GifStudio
-    description: Client-side GIF creation and editing studio with frame manipulation, timing controls, effects, and export tools.
-    icon: 
-    url: https://sysadmindoc.github.io/GifStudio/
-
-- name: 画布
-  icon: fas fa-pencil-ruler
-  items:
-  - title: Excalidraw
-    description: Excalidraw 是一款虚拟协作白板工具，可让您轻松绘制具有手绘感觉的图表。
-    icon: https://excalidraw.com/favicon.ico
-    url: https://excalidraw.com/
-  - title: Drawnix
-    description: Drawnix 是一款强大的开源白板工具（https://github.com/plait-board/drawnix），集成思维导图、流程图等功能。基于 Plait 框架开发，支持插件扩展，提供自动保存、无限画布等特性。Draw Beyond, Rise Above.
-    icon: https://drawnix.com/favicon.ico
-    url: https://drawnix.com/
-  - title: mind-map
-    description: 一个还算强大的Web思维导图。
-    icon: https://wanglin2.github.io/mind-map/dist/logo.ico
-    url: https://wanglin2.github.io/mind-map/#/
-  - title: markmap
-    description: Try the markmap REPL here.
-    icon: https://markmap.js.org/favicon.png
-    url: https://markmap.js.org/repl
-  - title: drawDB
-    description: Online database entity-realtionship diagram editor and SQL generator. Design, visualize, and export scripts without an account and completely free of charge.
-    icon: https://drawdb.vercel.app/favicon.ico
-    url: https://drawdb.vercel.app/editor
-
-
-  - title: ChartDB
-    description: Free and Open-source database diagrams editor, visualize and design your database with a single query. Tool to help you draw your DB relationship diagrams and export DDL scripts
-    icon: https://app.chartdb.io/favicon.ico
-    url: https://app.chartdb.io/
-
+      - title: ChartDB
+        description: Free and Open-source database diagrams editor, visualize and design your database with a single query. Tool to help you draw your DB relationship diagrams and export DDL scripts
+        icon: https://app.chartdb.io/favicon.ico
+        url: https://app.chartdb.io/
