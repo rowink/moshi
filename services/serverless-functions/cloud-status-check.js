@@ -1,6 +1,8 @@
-/* A cloud function that wraps the status checking method, for use on Netlify */
-const axios = require('axios').default;
+/* A Netlify cloud function for the status check feature.
+ * Uses only Node built-ins (https/http) so it has zero external
+ * dependencies and cannot fail to bundle on Netlify. */
 const https = require('https');
+const http = require('http');
 
 /* Determines if successful from the HTTP response code */
 const getResponseType = (code, validCodes) => {
@@ -23,39 +25,50 @@ const makeErrorMessage = (data) => `❌ Service Unavailable: ${data.hostname || 
 const makeErrorMessage2 = (data) => '❌ Service Error - '
   + `${data.status} - ${data.statusText}`;
 
-/* Kicks of a HTTP request, then formats and renders results */
+/* Kicks off a HTTP request, then formats and renders results */
 const makeRequest = (url, options, render) => {
   const {
     headers, enableInsecure, acceptCodes, maxRedirects,
   } = options;
   const validCodes = acceptCodes && acceptCodes !== 'null' ? acceptCodes : null;
   const startTime = new Date();
-  const requestMaker = axios.create({
-    httpsAgent: new https.Agent({
+  const redirectLimit = parseInt(maxRedirects, 10) > 0 ? parseInt(maxRedirects, 10) : 5;
+
+  const doRequest = (targetUrl, redirectsLeft) => {
+    const parsed = new URL(targetUrl);
+    const client = parsed.protocol === 'https:' ? https : http;
+    const req = client.request(parsed, {
+      method: 'GET',
+      headers,
       rejectUnauthorized: !enableInsecure,
-    }),
-  });
-  requestMaker.request({
-    url,
-    headers,
-    maxRedirects,
-    timeout: 8000,
-  })
-    .then((response) => {
-      const statusCode = response.status;
-      const { statusText } = response;
+      timeout: 8000,
+    }, (response) => {
+      const { statusCode, statusMessage } = response;
+      const location = response.headers.location;
+      if ([301, 302, 303, 307, 308].includes(statusCode) && location && redirectsLeft > 0) {
+        response.resume();
+        const nextUrl = new URL(location, targetUrl).toString();
+        doRequest(nextUrl, redirectsLeft - 1);
+        return;
+      }
       const successStatus = getResponseType(statusCode, validCodes);
-      const serverName = response.request.socket.servername;
-      const timeTaken = (new Date() - startTime);
       const results = {
-        statusCode, statusText, serverName, successStatus, timeTaken,
+        statusCode,
+        statusText: statusMessage,
+        serverName: parsed.hostname,
+        successStatus,
+        timeTaken: (new Date() - startTime),
       };
       results.message = makeMessageText(results);
-      return results;
-    })
-    .catch((error) => {
-      const response = error ? (error.response || {}) : {};
-      const returnCode = response.status || response.code;
+      response.resume();
+      render(JSON.stringify(results));
+    });
+    req.on('timeout', () => {
+      req.destroy(new Error('ETIMEDOUT'));
+    });
+    req.on('error', (error) => {
+      const response = error.response || {};
+      const returnCode = response.status || error.code;
       if (validCodes && String(validCodes).includes(returnCode)) { // Success overridden by user
         const results = {
           successStatus: getResponseType(returnCode, validCodes),
@@ -64,17 +77,18 @@ const makeRequest = (url, options, render) => {
           timeTaken: (new Date() - startTime),
         };
         results.message = makeMessageText(results);
-        return results;
+        render(JSON.stringify(results));
       } else { // Request failed
-        return {
+        render(JSON.stringify({
           successStatus: false,
           message: error.response ? makeErrorMessage2(error.response) : makeErrorMessage(error),
-        };
+        }));
       }
-    }).then((results) => {
-      // Request completed (either successfully, or failed) - render results
-      render(JSON.stringify(results));
     });
+    req.end();
+  };
+
+  doRequest(url, redirectLimit);
 };
 
 const decodeHeaders = (maybeHeaders) => {
