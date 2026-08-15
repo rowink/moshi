@@ -129,12 +129,13 @@ const statusCheck = (paramStr, render) => {
   }
 };
 
-exports.handler = (event, context, callback) => {
+exports.handler = async (event) => {
   const paramStr = event.rawQuery;
-  statusCheck(paramStr, (results) => {
-    callback(null, {
-      statusCode: 200,
-      body: results,
-    });
+  const results = await new Promise((resolve) => {
+    statusCheck(paramStr, resolve);
   });
+  return {
+    statusCode: 200,
+    body: results,
+  };
 };
