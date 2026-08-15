@@ -94,6 +94,7 @@ const makeMultiPageRoutes = (userPages: unknown[]): RouteRecordRaw[] => {
       name: `${subPageInfo.subPageInfo.pageId}-home`,
       component: Home,
       props: subPageInfo,
+      meta: makeMetaTags("Home Page"),
     });
   });
   return multiPageRoutes;
@@ -153,7 +154,7 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
   progress.end();
   nextTick(() => {
-    document.title = (to.meta?.title as string) || "moshi";
+    document.title = (to.meta?.title as string) || (pageInfo.title as string) || "moshi";
   });
 });
 
