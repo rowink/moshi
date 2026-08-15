@@ -48,6 +48,25 @@ const serveConfigYml = () => ({
   },
 });
 
+// The runtime also fetches '/xxx.yml' via axios in production, so the config
+// files must be emitted into the build output, mirroring the dev middleware.
+const emitConfigYml = () => ({
+  name: 'emit-config-yml',
+  enforce: 'post',
+  generateBundle() {
+    const configDir = path.resolve(__dirname, 'src', 'config');
+    fs.readdirSync(configDir).forEach((file) => {
+      if (/\.ya?ml$/.test(file)) {
+        this.emitFile({
+          type: 'asset',
+          fileName: file,
+          source: fs.readFileSync(path.join(configDir, file), 'utf-8'),
+        });
+      }
+    });
+  },
+});
+
 module.exports = defineConfig(({ mode }) => ({
   base,
   plugins: [
@@ -55,6 +74,7 @@ module.exports = defineConfig(({ mode }) => ({
     svgLoader(),
     loadConfigRaw(),
     serveConfigYml(),
+    emitConfigYml(),
     VitePWA({
       filename: 'service-worker.js',
       injectRegister: false, // moshi registers the SW itself in InitServiceWorker.js
