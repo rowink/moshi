@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, type PropType } from "vue";
+import { computed, ref, toRef, watch, type PropType } from "vue";
 import { useHome } from "@/composables/useHome";
 import SearchBar from "@/components/SearchBar.vue";
 import LayoutOptions from "@/components/LayoutOptions/LayoutOptions.vue";
@@ -77,7 +77,7 @@ const {
   getBackgroundImage,
   initiateFontAwesome,
   initiateMaterialDesignIcons,
-} = useHome(props.subPageInfo);
+} = useHome(toRef(props, "subPageInfo"));
 
 const layout = ref("");
 const itemSizeBound = ref("");

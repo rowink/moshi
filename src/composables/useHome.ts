@@ -1,7 +1,7 @@
 /**
  * Composable version of the HomeMixin, for the home page
  */
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch, type Ref } from "vue";
 import { useRoute } from "vue-router";
 import Defaults, { localStorageKeys, iconCdns } from "@/config/defaults";
 import { searchTiles } from "@/utils/Search";
@@ -18,7 +18,7 @@ interface SubPageInfo {
   confPath?: string;
 }
 
-export const useHome = (subPageInfo?: SubPageInfo) => {
+export const useHome = (subPageInfo: Ref<SubPageInfo | undefined>) => {
   const appStore = useAppStore();
   const route = useRoute();
 
@@ -26,13 +26,13 @@ export const useHome = (subPageInfo?: SubPageInfo) => {
   const appConfig = computed(() => appStore.appConfig);
   const pageInfo = computed(() => appStore.pageInfo);
   const modalOpen = computed(() => appStore.modalOpen);
-  const pageId = computed(() => (subPageInfo && subPageInfo.pageId ? subPageInfo.pageId : "home"));
+  const pageId = computed(() => (subPageInfo.value && subPageInfo.value.pageId ? subPageInfo.value.pageId : "home"));
 
   const searchValue = ref("");
 
   const getConfigForRoute = async () => {
-    appStore.setCurrentSubPage(subPageInfo);
-    const confPath = subPageInfo && subPageInfo.confPath;
+    appStore.setCurrentSubPage(subPageInfo.value);
+    const confPath = subPageInfo.value && subPageInfo.value.confPath;
     if (confPath) {
       // Get config for sub-page
       await appStore.initializeMultiPageConfig(confPath);
