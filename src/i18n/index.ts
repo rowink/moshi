@@ -3,7 +3,7 @@
  * Translation JSON files live in ./locales/*.json
  */
 import { createI18n, type I18nOptions } from "vue-i18n";
-import { language as defaultLanguage } from "@/config/defaults";
+import { language as defaultLanguage } from "@/utils/defaults";
 
 // Locales - Import translation files here
 import en from "./locales/en.json";

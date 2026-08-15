@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/vue";
 import { warningMsg, statusMsg, statusErrorMsg } from "@/utils/CoolConsole";
-import { sessionStorageKeys } from "@/config/defaults";
+import { sessionStorageKeys } from "@/utils/defaults";
 
 /* Makes the current time, like hh:mm:ss */
 const makeTime = (): string => {

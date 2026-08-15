@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import vLongPress from "@/directives/LongPress";
-import { localStorageKeys } from "@/config/defaults";
+import { localStorageKeys } from "@/utils/defaults";
 import Icon from "@/components/LinkItems/ItemIcon.vue";
 import OpenIcon from "@/assets/interface-icons/config-open-settings.svg";
 import { computed, onMounted, ref, watch } from "vue";

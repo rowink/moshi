@@ -1,11 +1,11 @@
-import ConfigAccumulator from "@/config/ConfigAccumalator";
+import ConfigAccumulator from "@/utils/ConfigAccumalator";
 import { languages } from "@/i18n";
 import {
   visibleComponents,
   localStorageKeys,
   theme as defaultTheme,
   language as defaultLanguage,
-} from "@/config/defaults";
+} from "@/utils/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 import ConfigSchema from "@/types/ConfigSchema.json";
 import type { Language } from "@/i18n";

@@ -15,7 +15,7 @@ import i18n from "@/i18n"; // vue-i18n instance and language registry
 import ErrorReporting from "@/utils/ErrorReporting"; // Error reporting initializer (off)
 import clickOutside from "@/directives/ClickOutside"; // Directive for closing popups, modals, etc
 import { showToast } from "@/utils/toast";
-import { tooltipOptions } from "@/config/defaults";
+import { tooltipOptions } from "@/utils/defaults";
 
 // Create the Vue 3 app
 const app = createApp(Moshi);

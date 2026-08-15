@@ -12,7 +12,7 @@ import {
   serviceEndpoints,
   localStorageKeys,
   iconSize as defaultSize,
-} from "@/config/defaults";
+} from "@/utils/defaults";
 import { useAppStore } from "@/store/modules/appStore";
 import { Item, ItemTarget } from "@/types/types";
 

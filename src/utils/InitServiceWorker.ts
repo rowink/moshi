@@ -1,7 +1,7 @@
 import axios from "axios";
 import yaml from "js-yaml";
 import { register } from "register-service-worker";
-import { sessionStorageKeys } from "@/config/defaults";
+import { sessionStorageKeys } from "@/utils/defaults";
 import { statusMsg, statusErrorMsg } from "@/utils/CoolConsole";
 
 /* Sets a local storage item with the state from the SW lifecycle */

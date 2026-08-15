@@ -12,7 +12,7 @@ import {
   pageInfo as defaultPageInfo,
   iconSize as defaultIconSize,
   layout as defaultLayout,
-} from "@/config/defaults";
+} from "@/utils/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 import { applyItemId } from "@/utils/SectionHelpers";
 import { pinia } from "@/store";

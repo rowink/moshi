@@ -43,7 +43,7 @@ import ContextMenu from "@/components/LinkItems/ItemContextMenu.vue";
 import useItem from "@/composables/useItem";
 import { SubItem } from "@/types/types";
 import vLongPress from "@/directives/LongPress";
-// import { targetValidator } from '@/config/ConfigHelpers';
+// import { targetValidator } from '@/utils/ConfigHelpers';
 
 const props = defineProps({
   id: String, // The unique ID of a tile (e.g. 001)

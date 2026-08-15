@@ -2,10 +2,10 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import yaml from "js-yaml";
-import ConfigAccumulator from "@/config/ConfigAccumalator";
-import { componentVisibility } from "@/config/ConfigHelpers";
+import ConfigAccumulator from "@/utils/ConfigAccumalator";
+import { componentVisibility } from "@/utils/ConfigHelpers";
 import ErrorHandler, { InfoHandler, InfoKeys } from "@/utils/ErrorHandler";
-import { localStorageKeys } from "../../config/defaults";
+import { localStorageKeys } from "@/utils/defaults";
 import { Item, Section } from "@/types/types";
 
 interface SubPageInfo {

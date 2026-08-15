@@ -34,7 +34,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import ArrowKeyNavigation from "@/utils/ArrowKeyNavigation";
 import ErrorHandler from "@/utils/ErrorHandler";
-import { getCustomKeyShortcuts } from "@/config/ConfigHelpers";
+import { getCustomKeyShortcuts } from "@/utils/ConfigHelpers";
 import { useAppStore } from "@/store/modules/appStore";
 import {
   getSearchEngineFromBang,
@@ -46,7 +46,7 @@ import {
   defaultSearchEngine,
   defaultSearchOpeningMethod,
   searchBangs as defaultSearchBangs,
-} from "@/config/defaults";
+} from "@/utils/defaults";
 
 const emit = defineEmits(["user-is-searchin"]);
 

@@ -82,7 +82,7 @@ import ErrorHandler from "@/utils/ErrorHandler";
 import {
   sortOrder as defaultSortOrder,
   localStorageKeys,
-} from "@/config/defaults";
+} from "@/utils/defaults";
 import { useAppStore } from "@/store/modules/appStore";
 import { Item as ItemType } from "@/types/types";
 

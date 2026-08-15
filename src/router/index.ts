@@ -1,7 +1,7 @@
 /**
  * This is the router config, which defines the location for
  * each page within the app, and how they should be loaded
- * Note that the page paths are defined in @/config/defaults.js
+ * Note that the page paths are defined in @/utils/defaults.js
  */
 
 // Import vue-router 4
@@ -21,8 +21,8 @@ import yaml from "js-yaml";
 import Home from "@/views/Home.vue";
 
 // Import helper functions, config data and defaults
-import { makePageSlug, makePageName } from "@/config/ConfigHelpers";
-import { metaTagData, startingView, routePaths } from "@/config/defaults";
+import { makePageSlug, makePageName } from "@/utils/ConfigHelpers";
+import { metaTagData, startingView, routePaths } from "@/utils/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 
 // Import data from users conf file. Note that rebuild is required for this to update.

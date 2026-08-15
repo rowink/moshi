@@ -53,7 +53,7 @@ import { useHome } from "@/composables/useHome";
 import SearchBar from "@/components/SearchBar.vue";
 import LayoutOptions from "@/components/LayoutOptions/LayoutOptions.vue";
 import Section from "@/components/LinkItems/Section.vue";
-import { localStorageKeys } from "@/config/defaults";
+import { localStorageKeys } from "@/utils/defaults";
 import { Section as SectionType } from "@/types/types";
 
 const props = defineProps({
