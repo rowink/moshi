@@ -286,10 +286,15 @@ defineExpose({ show, hide, close });
 
 .frame {
   /* Widen the frame so the embedded page's native scrollbar is clipped out of
-     view by the wrapper, keeping the bottom-right corner clear for the handle */
+     view by the wrapper, keeping the bottom-right corner clear for the handle.
+     On phones there is no scrollbar, and the extra width would offset the
+     embedded page, so use the exact container width there. */
   width: calc(100% + 24px);
   height: 100%;
   border: none;
+  @media (max-width: 599px) {
+    width: 100%;
+  }
 }
 
 .no-url {
