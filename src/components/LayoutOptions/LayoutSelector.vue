@@ -40,7 +40,7 @@ function updateDisplayLayout(layout: string) {
   appStore.setItemLayout(layout);
 }
 function tooltip(content: string) {
-  return { content, trigger: "hover focus", delay: 250 };
+  return { content, triggers: ["hover", "focus"], delay: 250 };
 }
 </script>
 

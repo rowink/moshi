@@ -40,7 +40,7 @@ function updateIconSize(iconSize: string) {
   appStore.setItemSize(iconSize);
 }
 function tooltip(content: string) {
-  return { content, trigger: "hover focus", delay: 250 };
+  return { content, triggers: ["hover", "focus"], delay: 250 };
 }
 </script>
 
