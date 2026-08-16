@@ -8,8 +8,8 @@
     "build": "vite build",
     "lint": "eslint src --ext .js,.ts,.vue",
     "format": "prettier --write src",
-    "format:check": "prettier --check src",
     "type-check": "vue-tsc --noEmit",
+    "iframe": "node scripts/check-iframe.mjs",
     "dependency-audit": "npx improved-yarn-audit --ignore-dev-deps"
   },
   "dependencies": {
