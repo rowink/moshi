@@ -181,8 +181,11 @@ function startResize(direction: ResizeDirection, event: PointerEvent) {
   /* On small screens the fixed 350px minimum exceeds the viewport, which
      would lock the width; shrink the minimum to fit the screen instead */
   const minWidth = Math.min(MIN_WIDTH, Math.round(window.innerWidth * 0.5));
-  const minLeft = Math.max(VIEWPORT_MARGIN, startLeft + startWidth - maxWidth);
-  const minTop = Math.max(VIEWPORT_MARGIN, startTop + startHeight - maxHeight);
+  /* The left/top edge may be dragged flush to the viewport edge; the
+     width/height caps below already keep the opposite edge inside the
+     viewport, so no margin floor is needed here */
+  const minLeft = Math.max(0, startLeft + startWidth - maxWidth);
+  const minTop = Math.max(0, startTop + startHeight - maxHeight);
   const maxLeft = startLeft + startWidth - minWidth;
   const maxTop = startTop + startHeight - MIN_HEIGHT;
 
