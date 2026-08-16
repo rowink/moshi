@@ -19,7 +19,7 @@ import {
 } from "@/utils/defaults";
 
 const appStore = useAppStore();
-const { availableLocales } = useI18n();
+const { availableLocales, locale } = useI18n();
 
 const isFetching = ref(true); // Set to false after the conf has been fetched
 
@@ -111,7 +111,7 @@ const getLanguage = () => {
 const applyLanguage = () => {
   const language = getLanguage();
   appStore.setLanguage(language);
-  useI18n().locale.value = language;
+  locale.value = language;
   document.getElementsByTagName("html")[0].setAttribute("lang", language);
 };
 
