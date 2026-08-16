@@ -182,7 +182,7 @@ itemSizeBound.value = iconSize.value;
   }
   &.orientation-waterfall {
     column-count: 3;
-    column-gap: 0.75rem;
+    column-gap: 1.375rem;
     display: block !important;
     @include phone {
       column-count: 1;
@@ -205,7 +205,7 @@ itemSizeBound.value = iconSize.value;
     & > * {
       break-inside: avoid;
       height: auto !important;
-      margin-bottom: 0.75rem;
+      margin: 0 0 1.375rem !important;
     }
     & .there-are-items {
       height: auto !important;
