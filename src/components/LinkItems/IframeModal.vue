@@ -178,9 +178,12 @@ function startResize(direction: ResizeDirection, event: PointerEvent) {
   const startHeight = rect.height;
   const maxWidth = window.innerWidth - VIEWPORT_MARGIN;
   const maxHeight = window.innerHeight - VIEWPORT_MARGIN;
+  /* On small screens the fixed 350px minimum exceeds the viewport, which
+     would lock the width; shrink the minimum to fit the screen instead */
+  const minWidth = Math.min(MIN_WIDTH, Math.round(window.innerWidth * 0.5));
   const minLeft = Math.max(VIEWPORT_MARGIN, startLeft + startWidth - maxWidth);
   const minTop = Math.max(VIEWPORT_MARGIN, startTop + startHeight - maxHeight);
-  const maxLeft = startLeft + startWidth - MIN_WIDTH;
+  const maxLeft = startLeft + startWidth - minWidth;
   const maxTop = startTop + startHeight - MIN_HEIGHT;
 
   const onMove = (moveEvent: PointerEvent) => {
@@ -191,7 +194,7 @@ function startResize(direction: ResizeDirection, event: PointerEvent) {
     let width = startWidth;
     let height = startHeight;
 
-    if (direction.includes("e")) width = clamp(startWidth + dx, MIN_WIDTH, maxWidth);
+    if (direction.includes("e")) width = clamp(startWidth + dx, minWidth, maxWidth);
     if (direction.includes("s")) height = clamp(startHeight + dy, MIN_HEIGHT, maxHeight);
     if (direction.includes("w")) {
       left = clamp(startLeft + dx, minLeft, maxLeft);
