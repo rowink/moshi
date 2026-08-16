@@ -7,11 +7,16 @@ export const GetTheme = (): string => getTheme();
 
 /* Gets user custom color preferences for current theme, and applies to DOM */
 export const ApplyCustomVariables = (theme: string) => {
-  mainCssVars.forEach((vName) => { document.documentElement.style.removeProperty(`--${vName}`); });
+  mainCssVars.forEach((vName) => {
+    document.documentElement.style.removeProperty(`--${vName}`);
+  });
   const themeColors = getCustomColors()[theme];
   if (themeColors) {
     Object.keys(themeColors).forEach((customVar) => {
-      document.documentElement.style.setProperty(`--${customVar}`, themeColors[customVar]);
+      document.documentElement.style.setProperty(
+        `--${customVar}`,
+        themeColors[customVar],
+      );
     });
   }
 };
@@ -48,8 +53,11 @@ export const LoadExternalTheme = function th() {
   };
 
   /* Check theme is selected, and it exists */
-  const checkTheme = (themes: Record<string, CSSStyleSheet>, name?: string): boolean => {
-    if ((!name) || (name !== "custom" && !themes[name])) {
+  const checkTheme = (
+    themes: Record<string, CSSStyleSheet>,
+    name?: string,
+  ): boolean => {
+    if (!name || (name !== "custom" && !themes[name])) {
       ErrorHandler(`Theme: '${name || "[not selected]"}' does not exist.`);
       return false;
     }
@@ -57,18 +65,31 @@ export const LoadExternalTheme = function th() {
   };
 
   /* Disable all but selected theme */
-  const selectTheme = (themes: Record<string, CSSStyleSheet>, name?: string) => {
+  const selectTheme = (
+    themes: Record<string, CSSStyleSheet>,
+    name?: string,
+  ) => {
     if (checkTheme(themes, name)) {
       const t = themes; // To avoid ESLint complaining about mutating a param
-      Object.keys(themes).forEach((n) => { t[n].disabled = (n !== name); });
+      Object.keys(themes).forEach((n) => {
+        t[n].disabled = n !== name;
+      });
     }
   };
 
   const themes: Record<string, CSSStyleSheet> = {};
 
   return {
-    add(name: string, href: string) { return preloadTheme(href).then((s) => { themes[name] = s; }); },
-    set theme(name: string | undefined) { selectTheme(themes, name); },
-    get theme(): string | undefined { return Object.keys(themes).find((n) => !themes[n].disabled); },
+    add(name: string, href: string) {
+      return preloadTheme(href).then((s) => {
+        themes[name] = s;
+      });
+    },
+    set theme(name: string | undefined) {
+      selectTheme(themes, name);
+    },
+    get theme(): string | undefined {
+      return Object.keys(themes).find((n) => !themes[n].disabled);
+    },
   };
 };

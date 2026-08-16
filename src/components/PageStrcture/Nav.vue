@@ -7,10 +7,7 @@
     <nav id="nav" v-if="navVisible">
       <!-- Render either router-link or anchor, depending if internal / external link -->
       <template v-for="(link, index) in allLinks" :key="index">
-        <router-link
-          v-if="!isUrl(link.path)"
-          :to="link.path"
-          class="nav-item"
+        <router-link v-if="!isUrl(link.path)" :to="link.path" class="nav-item"
           >{{ link.title }}
         </router-link>
         <a

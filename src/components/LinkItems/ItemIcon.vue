@@ -88,7 +88,8 @@ function getIconPath(img: string | undefined, url: string | undefined) {
 }
 /* Check if a string is in a URL format. Used to identify tile icon source */
 function isUrl(str: string) {
-  const pattern = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-/]))?/;
+  const pattern =
+    /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-/]))?/;
   return pattern.test(str);
 }
 /* Returns true if the input is a path to an image file */
@@ -96,8 +97,7 @@ function isImage(img: string) {
   const fileExtRegex = /(?:\.([^.]+))?$/;
   const validImgExtensions = ["svg", "png", "jpg"];
   const splitPath = fileExtRegex.exec(img) || [];
-  if (splitPath.length >= 1)
-    return validImgExtensions.includes(splitPath[1]);
+  if (splitPath.length >= 1) return validImgExtensions.includes(splitPath[1]);
   return false;
 }
 /* Get favicon URL, for items which use the favicon as their icon */
@@ -120,7 +120,10 @@ function getFavicon(fullUrl: string | undefined, specificApi?: string) {
   return "";
 }
 /* Get the URL for a favicon, but using the non-default favicon API */
-function getCustomFavicon(fullUrl: string | undefined, faviconIdentifier: string) {
+function getCustomFavicon(
+  fullUrl: string | undefined,
+  faviconIdentifier: string,
+) {
   let errorMsg = "";
   const faviconApi = faviconIdentifier.split("favicon-")[1];
   if (!faviconApi) {

@@ -9,7 +9,11 @@ import type { ObjectDirective } from "vue";
 const instances: Array<{ index: number; click: (event: Event) => void }> = []; // List of click event instances
 
 /* Trigger action when click anywhere, except target elem */
-function onDocumentClick(event: Event, elem: HTMLElement, action: (e: Event) => void) {
+function onDocumentClick(
+  event: Event,
+  elem: HTMLElement,
+  action: (e: Event) => void,
+) {
   const { target } = event;
   if (elem !== target && !elem.contains(target as Node)) {
     action(event);

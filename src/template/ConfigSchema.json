@@ -1,8 +1,6 @@
 ﻿{
   "type": "object",
-  "required": [
-    "sections"
-  ],
+  "required": ["sections"],
   "additionalProperties": false,
   "properties": {
     "pages": {
@@ -54,10 +52,7 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "title",
-              "path"
-            ],
+            "required": ["title", "path"],
             "properties": {
               "title": {
                 "type": "string"
@@ -68,12 +63,7 @@
               "target": {
                 "title": "Opening Method",
                 "type": "string",
-                "enum": [
-                  "newtab",
-                  "sametab",
-                  "parent",
-                  "top"
-                ],
+                "enum": ["newtab", "sametab", "parent", "top"],
                 "default": "newtab",
                 "description": "Where / how the item is opened when it's clicked"
               }
@@ -90,15 +80,10 @@
           "type": "string",
           "description": "Path to an optional image asset, to be displayed in the header",
           "pattern": "^(http|/)(.*?)",
-          "examples": [
-            "/favicon.ico",
-            "https://example.com/logo.png"
-          ]
+          "examples": ["/favicon.ico", "https://example.com/logo.png"]
         }
       },
-      "required": [
-        "title"
-      ],
+      "required": ["title"],
       "additionalProperties": false
     },
     "appConfig": {
@@ -107,23 +92,14 @@
         "startingView": {
           "title": "Starting View",
           "type": "string",
-          "enum": [
-            "default"
-          ],
+          "enum": ["default"],
           "default": "default",
           "description": "Which page to load by default, and on the base page or domain root."
         },
         "defaultOpeningMethod": {
           "title": "Default Opening Method",
           "type": "string",
-          "enum": [
-            "newtab",
-            "sametab",
-            "parent",
-            "top",
-            "modal",
-            "clipboard"
-          ],
+          "enum": ["newtab", "sametab", "parent", "top", "modal", "clipboard"],
           "default": "newtab",
           "description": "The default opening method for items. Only used if no item.target is specified"
         },
@@ -149,9 +125,7 @@
           "type": "string",
           "default": "glow",
           "description": "A theme to be applied by default on first load",
-          "examples": [
-            "glow"
-          ]
+          "examples": ["glow"]
         },
         "backgroundImg": {
           "title": "Background Image",
@@ -183,23 +157,14 @@
         "layout": {
           "title": "Default Layout",
           "type": "string",
-          "enum": [
-            "horizontal",
-            "vertical",
-            "auto",
-            "sidebar"
-          ],
+          "enum": ["horizontal", "vertical", "auto", "sidebar"],
           "default": "auto",
           "description": "Specifies sections layout orientation on the home screen"
         },
         "iconSize": {
           "title": "Default Icon Size",
           "type": "string",
-          "enum": [
-            "small",
-            "medium",
-            "large"
-          ],
+          "enum": ["small", "medium", "large"],
           "default": "medium",
           "description": "The size of each link item / icon"
         },
@@ -213,10 +178,7 @@
         "routingMode": {
           "title": "Routing Mode",
           "type": "string",
-          "enum": [
-            "hash",
-            "history"
-          ],
+          "enum": ["hash", "history"],
           "default": "history",
           "description": "The Vue routing mode to use, history mode will remove the annoying hash from the URL, but requires some extra config on some systems"
         },
@@ -262,11 +224,7 @@
             "openingMethod": {
               "title": "Search Opening Method",
               "type": "string",
-              "enum": [
-                "newtab",
-                "sametab",
-                "modal"
-              ],
+              "enum": ["newtab", "sametab", "modal"],
               "default": "newtab",
               "description": "Set where you would like search results to open to"
             },
@@ -433,9 +391,7 @@
       "items": {
         "title": "Items",
         "type": "object",
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "additionalProperties": false,
         "properties": {
           "name": {
@@ -493,11 +449,7 @@
               "itemSize": {
                 "title": "Item Size",
                 "type": "string",
-                "enum": [
-                  "small",
-                  "medium",
-                  "large"
-                ],
+                "enum": ["small", "medium", "large"],
                 "default": "medium",
                 "description": "Size of items within the section"
               },
@@ -520,10 +472,7 @@
               "sectionLayout": {
                 "title": "Layout Type",
                 "type": "string",
-                "enum": [
-                  "grid",
-                  "auto"
-                ],
+                "enum": ["grid", "auto"],
                 "default": "auto",
                 "description": "If set to grid, items have uniform width, and itemCount can be set"
               },
@@ -550,9 +499,7 @@
             "items": {
               "type": "object",
               "additionalProperties": false,
-              "required": [
-                "title"
-              ],
+              "required": ["title"],
               "properties": {
                 "title": {
                   "title": "Item Text",
@@ -581,8 +528,7 @@
                   "type": "object",
                   "additionalProperties": false,
                   "description": "Optional meta data for customizing an item",
-                  "properties": {
-                  }
+                  "properties": {}
                 },
                 "target": {
                   "title": "Opening Method",

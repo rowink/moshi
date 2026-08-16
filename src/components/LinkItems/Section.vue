@@ -113,7 +113,9 @@ const resizeObserver = ref<ResizeObserver | undefined>(undefined);
 
 /* Template refs */
 const collapsableRef = ref<InstanceType<typeof Collapsable> | null>(null);
-const iframeModals = ref<Record<string, InstanceType<typeof IframeModal> | null>>({});
+const iframeModals = ref<
+  Record<string, InstanceType<typeof IframeModal> | null>
+>({});
 
 const setCollapsableRef = (el: unknown) => {
   collapsableRef.value = el as InstanceType<typeof Collapsable> | null;

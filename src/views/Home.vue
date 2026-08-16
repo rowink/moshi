@@ -58,7 +58,11 @@ import { Section as SectionType } from "@/types/types";
 
 const props = defineProps({
   subPageInfo: {
-    type: Object as PropType<{ confPath?: string; pageId?: string; pageTitle?: string }>,
+    type: Object as PropType<{
+      confPath?: string;
+      pageId?: string;
+      pageTitle?: string;
+    }>,
     default: undefined,
   },
 });
@@ -144,7 +148,8 @@ itemSizeBound.value = iconSize.value;
   min-height: calc(99.9vh - var(--footer-height));
 }
 
-/* Toolbar row containing search bar and layout options */.home-toolbar {
+/* Toolbar row containing search bar and layout options */
+.home-toolbar {
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -128,36 +128,38 @@ const makeColumnCount = computed(() => {
 });
 
 /* Based on item props, adjust class names */
-const makeClassList = computed(() => (
-  `size-${size.value} ${!itemIcon.value ? "short" : ""} ` +
-  `${props.isAddNew ? "add-new" : ""}`
-));
+const makeClassList = computed(
+  () =>
+    `size-${size.value} ${!itemIcon.value ? "short" : ""} ` +
+    `${props.isAddNew ? "add-new" : ""}`,
+);
 
 /* Used by certain themes (material), to show animated CSS icon */
 const unicodeOpeningIcon = computed(() => {
   switch (accumulatedTarget.value) {
     case "newtab":
-      return "\"\\f360\"";
+      return '"\\f360"';
     case "sametab":
-      return "\"\\f24d\"";
+      return '"\\f24d"';
     case "parent":
-      return "\"\\f3bf\"";
+      return '"\\f3bf"';
     case "top":
-      return "\"\\f102\"";
+      return '"\\f102"';
     case "modal":
-      return "\"\\f2d0\"";
+      return '"\\f2d0"';
     case "clipboard":
-      return "\"\\f0ea\"";
+      return '"\\f0ea"';
     default:
-      return "\"\\f054\"";
+      return '"\\f054"';
   }
 });
 
-const customStyle = computed(() => (
-  `--open-icon:${unicodeOpeningIcon.value};` +
-  `color:${props.item?.color};` +
-  `background:${props.item?.backgroundColor}`
-));
+const customStyle = computed(
+  () =>
+    `--open-icon:${unicodeOpeningIcon.value};` +
+    `color:${props.item?.color};` +
+    `background:${props.item?.backgroundColor}`,
+);
 
 /* Returns configuration object for the tooltip */
 function getTooltipOptions() {

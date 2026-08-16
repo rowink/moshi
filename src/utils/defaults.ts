@@ -36,9 +36,7 @@ const defaults = {
     statusCheck: "/status-check",
   },
   /* List of built-in themes, to be displayed within the theme-switcher dropdown */
-  builtInThemes: [
-    "glow",
-  ],
+  builtInThemes: ["glow"],
   /* Which CSS variables to show in the first view of theme configurator */
   mainCssVars: ["primary", "background", "background-darker"],
   /* Which structural components should be visible by default */
@@ -73,7 +71,12 @@ const defaults = {
     ERROR_LOG: "errorLog",
   },
   /* Page meta-data, rendered in the header of each view */
-  metaTagData: [{ name: "description", content: "A simple static homepage for you're server" }],
+  metaTagData: [
+    {
+      name: "description",
+      content: "A simple static homepage for you're server",
+    },
+  ],
   /* Default option for Toast messages */
   toastedOptions: {
     position: "bottom-center",
@@ -102,8 +105,10 @@ const defaults = {
     duckduckgo: "https://icons.duckduckgo.com/ip2/$URL.ico",
     yandex: "https://favicon.yandex.net/favicon/$URL",
     google: "https://www.google.com/s2/favicons?sz=128&domain_url=$URL",
-    besticon: "https://besticon-demo.herokuapp.com/icon?url=$URL&size=80..120..200",
-    webmasterapi: "https://api.webmasterapi.com/v1/favicon/yEwx0ZFs0CSPshHq/$URL",
+    besticon:
+      "https://besticon-demo.herokuapp.com/icon?url=$URL&size=80..120..200",
+    webmasterapi:
+      "https://api.webmasterapi.com/v1/favicon/yEwx0ZFs0CSPshHq/$URL",
     mcapi: "https://eu.mc-api.net/v3/server/favicon/$URL",
   },
   /* The URL to CDNs used for external icons. These are only loaded when required */
@@ -160,7 +165,8 @@ const defaults = {
     "/wa": "wolframalpha",
   },
   /* Use your own self-hosted Sentry instance. Only used if error reporting is turned on */
-  sentryDsn: "https://3138ea85f15a4fa883a5b27a4dc8ee28@o937511.ingest.sentry.io/5887934",
+  sentryDsn:
+    "https://3138ea85f15a4fa883a5b27a4dc8ee28@o937511.ingest.sentry.io/5887934",
   /* Progressive Web App settings, used by Vue Config */
   pwa: {
     name: "moshi",
@@ -173,12 +179,34 @@ const defaults = {
 
 export default defaults;
 export const {
-  pageInfo, appConfig, language, startingView, iconSize, layout,
-  theme, fontAwesomeKey, faviconApi, sortOrder, openingMethod, routePaths,
-  serviceEndpoints, builtInThemes, mainCssVars, visibleComponents,
-  hideFurnitureOn, localStorageKeys, sessionStorageKeys,
-  metaTagData, toastedOptions, tooltipOptions,
-  faviconApiEndpoints, iconCdns,
-  searchEngineUrls, defaultSearchEngine, defaultSearchOpeningMethod, searchBangs,
-  sentryDsn, pwa,
+  pageInfo,
+  appConfig,
+  language,
+  startingView,
+  iconSize,
+  layout,
+  theme,
+  fontAwesomeKey,
+  faviconApi,
+  sortOrder,
+  openingMethod,
+  routePaths,
+  serviceEndpoints,
+  builtInThemes,
+  mainCssVars,
+  visibleComponents,
+  hideFurnitureOn,
+  localStorageKeys,
+  sessionStorageKeys,
+  metaTagData,
+  toastedOptions,
+  tooltipOptions,
+  faviconApiEndpoints,
+  iconCdns,
+  searchEngineUrls,
+  defaultSearchEngine,
+  defaultSearchOpeningMethod,
+  searchBangs,
+  sentryDsn,
+  pwa,
 } = defaults;

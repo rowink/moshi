@@ -19,7 +19,10 @@ const setSwStatus = (swStateToSet: Record<string, boolean>) => {
   const currentSwState = sessionData ? JSON.parse(sessionData) : initialSwState;
   try {
     const newSwState = { ...currentSwState, ...swStateToSet };
-    sessionStorage.setItem(sessionStorageKeys.SW_STATUS, JSON.stringify(newSwState));
+    sessionStorage.setItem(
+      sessionStorageKeys.SW_STATUS,
+      JSON.stringify(newSwState),
+    );
   } catch (e) {
     statusErrorMsg("Service Worker Status", "Error Updating SW Status", e);
   }
@@ -31,7 +34,10 @@ const setSwStatus = (swStateToSet: Record<string, boolean>) => {
  * Or disable if user specified to disable
  */
 const shouldEnableServiceWorker = async (): Promise<boolean> => {
-  const conf = yaml.load((await axios.get("/conf.yml")).data) as Record<string, any> | null;
+  const conf = yaml.load((await axios.get("/conf.yml")).data) as Record<
+    string,
+    any
+  > | null;
   if (conf && conf.appConfig && conf.appConfig.enableServiceWorker) {
     setSwStatus({ disabledByUser: false });
     return true;
@@ -57,8 +63,8 @@ const registerServiceWorker = async () => {
       ready() {
         setSwStatus({ ready: true });
         printSwStatus(
-          "moshi is being served from cache by a service worker.\n"
-          + "For more details, visit https://goo.gl/AFskqB",
+          "moshi is being served from cache by a service worker.\n" +
+            "For more details, visit https://goo.gl/AFskqB",
         );
       },
       registered() {
@@ -71,11 +77,17 @@ const registerServiceWorker = async () => {
       },
       offline() {
         setSwStatus({ offline: true });
-        printSwStatus("No internet connection found. moshi is running in offline mode.");
+        printSwStatus(
+          "No internet connection found. moshi is running in offline mode.",
+        );
       },
       error(error: Error) {
         setSwStatus({ error: true });
-        statusErrorMsg("Service Worker Status", "Error during SW registration", error);
+        statusErrorMsg(
+          "Service Worker Status",
+          "Error during SW registration",
+          error,
+        );
       },
     });
   }

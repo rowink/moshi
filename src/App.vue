@@ -31,7 +31,9 @@ watch(
 );
 
 /* If the user has specified custom text for footer - get it */
-const footerText = computed(() => (pageInfo.value && pageInfo.value.footerText ? pageInfo.value.footerText : ""));
+const footerText = computed(() =>
+  pageInfo.value && pageInfo.value.footerText ? pageInfo.value.footerText : "",
+);
 const appConfig = computed(() => appStore.appConfig);
 const pageInfo = computed(() => appStore.pageInfo);
 const visibleComponents = computed(() => appStore.visibleComponents);
@@ -85,9 +87,7 @@ const autoDetectLanguage = (availibleLocales: string[]) => {
   return (
     isLangSupported(availibleLocales, usersBorwserLang1) ||
     isLangSupported(availibleLocales, usersBorwserLang2) ||
-    usersSpairLangs.find((spair) =>
-      isLangSupported(availibleLocales, spair),
-    ) ||
+    usersSpairLangs.find((spair) => isLangSupported(availibleLocales, spair)) ||
     defaultLanguage
   );
 };
@@ -121,10 +121,7 @@ const applyLanguage = () => {
   applyLanguage(); // Apply users local language
   if (appConfig.value.customCss) {
     // Inject users custom CSS, if present
-    const cleanedCss = appConfig.value.customCss.replace(
-      /<\/?[^>]+(>|$)/g,
-      "",
-    );
+    const cleanedCss = appConfig.value.customCss.replace(/<\/?[^>]+(>|$)/g, "");
     injectCustomStyles(cleanedCss);
   }
   welcomeMsg(); // Show message in console

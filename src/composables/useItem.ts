@@ -37,7 +37,10 @@ interface ItemComposableProps {
   url?: string;
 }
 
-export const useItem = (props: ItemComposableProps, emit: (event: string, ...args: unknown[]) => void) => {
+export const useItem = (
+  props: ItemComposableProps,
+  emit: (event: string, ...args: unknown[]) => void,
+) => {
   const appStore = useAppStore();
   const { t } = useI18n();
 
@@ -261,10 +264,7 @@ export const useItem = (props: ItemComposableProps, emit: (event: string, ...arg
     let counter = mostUsed[itemId as string] || 0;
     counter += 1;
     mostUsed[itemId as string] = counter;
-    localStorage.setItem(
-      localStorageKeys.MOST_USED,
-      JSON.stringify(mostUsed),
-    );
+    localStorage.setItem(localStorageKeys.MOST_USED, JSON.stringify(mostUsed));
   };
 
   /* Used for smart-sort when sorting by last used apps */
@@ -273,10 +273,7 @@ export const useItem = (props: ItemComposableProps, emit: (event: string, ...arg
       localStorage.getItem(localStorageKeys.LAST_USED) || "{}",
     );
     lastUsed[itemId as string] = new Date().getTime();
-    localStorage.setItem(
-      localStorageKeys.LAST_USED,
-      JSON.stringify(lastUsed),
-    );
+    localStorage.setItem(localStorageKeys.LAST_USED, JSON.stringify(lastUsed));
   };
 
   /* Stops the interval used to re-fire status checks */

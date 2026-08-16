@@ -24,8 +24,8 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-@use '@/styles/media-queries' as *;
-@use '@/styles/style-helpers' as *;
+@use "@/styles/media-queries" as *;
+@use "@/styles/style-helpers" as *;
 main.not-found-page {
   margin: 0;
   padding: 0;
@@ -39,12 +39,16 @@ main.not-found-page {
   background: #202020;
   min-height: calc(99vh - var(--footer-height));
   background-color: #202020;
-  h1.not-found-title, h2.not-found-sad-face {
+  h1.not-found-title,
+  h2.not-found-sad-face {
     font-size: 20vh;
     font-family: Tahoma, monospace;
     cursor: default;
     color: #0c0c0c;
-    text-shadow: 0px 4px 4px #090909, 0 0 0 #000, 0px 2px 2px #000000;
+    text-shadow:
+      0px 4px 4px #090909,
+      0 0 0 #000,
+      0px 2px 2px #000000;
     margin: 1rem 0 0;
   }
   h2.not-found-sad-face {
@@ -56,7 +60,10 @@ main.not-found-page {
     cursor: default;
     color: #0c0c0c;
     margin: 0.2rem 0;
-    text-shadow: 0 1px 1px #090909, 0 0 0 #000, 0 1px 1px #000000;
+    text-shadow:
+      0 1px 1px #090909,
+      0 0 0 #000,
+      0 1px 1px #000000;
   }
   p.not-found-subtitle {
     font-size: 2.8rem;
@@ -80,8 +87,13 @@ main.not-found-page {
     text-decoration: none;
     background: #db78fc;
     box-shadow: 0 4px #b83ddd;
-    &:hover { box-shadow: 0 2px #b83ddd; }
+    &:hover {
+      box-shadow: 0 2px #b83ddd;
+    }
   }
-  ::selection { background-color: #db78fc; color: #121212; }
+  ::selection {
+    background-color: #db78fc;
+    color: #121212;
+  }
 }
 </style>

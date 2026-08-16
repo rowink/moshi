@@ -9,7 +9,10 @@
       <ClipboardOpenIcon v-else-if="openingMethod === 'clipboard'" />
       <UnknownIcon v-else />
     </div>
-    <div v-if="hotkey" :class="`hotkey-denominator ${makeClass(position, isSmall, isTransparent)}`">
+    <div
+      v-if="hotkey"
+      :class="`hotkey-denominator ${makeClass(position, isSmall, isTransparent)}`"
+    >
       {{ hotkey }}
     </div>
   </div>
@@ -36,7 +39,11 @@ defineProps({
 });
 
 /* Returns custom class string, from optional props */
-function makeClass(position = "top right", isSmall = false, transparent = false) {
+function makeClass(
+  position = "top right",
+  isSmall = false,
+  transparent = false,
+) {
   return `opening-method-icon
   ${position || "top right"}
   ${isSmall ? "short" : ""}
@@ -54,10 +61,18 @@ function makeClass(position = "top right", isSmall = false, transparent = false)
       fill: currentColor;
     }
   }
-  &.top svg { top: 0; }
-  &.bottom svg { bottom: 0; }
-  &.left svg { left: 0; }
-  &.right svg { right: 0; }
+  &.top svg {
+    top: 0;
+  }
+  &.bottom svg {
+    bottom: 0;
+  }
+  &.left svg {
+    left: 0;
+  }
+  &.right svg {
+    right: 0;
+  }
 
   &.short svg {
     width: 0.8rem;
@@ -78,8 +93,11 @@ div.hotkey-denominator {
   border-radius: 18px;
   border: 1px solid currentColor;
   padding: 0.1rem 0.4rem 0.2rem 0.4rem;
-  &.top { right: 0; } // Position opposite of opening method icon
-  &.bottom { left: 0; }
+  &.top {
+    right: 0;
+  } // Position opposite of opening method icon
+  &.bottom {
+    left: 0;
+  }
 }
-
 </style>

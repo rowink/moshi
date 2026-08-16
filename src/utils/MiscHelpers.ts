@@ -3,11 +3,13 @@
 
 /* Very rudimentary hash function for generative icons */
 export const asciiHash = (input: string): string => {
-  const str = (!input || input.length === 0) ? Math.random().toString() : input;
+  const str = !input || input.length === 0 ? Math.random().toString() : input;
   // previousHash is always a non-empty string (first char, or prior reduce result)
-  const reducer = (previousHash: string, char: string): string => previousHash + char.charCodeAt(0);
+  const reducer = (previousHash: string, char: string): string =>
+    previousHash + char.charCodeAt(0);
   const asciiSum = str.split("").reduce(reducer).toString();
-  const shortened = asciiSum.slice(0, 30) + asciiSum.slice(asciiSum.length - 30);
+  const shortened =
+    asciiSum.slice(0, 30) + asciiSum.slice(asciiSum.length - 30);
   return window.btoa(shortened);
 };
 
@@ -17,19 +19,22 @@ export const sanitize = (string: string): string => {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
-    "\"": "&quot;",
+    '"': "&quot;",
     "'": "&#x27;",
     "/": "&#x2F;",
   };
-  const reg = /[&<>"'/]/ig;
-  return string.replace(reg, (match) => (map[match]));
+  const reg = /[&<>"'/]/gi;
+  return string.replace(reg, (match) => map[match]);
 };
 
 /* Given a timestamp, returns formatted date, in local format */
 export const timestampToDate = (timestamp: number): string => {
   const localFormat = navigator.language;
   const dateFormat: Intl.DateTimeFormatOptions = {
-    weekday: "short", day: "numeric", month: "short", year: "numeric",
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   };
   const date = new Date(timestamp).toLocaleDateString(localFormat, dateFormat);
   return `${date}`;
@@ -38,8 +43,14 @@ export const timestampToDate = (timestamp: number): string => {
 /* Given a timestamp, returns formatted time in local format */
 export const timestampToTime = (timestamp: number): string => {
   const localFormat = navigator.language;
-  const timeFormat: Intl.DateTimeFormatOptions = { hour: "numeric", minute: "numeric", second: "numeric" };
-  return Intl.DateTimeFormat(localFormat, timeFormat).format(new Date(timestamp));
+  const timeFormat: Intl.DateTimeFormatOptions = {
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+  };
+  return Intl.DateTimeFormat(localFormat, timeFormat).format(
+    new Date(timestamp),
+  );
 };
 
 /* Given a timestamp, returns both human Date and Time */
@@ -54,7 +65,10 @@ export const getCountryFromIso = (iso: string): string | undefined => {
 };
 
 /* Given a 2-digit country code, return path to flag image from Flagpedia */
-export const getCountryFlag = (countryCode: string, dimens?: string): string => {
+export const getCountryFlag = (
+  countryCode: string,
+  dimens?: string,
+): string => {
   const protocol = "https";
   const cdn = "flagcdn.com";
   const dimensions = dimens || "64x48";
@@ -64,7 +78,10 @@ export const getCountryFlag = (countryCode: string, dimens?: string): string => 
 };
 
 /* Given a Latitude & Longitude object, and optional zoom level, return link to OSM */
-export const getMapUrl = (location: { lat: number; lon: number }, zoom?: number): string => {
+export const getMapUrl = (
+  location: { lat: number; lon: number },
+  zoom?: number,
+): string => {
   return `https://www.openstreetmap.org/#map=${zoom || 10}/${location.lat}/${location.lon}`;
 };
 
@@ -77,7 +94,10 @@ export const getPlaceUrl = (placeName: string): string => {
 export const putCommasInBigNum = (bigNum: number): string => {
   const strNum = Number.isNaN(bigNum) ? String(bigNum) : String(bigNum);
   const [integerPart, decimalPart] = strNum.split(".");
-  return integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (decimalPart ? `.${decimalPart}` : "");
+  return (
+    integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+    (decimalPart ? `.${decimalPart}` : "")
+  );
 };
 
 /* Given a large number, will convert 1000 into k for readability */
@@ -89,7 +109,9 @@ export const showNumAsThousand = (bigNum: number): number | string => {
 /* Capitalizes the first letter of each word within a string */
 export const capitalize = (str: string): string => {
   const words = str.replaceAll("_", " ").replaceAll("-", " ");
-  return words.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
+  return words.replace(/\w\S*/g, (w) =>
+    w.replace(/^\w/, (c) => c.toUpperCase()),
+  );
 };
 
 /* Given a mem size in bytes, will return it in appropriate unit */
@@ -98,7 +120,7 @@ export const convertBytes = (bytes: number, decimals = 2): string => {
   const k = 1024;
   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / (k ** i)).toFixed(decimals))} ${sizes[i]}`;
+  return `${parseFloat((bytes / k ** i).toFixed(decimals))} ${sizes[i]}`;
 };
 
 /* Round a number to thousands, millions, billions or trillions and suffix
@@ -108,7 +130,7 @@ export const formatNumber = (number: number, decimals = 1): number | string => {
   const units = ["", "K", "M", "B", "T"];
   const k = 1000;
   const i = Math.floor(Math.log(number) / Math.log(k));
-  const f = parseFloat(String(number / (k ** i)));
+  const f = parseFloat(String(number / k ** i));
   const d = parseFloat(f.toFixed(decimals)) % 1.0 === 0 ? 0 : decimals; // number of decimals, omit .0
   return `${f.toFixed(d)}${units[i]}`;
 };
@@ -128,12 +150,18 @@ export const roundPrice = (price: number): number | string => {
 
 /* Cuts string off at given length, and adds an ellipse */
 export const truncateStr = (str: string, len = 60, ellipse = "..."): string => {
-  return str.length > len + ellipse.length ? `${str.slice(0, len)}${ellipse}` : str;
+  return str.length > len + ellipse.length
+    ? `${str.slice(0, len)}${ellipse}`
+    : str;
 };
 
 /* Given two timestamp, return the difference in text format, e.g. '10 minutes' */
-export const getTimeDifference = (startTime: number | string, endTime: number | string): string => {
-  const msDifference = new Date(endTime).getTime() - new Date(startTime).getTime();
+export const getTimeDifference = (
+  startTime: number | string,
+  endTime: number | string,
+): string => {
+  const msDifference =
+    new Date(endTime).getTime() - new Date(startTime).getTime();
   const diff = Math.abs(Math.round(msDifference / 1000));
   const divide = (time: number, round: number) => Math.round(time / round);
 
@@ -177,7 +205,7 @@ export const getValueFromCss = (colorVar: string): string => {
 
 /* Given a temperature in Celsius, returns value in Fahrenheit */
 export const celsiusToFahrenheit = (celsius: number): number => {
-  return Math.round((celsius * 1.8) + 32);
+  return Math.round(celsius * 1.8 + 32);
 };
 
 /* Given a temperature in Fahrenheit, returns value in Celsius */

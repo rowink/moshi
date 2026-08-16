@@ -1,10 +1,12 @@
 <template>
-  <div class="indicator"
+  <div
+    class="indicator"
     v-tooltip="{
       content: statusText || otherStatusText,
       popperClass: ['status-tooltip', `tip-${color()}`],
-      delay: { show: 0, hide: 150 }
-    }">
+      delay: { show: 0, hide: 150 },
+    }"
+  >
     <div :class="`dot dot-${color()}`">
       <span><span></span></span>
     </div>
@@ -44,10 +46,9 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-
 .indicator {
   padding: 5px;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   cursor: help;
   z-index: 4;
   &:hover {
@@ -58,13 +59,26 @@ onMounted(() => {
 }
 
 @keyframes pulse {
-  0% { opacity: .75; transform: scale(1); }
-  25% { opacity: 0.75; transform: scale(1); }
-  100% { opacity: 0; transform: scale(1.8); }
+  0% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
 }
 @keyframes applyOpacity {
-  50% { opacity: 0.9; }
-  to { opacity: 0.8; }
+  50% {
+    opacity: 0.9;
+  }
+  to {
+    opacity: 0.8;
+  }
 }
 
 .dot {
@@ -72,53 +86,66 @@ onMounted(() => {
   height: 12px;
   width: 12px;
   animation: applyOpacity 1s ease-in 8s forwards;
-  > span, > span span, > span span:after {
+  > span,
+  > span span,
+  > span span:after {
     animation: pulse 1s linear 0.5s 2;
     border-radius: 50%;
     display: block;
     height: 12px;
     width: 12px;
-    content: '';
+    content: "";
   }
   &.dot-green {
     background-color: var(--success);
-    span, span:after {
+    span,
+    span:after {
       background-color: var(--success);
       opacity: 0.4;
     }
   }
   &.dot-red {
     background-color: var(--danger);
-    span, span:after {
+    span,
+    span:after {
       background-color: var(--danger);
       opacity: 0.4;
     }
   }
   &.dot-yellow {
     background-color: var(--warning);
-    span, span:after {
+    span,
+    span:after {
       background-color: var(--warning);
       opacity: 0.4;
     }
   }
   &.dot-grey {
     background-color: var(--medium-grey);
-    span, span:after {
+    span,
+    span:after {
       background-color: var(--medium-grey);
       opacity: 0.4;
     }
   }
 }
-
 </style>
 
 <style lang="scss">
 .v-popper__popper.status-tooltip {
   z-index: 10;
-  &.tip-grey { --status-color: var(--medium-grey); }
-  &.tip-green { --status-color: var(--success); }
-  &.tip-yellow { --status-color: var(--warning); }
-  &.tip-red { --status-color: var(--danger); }
+  &.tip-grey {
+    --status-color: var(--medium-grey);
+  }
+  &.tip-green {
+    --status-color: var(--success);
+  }
+  &.tip-yellow {
+    --status-color: var(--warning);
+  }
+  &.tip-red {
+    --status-color: var(--danger);
+  }
   .v-popper__inner {
     background: var(--status-check-tooltip-background) !important;
     border: 1px solid var(--status-color);

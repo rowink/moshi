@@ -1,44 +1,60 @@
-
 /* Fonts used by the default theme, and bundled within the app */
 @font-face {
-  font-family: 'Raleway';
-  src: url('../assets/fonts/Raleway-Variable.ttf');
+  font-family: "Raleway";
+  src: url("../assets/fonts/Raleway-Variable.ttf");
 }
 
 @font-face {
-  font-family: 'PTMono';
-  src: url('../assets/fonts/PTMono-Regular.ttf');
+  font-family: "PTMono";
+  src: url("../assets/fonts/PTMono-Regular.ttf");
 }
 
 html {
-  --font-body: 'Raleway', 'Trebuchet MS', sans-serif;
-  --font-headings: 'Sniglet', 'Georgia', sans-serif;
-  --font-monospace: 'PTMono', 'Courier New', monospace;
+  --font-body: "Raleway", "Trebuchet MS", sans-serif;
+  --font-headings: "Sniglet", "Georgia", sans-serif;
+  --font-monospace: "PTMono", "Courier New", monospace;
 
   font-size: 1rem;
   font-weight: normal;
   text-decoration: none;
-	background: transparent;
+  background: transparent;
   vertical-align: baseline;
 
   /* Default app font face */
-  body, div, p, a, span, label, input, button, .text {
+  body,
+  div,
+  p,
+  a,
+  span,
+  label,
+  input,
+  button,
+  .text {
     font-family: var(--font-body);
   }
 
   /* Headings font face */
-  h1, h2, h3, h4, h5, .heading {
-    font-family:  var(--font-headings);
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  .heading {
+    font-family: var(--font-headings);
   }
 
   /* Monospace, for code and raw data output */
-  code, pre, pre *, .mono * {
+  code,
+  pre,
+  pre *,
+  .mono * {
     font-weight: normal;
   }
 }
 /* Optional fonts for specific themes */
 /* These fonts are loaded from ./public so not bundled within dist */
-@font-face { // Heading text in the Glow theme. Credit to Haley Fiege
-  font-family: 'Sniglet';
-  src: url('/fonts/Sniglet-Regular.ttf');
+@font-face {
+  // Heading text in the Glow theme. Credit to Haley Fiege
+  font-family: "Sniglet";
+  src: url("/fonts/Sniglet-Regular.ttf");
 }

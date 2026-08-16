@@ -22,7 +22,10 @@ const appendToErrorLog = (msg: string) => {
  * If error reporting is enabled, will also log the message to Sentry
  * If you wish to use your own error logging service, put code for it here
  */
-export const ErrorHandler = function handler(msg: string, errorStack?: unknown) {
+export const ErrorHandler = function handler(
+  msg: string,
+  errorStack?: unknown,
+) {
   warningMsg(msg, errorStack); // Print to console
   appendToErrorLog(msg); // Save to local storage
   Sentry.captureMessage(`[USER-WARN] ${msg}`); // Report to bug tracker (if enabled)
@@ -34,7 +37,11 @@ export const InfoHandler = (msg: string, title?: string) => {
 };
 
 /* Outputs warnings caused by the user, such as missing field */
-export const WarningInfoHandler = (msg: string, title?: string, log?: unknown) => {
+export const WarningInfoHandler = (
+  msg: string,
+  title?: string,
+  log?: unknown,
+) => {
   statusErrorMsg(title || "Warning", msg, log);
 };
 

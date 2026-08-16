@@ -33,10 +33,16 @@ export const makePageSlug = (pageName: string): string => {
  * @param userPage The sub-page config entry
  * @returns The route path, always starting with "/"
  */
-export const makePageRoute = (userPage: { name?: string; path?: string; route?: string }): string => {
+export const makePageRoute = (userPage: {
+  name?: string;
+  path?: string;
+  route?: string;
+}): string => {
   // 1. Explicit route field wins
   if (userPage.route) {
-    return userPage.route.startsWith("/") ? userPage.route : `/${userPage.route}`;
+    return userPage.route.startsWith("/")
+      ? userPage.route
+      : `/${userPage.route}`;
   }
   // 2. conf-* convention: conf.yml -> "/", conf-dev.yml -> "/dev"
   const configFile = userPage.path || "";
@@ -53,7 +59,10 @@ export const makePageRoute = (userPage: { name?: string; path?: string; route?: 
  * @param userPage The sub-page config entry
  * @returns A page id string
  */
-export const makePageId = (userPage: { name?: string; path?: string }): string => {
+export const makePageId = (userPage: {
+  name?: string;
+  path?: string;
+}): string => {
   const nameId = makePageName(userPage.name);
   if (nameId !== "unnamed-page") return nameId;
   const configFile = userPage.path || "";
@@ -90,13 +99,17 @@ export const componentVisibility = (appConfig: Record<string, any>) => {
   // For each option, return users choice (if specified), else use the default
   return {
     pageTitle: isThere(usersChoice.hideHeading)
-      ? !usersChoice.hideHeading : visibleComponents.pageTitle,
+      ? !usersChoice.hideHeading
+      : visibleComponents.pageTitle,
     navigation: isThere(usersChoice.hideNav)
-      ? !usersChoice.hideNav : visibleComponents.navigation,
+      ? !usersChoice.hideNav
+      : visibleComponents.navigation,
     searchBar: isThere(usersChoice.hideSearch)
-      ? !usersChoice.hideSearch : visibleComponents.searchBar,
+      ? !usersChoice.hideSearch
+      : visibleComponents.searchBar,
     footer: isThere(usersChoice.hideFooter)
-      ? !usersChoice.hideFooter : visibleComponents.footer,
+      ? !usersChoice.hideFooter
+      : visibleComponents.footer,
   };
 };
 
@@ -116,7 +129,9 @@ export const getTheme = (): string => {
  * @returns An array of objects, one for each theme, containing kvps for variables
  */
 export const getCustomColors = (): Record<string, any> => {
-  const localColors = JSON.parse(localStorage[localStorageKeys.CUSTOM_COLORS] || "{}");
+  const localColors = JSON.parse(
+    localStorage[localStorageKeys.CUSTOM_COLORS] || "{}",
+  );
   const configColors = config.appConfig.customColors || {};
   return Object.assign(configColors, localColors);
 };
@@ -129,8 +144,17 @@ export const getCustomKeyShortcuts = () => {
   const results: { hotkey: string | number; url: string }[][] = [];
   const sections = config.sections || [];
   sections.forEach((section) => {
-    const itemsWithHotKeys = section.items.filter((item: { hotkey: string | number }) => item.hotkey);
-    results.push(itemsWithHotKeys.map((item: { hotkey: string | number; url: string }) => ({ hotkey: item.hotkey, url: item.url })));
+    const itemsWithHotKeys = section.items.filter(
+      (item: { hotkey: string | number }) => item.hotkey,
+    );
+    results.push(
+      itemsWithHotKeys.map(
+        (item: { hotkey: string | number; url: string }) => ({
+          hotkey: item.hotkey,
+          url: item.url,
+        }),
+      ),
+    );
   });
   return results.flat();
 };
@@ -140,10 +164,11 @@ export const getCustomKeyShortcuts = () => {
  * @returns Language, including code, name and flag
  */
 export const getUsersLanguage = (): Language | undefined => {
-  const langCode = localStorage[localStorageKeys.LANGUAGE]
-    || config.appConfig.language
-    || defaultLanguage;
-  const langObj = languages.find(lang => lang.code === langCode);
+  const langCode =
+    localStorage[localStorageKeys.LANGUAGE] ||
+    config.appConfig.language ||
+    defaultLanguage;
+  const langObj = languages.find((lang) => lang.code === langCode);
   return langObj;
 };
 
@@ -173,7 +198,9 @@ type TargetSchema = {
  */
 export const targetValidator = (target: string): boolean => {
   const schema = ConfigSchema as TargetSchema;
-  const acceptedTargets = schema.properties.sections.items.properties.items.items.properties.target.enum;
+  const acceptedTargets =
+    schema.properties.sections.items.properties.items.items.properties.target
+      .enum;
   const isTargetValid = acceptedTargets.indexOf(target) !== -1;
   if (!isTargetValid) ErrorHandler(`Unknown target value: ${target}`);
   return isTargetValid;

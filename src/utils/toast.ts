@@ -11,7 +11,8 @@ export const showToast = (
   options?: { className?: string },
 ) => {
   const toast = document.createElement("div");
-  toast.className = options?.className || toastedOptions.className || "toast-message";
+  toast.className =
+    options?.className || toastedOptions.className || "toast-message";
   toast.textContent = message;
   toast.style.position = "fixed";
   toast.style.bottom = "1.5rem";

@@ -43,7 +43,8 @@ const appConfig = config.appConfig || {};
 const progress = new Progress({ color: "var(--progress-bar)" });
 
 /* Get the users chosen starting view from app config, or return default */
-const getStartingView = () => (appConfig as { startingView?: string }).startingView || startingView;
+const getStartingView = () =>
+  (appConfig as { startingView?: string }).startingView || startingView;
 
 /**
  * Returns the component that should be rendered at the base path,
@@ -77,7 +78,8 @@ const makeMultiPageRoutes = (userPages: unknown[]): RouteRecordRaw[] => {
   // For each user page, create an additional route
   userPages.forEach((page) => {
     const userPage = page as UserPage;
-    if (!userPage.name || !userPage.path) { // Something not right, show warning
+    if (!userPage.name || !userPage.path) {
+      // Something not right, show warning
       ErrorHandler("Additional pages must have both a `name` and `path`");
     }
     // Props to be passed to home mixin
@@ -114,31 +116,36 @@ const router = createRouter({
   history,
   routes: [
     ...makeMultiPageRoutes(pages as unknown[]),
-    { // The default view can be customized by the user
+    {
+      // The default view can be customized by the user
       path: "/",
       name: `landing-page-${getStartingView()}`,
       component: getStartingComponent(),
       meta: makeMetaTags("Home Page"),
     },
-    { // Default home page
+    {
+      // Default home page
       path: routePaths.home,
       name: "home",
       component: Home,
       meta: makeMetaTags("Home Page"),
     },
-    { // Page not found, any non-defined routes will land here
+    {
+      // Page not found, any non-defined routes will land here
       path: routePaths.notFound,
       name: "404",
       component: () => import("../views/404.vue"),
       meta: makeMetaTags("404 Not Found"),
       beforeEnter: (to, from, next) => {
-        if (to.redirectedFrom) { // Log error, if redirected here from another route
+        if (to.redirectedFrom) {
+          // Log error, if redirected here from another route
           ErrorHandler(`Route not found: "${to.redirectedFrom.path}"`);
         }
         next();
       },
     },
-    { // Redirect any not-found routed to the 404 view
+    {
+      // Redirect any not-found routed to the 404 view
       path: "/:pathMatch(.*)*",
       redirect: "/404",
     },
@@ -154,7 +161,10 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
   progress.end();
   nextTick(() => {
-    document.title = (to.meta?.title as string) || (pageInfo as { title?: string }).title || "moshi";
+    document.title =
+      (to.meta?.title as string) ||
+      (pageInfo as { title?: string }).title ||
+      "moshi";
   });
 });
 

@@ -1,10 +1,17 @@
 /* Types aligned with the JSON schema in src/template/ConfigSchema.json. All fields optional, as the config is user-customizable. */
 
-export type ItemTarget = "newtab" | "sametab" | "parent" | "top" | "modal" | "clipboard";
+export type ItemTarget =
+  "newtab" | "sametab" | "parent" | "top" | "modal" | "clipboard";
 export type NavLinkTarget = "newtab" | "sametab" | "parent" | "top";
 export type ItemSize = "small" | "medium" | "large";
 export type SectionLayout = "grid" | "auto";
-export type SortBy = "default" | "most-used" | "last-used" | "alphabetical" | "reverse-alphabetical" | "random";
+export type SortBy =
+  | "default"
+  | "most-used"
+  | "last-used"
+  | "alphabetical"
+  | "reverse-alphabetical"
+  | "random";
 
 export interface SubItem {
   title?: string;

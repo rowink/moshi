@@ -13,7 +13,12 @@ module.exports = {
     // Files are CRLF on disk (core.autocrlf) - the style rule is meaningless here
     'linebreak-style': 'off',
     // Codebase convention is double quotes (templates + migrated .vue files)
-    quotes: ['error', 'double'],
+    // Disabled: prettier owns quote formatting (singleQuote: false); it may use
+    // single quotes when a string contains double quotes to minimize escaping
+    quotes: 'off',
+    // Disabled: prettier owns indentation (may differ from eslint's indent rule
+    // for chained calls / ternaries)
+    indent: 'off',
     // Codebase relies on hoisted function declarations and cross-referencing computeds
     'no-use-before-define': 'off',
     // Style preferences below conflict with the codebase's established formatting

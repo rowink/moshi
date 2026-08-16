@@ -26,7 +26,11 @@ export const useHome = (subPageInfo: Ref<SubPageInfo | undefined>) => {
   const appConfig = computed(() => appStore.appConfig);
   const pageInfo = computed(() => appStore.pageInfo);
   const modalOpen = computed(() => appStore.modalOpen);
-  const pageId = computed(() => (subPageInfo.value && subPageInfo.value.pageId ? subPageInfo.value.pageId : "home"));
+  const pageId = computed(() =>
+    subPageInfo.value && subPageInfo.value.pageId
+      ? subPageInfo.value.pageId
+      : "home",
+  );
 
   const searchValue = ref("");
 
@@ -77,7 +81,10 @@ export const useHome = (subPageInfo: Ref<SubPageInfo | undefined>) => {
   };
 
   /* Returns only the tiles that match the users search query */
-  const filterTiles = (allTiles: Item[] | undefined, _searchTerm?: string): Item[] => {
+  const filterTiles = (
+    allTiles: Item[] | undefined,
+    _searchTerm?: string,
+  ): Item[] => {
     if (!allTiles) {
       return [];
     }

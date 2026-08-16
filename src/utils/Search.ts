@@ -29,9 +29,9 @@ const filterHelper = (compareStr: unknown, searchStr: string): boolean => {
   const process = (input: unknown) =>
     input
       ? input
-        .toString()
-        .toLowerCase()
-        .replace(/[^\w\s]/gi, "")
+          .toString()
+          .toLowerCase()
+          .replace(/[^\w\s]/gi, "")
       : "";
   return process(searchStr)
     .split(/\s/)

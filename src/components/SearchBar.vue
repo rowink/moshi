@@ -1,8 +1,5 @@
 <template>
-  <form
-    @submit.prevent="searchSubmitted"
-    class="normal"
-  >
+  <form @submit.prevent="searchSubmitted" class="normal">
     <label for="filter-tiles">{{ $t("search.search-label") }}</label>
     <div class="search-wrap">
       <input
@@ -60,9 +57,7 @@ const searchPrefs = computed(() => appStore.webSearch || {});
 
 /* Call correct function dependending on which key is pressed */
 function handleKeyPress(event: KeyboardEvent) {
-  const currentElem = document.activeElement
-    ? document.activeElement.id
-    : "";
+  const currentElem = document.activeElement ? document.activeElement.id : "";
   const { key, keyCode } = event;
   const notAlreadySearching = currentElem !== "filter-tiles";
   // If a modal is open, then do nothing
@@ -140,7 +135,8 @@ function searchSubmitted() {
       : findUrlForSearchEngine(desiredSearchEngine, searchEngineUrls);
     if (searchUrl) {
       // Append search query to URL, and launch
-      const fullUrl = searchUrl + encodeURIComponent(stripBangs(input.value, bangList));
+      const fullUrl =
+        searchUrl + encodeURIComponent(stripBangs(input.value, bangList));
       launchWebSearch(fullUrl, openingMethod);
       clearFilterInput();
     }

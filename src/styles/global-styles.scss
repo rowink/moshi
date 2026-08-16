@@ -1,6 +1,5 @@
-
-@use '@/styles/style-helpers' as *;
-@use '@/styles/media-queries' as *;
+@use "@/styles/style-helpers" as *;
+@use "@/styles/media-queries" as *;
 
 /* Essential global page layout styles */
 html {
@@ -17,18 +16,27 @@ html {
     padding: 0;
   }
   /* Make links have pointy cursor */
-  input[type=button], button, a {
+  input[type="button"],
+  button,
+  a {
     cursor: pointer;
   }
 }
 
 /* Hide text, and show 'Loading...' while Vue is initializing tags */
-[v-cloak] > * { display:none }
-[v-cloak]::before { content: "loading…" }
+[v-cloak] > * {
+  display: none;
+}
+[v-cloak]::before {
+  content: "loading…";
+}
 
 /* Overriding styles for the modal component */
-.vm--modal, .dashy-modal {
-  box-shadow: 0 40px 70px -2px hsl(0deg 0% 0% / 60%), 1px 1px 6px var(--primary) !important;
+.vm--modal,
+.dashy-modal {
+  box-shadow:
+    0 40px 70px -2px hsl(0deg 0% 0% / 60%),
+    1px 1px 6px var(--primary) !important;
   min-width: 350px;
   min-height: 200px;
   background: var(--background-darker);
@@ -71,7 +79,9 @@ html {
     span.vs__selected {
       color: var(--primary);
     }
-    .vs__actions svg path { fill: var(--primary); }
+    .vs__actions svg path {
+      fill: var(--primary);
+    }
   }
   ul.vs__dropdown-menu {
     background: var(--background);
@@ -110,5 +120,7 @@ html {
     visibility: visible;
     border-color: var(--description-tooltip-background);
   }
-  &.in-modal-tt { z-index: 999; }
+  &.in-modal-tt {
+    z-index: 999;
+  }
 }

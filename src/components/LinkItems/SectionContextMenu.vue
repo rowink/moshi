@@ -37,12 +37,13 @@ function expandCollapseSection() {
 }
 function calcPosition() {
   const parentEl = getCurrentInstance()?.parent?.proxy?.$el as
-    | HTMLElement
-    | undefined;
+    HTMLElement | undefined;
   const bounds = (parentEl || document.body).getBoundingClientRect();
   const left = (props.posX as number) < (bounds.right + bounds.left) / 2;
   const position = `top:${props.posY}px;${left ? "left" : "right"}:${
-    left ? props.posX : document.documentElement.clientWidth - (props.posX as number)
+    left
+      ? props.posX
+      : document.documentElement.clientWidth - (props.posX as number)
   }px;`;
   return position;
 }

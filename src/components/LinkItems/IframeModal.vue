@@ -20,7 +20,12 @@
           <Minimize v-if="isFullscreen" :size="16" />
           <Maximize v-else :size="16" />
         </button>
-        <button type="button" class="action-button" title="Close" @click="hide()">
+        <button
+          type="button"
+          class="action-button"
+          title="Close"
+          @click="hide()"
+        >
           <X :size="16" />
         </button>
       </div>
@@ -37,14 +42,39 @@
       </div>
 
       <!-- Drag-resize handles on every edge and corner -->
-      <div class="resize-handle resize-n" @pointerdown="startResize('n', $event)" />
-      <div class="resize-handle resize-s" @pointerdown="startResize('s', $event)" />
-      <div class="resize-handle resize-e" @pointerdown="startResize('e', $event)" />
-      <div class="resize-handle resize-w" @pointerdown="startResize('w', $event)" />
-      <div class="resize-handle resize-ne" @pointerdown="startResize('ne', $event)" />
-      <div class="resize-handle resize-nw" @pointerdown="startResize('nw', $event)" />
-      <div class="resize-handle resize-sw" @pointerdown="startResize('sw', $event)" />
-      <div class="resize-handle resize-se" title="Resize" @pointerdown="startResize('se', $event)" />
+      <div
+        class="resize-handle resize-n"
+        @pointerdown="startResize('n', $event)"
+      />
+      <div
+        class="resize-handle resize-s"
+        @pointerdown="startResize('s', $event)"
+      />
+      <div
+        class="resize-handle resize-e"
+        @pointerdown="startResize('e', $event)"
+      />
+      <div
+        class="resize-handle resize-w"
+        @pointerdown="startResize('w', $event)"
+      />
+      <div
+        class="resize-handle resize-ne"
+        @pointerdown="startResize('ne', $event)"
+      />
+      <div
+        class="resize-handle resize-nw"
+        @pointerdown="startResize('nw', $event)"
+      />
+      <div
+        class="resize-handle resize-sw"
+        @pointerdown="startResize('sw', $event)"
+      />
+      <div
+        class="resize-handle resize-se"
+        title="Resize"
+        @pointerdown="startResize('se', $event)"
+      />
     </div>
   </div>
 </template>
@@ -197,8 +227,10 @@ function startResize(direction: ResizeDirection, event: PointerEvent) {
     let width = startWidth;
     let height = startHeight;
 
-    if (direction.includes("e")) width = clamp(startWidth + dx, minWidth, maxWidth);
-    if (direction.includes("s")) height = clamp(startHeight + dy, MIN_HEIGHT, maxHeight);
+    if (direction.includes("e"))
+      width = clamp(startWidth + dx, minWidth, maxWidth);
+    if (direction.includes("s"))
+      height = clamp(startHeight + dy, MIN_HEIGHT, maxHeight);
     if (direction.includes("w")) {
       left = clamp(startLeft + dx, minLeft, maxLeft);
       width = startLeft + startWidth - left;

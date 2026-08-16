@@ -129,10 +129,7 @@ function sanitizeCustomStyles(userCss: string | undefined) {
 function locallyStoredCollapseStates() {
   // If not yet set, then call initialize
   if (!localStorage[localStorageKeys.COLLAPSE_STATE]) {
-    localStorage.setItem(
-      localStorageKeys.COLLAPSE_STATE,
-      JSON.stringify({}),
-    );
+    localStorage.setItem(localStorageKeys.COLLAPSE_STATE, JSON.stringify({}));
     return {};
   }
   // Otherwise, return value of local storage
