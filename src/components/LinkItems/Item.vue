@@ -24,7 +24,7 @@
         <p class="description">{{ item.description }}</p>
       </div>
       <!-- Item Icon -->
-      <Icon
+      <FaviconIcon
         :icon="itemIcon"
         :url="item.url"
         :size="size"
@@ -64,12 +64,12 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import Icon from "@/components/LinkItems/ItemIcon.vue";
 import ItemOpenMethodIcon from "@/components/LinkItems/ItemOpenMethodIcon.vue";
 import StatusIndicator from "@/components/LinkItems/StatusIndicator.vue";
 import ContextMenu from "@/components/LinkItems/ItemContextMenu.vue";
 import useItem, { ItemComposableItem } from "@/composables/useItem";
 import vLongPress from "@/directives/LongPress";
+import FaviconIcon from "./FaviconIcon.vue";
 
 const props = defineProps({
   item: {

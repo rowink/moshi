@@ -21,7 +21,7 @@ const defaults = {
   /* Default Font-Awesome API key, for FA icons (if used) */
   fontAwesomeKey: "0821c65656",
   /* Default API to use for fetching of user service favicon icons (if enabled) */
-  faviconApi: "allesedv",
+  faviconApi: "duckduckgo",
   /* The default sort order for sections */
   sortOrder: "default",
   /* If no 'target' specified, this is the default opening method */
@@ -102,7 +102,7 @@ const defaults = {
     clearbit: "https://logo.clearbit.com/$URL",
     iconhorse: "https://icon.horse/icon/$URL",
     faviconkit: "https://api.faviconkit.com/$URL/64",
-    duckduckgo: "https://icons.duckduckgo.com/ip2/$URL.ico",
+    duckduckgo: "https://icons.duckduckgo.com/ip3/$URL.ico",
     yandex: "https://favicon.yandex.net/favicon/$URL",
     google: "https://www.google.com/s2/favicons?sz=128&domain_url=$URL",
     besticon:
