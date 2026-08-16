@@ -154,7 +154,7 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
   progress.end();
   nextTick(() => {
-    document.title = (to.meta?.title as string) || (pageInfo.title as string) || "moshi";
+    document.title = (to.meta?.title as string) || (pageInfo as { title?: string }).title || "moshi";
   });
 });
 
