@@ -20,6 +20,12 @@
         :class="`layout-icon ${displayLayout === 'vertical' ? 'selected' : ''}`"
         tabindex="-2"
       />
+      <IconWaterfall
+        @click="updateDisplayLayout('waterfall')"
+        v-tooltip="tooltip($t('settings.layout-waterfall'))"
+        :class="`layout-icon ${displayLayout === 'waterfall' ? 'selected' : ''}`"
+        tabindex="-2"
+      />
     </div>
   </div>
 </template>
@@ -28,6 +34,7 @@
 import IconDeafault from "@/assets/interface-icons/layout-default.svg";
 import IconHorizontal from "@/assets/interface-icons/layout-horizontal.svg";
 import IconVertical from "@/assets/interface-icons/layout-vertical.svg";
+import IconWaterfall from "@/assets/interface-icons/layout-waterfall.svg";
 import { useAppStore } from "@/store/modules/appStore";
 
 defineProps({

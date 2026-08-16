@@ -180,6 +180,38 @@ itemSizeBound.value = iconSize.value;
       flex-direction: row;
     }
   }
+  &.orientation-waterfall {
+    column-count: 3;
+    column-gap: 0.75rem;
+    display: block !important;
+    @include phone {
+      column-count: 1;
+    }
+    @include tablet {
+      column-count: 2;
+    }
+    @include laptop {
+      column-count: 2;
+    }
+    @include monitor {
+      column-count: 3;
+    }
+    @include big-screen {
+      column-count: 4;
+    }
+    @include big-screen-up {
+      column-count: 5;
+    }
+    & > * {
+      break-inside: avoid;
+      height: auto !important;
+      margin-bottom: 0.75rem;
+    }
+    & .there-are-items {
+      height: auto !important;
+      display: block !important;
+    }
+  }
   &.orientation-horizontal,
   &.orientation-vertical {
     @include phone {
