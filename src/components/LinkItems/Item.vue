@@ -255,19 +255,20 @@ function getTooltipOptions() {
 
 /* Text in tile */
 .tile-title {
-  white-space: nowrap;
+  white-space: normal;
   text-overflow: ellipsis;
   min-width: 120px;
-  height: 30px;
+  min-height: 30px;
   position: relative;
   padding: 0;
   z-index: 2;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  word-break: keep-all;
+  word-break: break-word;
+  overflow: hidden;
   span.text {
-    white-space: nowrap;
+    white-space: normal;
   }
 }
 
