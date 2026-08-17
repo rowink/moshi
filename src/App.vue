@@ -1,7 +1,7 @@
 <template>
   <div id="dashy" :style="topLevelStyleModifications" :class="subPageClassName">
     <Header :pageInfo="pageInfo" />
-    <router-view v-if="!isFetching" />
+    <router-view v-if="!isFetching" :key="$route.fullPath" />
     <Footer :text="footerText" v-if="visibleComponents.footer && !isFetching" />
   </div>
 </template>

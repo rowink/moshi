@@ -22,10 +22,9 @@
     >
       <template
         v-for="(section, index) in filteredTiles"
-        :key="`${pageId}-section-${index}`"
+        :key="`${pageId}-${section.name || index}`"
       >
         <Section
-          :index="index"
           :title="section.name"
           :icon="section.icon || undefined"
           :displayData="getDisplayData(section)"

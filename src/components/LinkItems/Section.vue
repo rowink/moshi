@@ -95,7 +95,6 @@ const props = defineProps({
     default: () => ({}),
   },
   items: { type: Array as PropType<ItemType[]>, default: () => [] },
-  index: Number,
   searchTerm: String,
 });
 const emit = defineEmits(["itemClicked"]);
