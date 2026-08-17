@@ -20,7 +20,10 @@
         (colCount ? `col-count-${colCount} ` : '')
       "
     >
-      <template v-for="(section, index) in filteredTiles" :key="index">
+      <template
+        v-for="(section, index) in filteredTiles"
+        :key="`${pageId}-section-${index}`"
+      >
         <Section
           :index="index"
           :title="section.name"

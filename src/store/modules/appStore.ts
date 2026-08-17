@@ -29,7 +29,7 @@ export const useAppStore = defineStore("app", {
       if (!state.config) return {};
       return state.config.appConfig || {};
     },
-    sections(state) {
+    sections(state): Section[] {
       return state.config.sections || [];
     },
     pages(state) {
