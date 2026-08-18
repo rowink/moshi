@@ -10,7 +10,7 @@
     "format": "prettier --write src",
     "type-check": "vue-tsc --noEmit",
     "iframe": "node scripts/check-iframe.mjs",
-    "dependency-audit": "npx improved-yarn-audit --ignore-dev-deps"
+    "new-page": "node scripts/generate-config.mjs"
   },
   "dependencies": {
     "@lucide/vue": "^1.30.0",

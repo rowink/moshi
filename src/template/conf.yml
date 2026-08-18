@@ -1,0 +1,52 @@
+---
+# =============================================================================
+# moshi 默认配置模板
+# -----------------------------------------------------------------------------
+# 本文件是 moshi 的默认配置，通过以下命令生成到 src/config/conf.yml：
+#   pnpm generate-config            # 仅当目标不存在时生成
+#   pnpm generate-config -- --force # 强制覆盖（会替换现有 conf.yml！）
+#
+# 配置由四个部分组成：
+#   pageInfo  - 页面头部信息（logo、标题、描述、导航链接、页脚）
+#   pages     - 多页面配置（可选，每个条目增加一个子页面与导航链接）
+#   appConfig - 应用级设置（主题、语言、打开方式、状态检查等）
+#   sections  - 主内容：一个 section 数组，每个 section 包含 items 数组
+# =============================================================================
+
+# Page meta info, like heading, footer text and nav links
+pageInfo:
+  logo: /favicon.ico
+  title: moshi
+  description:
+  navLinks:
+    - title: GitHub
+      path: https://github.com/rowink/moshi
+  footerText: (ﾉ´ヮ´)ﾉ*:･ﾟ✧
+
+# Optional app settings and configuration
+appConfig:
+  # 主题，目前仅支持 glow
+  theme: glow
+  # 界面语言：cn / en
+  language: cn
+  # 是否对每个链接执行在线状态检查（需要 /status-check 端点）
+  statusCheck: true
+  # 状态检查轮询间隔（秒），0 表示仅在页面加载时检查一次
+  statusCheckInterval: 0
+  # 链接默认打开方式：newtab / sametab / modal / clipboard
+  defaultOpeningMethod: modal
+  webSearch:
+    # 是否禁用搜索框下方的 Web 搜索提示
+    disableWebSearch: true
+  # 是否加载 Font Awesome 图标库（用于 fas/fab 等图标）
+  enableFontAwesome: true
+
+# Main content - An array of sections, each containing an array of items
+sections:
+  - name: 示例分组
+    icon: fas fa-star
+    items:
+      - title: 示例工具
+        description: 在这里添加你的第一个工具链接
+        icon: https://example.com/favicon.ico
+        url: https://example.com
