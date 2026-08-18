@@ -1,4 +1,7 @@
 ---
+# 排序权重(可选):数字越小,在主页菜单中越靠前
+weight: 20
+
 # Page meta info, like heading, footer text and nav links
 pageInfo:
   logo: /favicon-trend.ico

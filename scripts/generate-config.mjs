@@ -20,53 +20,70 @@
  *   node scripts/generate-config.mjs --dry-run        # show what would be written
  *   node scripts/generate-config.mjs exp              # write src/config/conf-exp.yml
  *   node scripts/generate-config.mjs exp dev          # write conf-exp.yml and conf-dev.yml
+ *   node scripts/generate-config.mjs exp --weight 10  # write conf-exp.yml with weight 50
  *   node scripts/generate-config.mjs --dry-run exp    # show the would-be page file
  *
  * Exit code is 0 on success, 1 when a template is missing, a page name is
  * invalid, or a file could not be written.
  */
 
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const TEMPLATE_DIR = path.resolve(__dirname, '..', 'src', 'template');
-const CONFIG_DIR = path.resolve(__dirname, '..', 'src', 'config');
+const TEMPLATE_DIR = path.resolve(__dirname, "..", "src", "template");
+const CONFIG_DIR = path.resolve(__dirname, "..", "src", "config");
 
 /* Default templates: filename -> copy to src/config/<filename> */
-const TEMPLATES = ['conf.yml'];
+const TEMPLATES = ["conf.yml"];
 
 /* Mirror makePageName from src/utils/ConfigHelpers.ts */
 const sanitizePageName = (rawName) =>
   rawName
     .toLowerCase()
-    .replace(/\.ya?ml$/, '')
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s-]+/g, '');
+    .replace(/\.ya?ml$/, "")
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s-]+/g, "");
 
 /* Personalise a new sub-page copy: set its nav title and a default weight so
  * build-time discovery shows it in the menu with a sensible order. */
-const customizePageContent = (content, pageName) =>
+const customizePageContent = (content, pageName, weight) =>
   content
-    .replace('title: moshi', `title: ${pageName}`)
+    .replace("title: moshi", `title: ${pageName}`)
     .replace(
-      '# Page meta info, like heading, footer text and nav links',
-      '# 排序权重(可选):数字越小,在主页菜单中越靠前\nweight: 100\n\n# Page meta info, like heading, footer text and nav links',
+      "# Page meta info, like heading, footer text and nav links",
+      `# 排序权重(可选):数字越小,在主页菜单中越靠前\nweight: ${weight}\n\n# Page meta info, like heading, footer text and nav links`,
     );
 
 /* Parse simple CLI flags */
 const args = process.argv.slice(2);
-const force = args.includes('--force');
-const dryRun = args.includes('--dry-run');
-const onlyFlag = args.indexOf('--only');
+const force = args.includes("--force");
+const dryRun = args.includes("--dry-run");
+const onlyFlag = args.indexOf("--only");
 const only = onlyFlag !== -1 && args[onlyFlag + 1] ? args[onlyFlag + 1] : null;
+const weightFlag = args.indexOf("--weight");
+const weightArg =
+  weightFlag !== -1 && args[weightFlag + 1] ? args[weightFlag + 1] : null;
+const weight = weightArg === null ? 10 : Number(weightArg);
+if (weightArg !== null && !Number.isFinite(weight)) {
+  console.error(`[generate-config] Invalid weight: ${weightArg}`);
+  process.exit(1);
+}
 
-/* Positional page names: anything that isn't a flag or the --only value */
+/* Positional page names: anything that isn't a flag or a flag value */
 const pageNames = args.filter((arg, index) => {
-  if (arg === '--force' || arg === '--dry-run' || arg === '--only') return false;
-  return only === null || index !== onlyFlag + 1;
+  if (
+    arg === "--force" ||
+    arg === "--dry-run" ||
+    arg === "--only" ||
+    arg === "--weight"
+  )
+    return false;
+  if (only !== null && index === onlyFlag + 1) return false;
+  if (weightArg !== null && index === weightFlag + 1) return false;
+  return true;
 });
 
 /* Build (templateFile, targetFile) pairs for every requested config */
@@ -80,7 +97,7 @@ const buildTargets = () => {
       }
       return {
         name: `conf-${name}.yml`,
-        templateFile: path.join(TEMPLATE_DIR, 'conf.yml'),
+        templateFile: path.join(TEMPLATE_DIR, "conf.yml"),
         targetFile: path.join(CONFIG_DIR, `conf-${name}.yml`),
       };
     });
@@ -90,7 +107,7 @@ const buildTargets = () => {
 
   if (names.length === 0) {
     console.error(`Unknown template name: ${only}`);
-    console.error(`Available templates: ${TEMPLATES.join(', ')}`);
+    console.error(`Available templates: ${TEMPLATES.join(", ")}`);
     process.exit(1);
   }
 
@@ -113,14 +130,16 @@ for (const { name, templateFile, targetFile } of targets) {
   }
 
   if (fs.existsSync(targetFile) && !force) {
-    console.log(`[generate-config] Skipped ${name} (already exists, use --force to overwrite)`);
+    console.log(
+      `[generate-config] Skipped ${name} (already exists, use --force to overwrite)`,
+    );
     continue;
   }
 
-  let content = fs.readFileSync(templateFile, 'utf-8');
-  const isPageTarget = name.startsWith('conf-') && name !== 'conf.yml';
+  let content = fs.readFileSync(templateFile, "utf-8");
+  const isPageTarget = name.startsWith("conf-") && name !== "conf.yml";
   if (isPageTarget) {
-    content = customizePageContent(content, name.slice(5, -4));
+    content = customizePageContent(content, name.slice(5, -4), weight);
   }
 
   if (dryRun) {
@@ -129,10 +148,12 @@ for (const { name, templateFile, targetFile } of targets) {
   }
 
   try {
-    fs.writeFileSync(targetFile, content, 'utf-8');
+    fs.writeFileSync(targetFile, content, "utf-8");
     console.log(`[generate-config] Wrote ${targetFile}`);
   } catch (err) {
-    console.error(`[generate-config] Failed to write ${targetFile}: ${err.message}`);
+    console.error(
+      `[generate-config] Failed to write ${targetFile}: ${err.message}`,
+    );
     failed = true;
   }
 }
