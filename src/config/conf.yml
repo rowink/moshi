@@ -229,7 +229,6 @@ sections:
         url: https://chalk.ist/
       - title: Code to Image
         description: Transform your code into visually appealing images effortlessly with our tool.
-        icon: /favicon.ico
         url: https://code-to-image-converter.vercel.app/
 
   - name: 图文卡片
@@ -298,7 +297,6 @@ sections:
         url: https://jakearchibald.github.io/svgomg/
       - title: GifStudio
         description: Client-side GIF creation and editing studio with frame manipulation, timing controls, effects, and export tools.
-        icon:
         url: https://sysadmindoc.github.io/GifStudio/
 
   - name: 画布

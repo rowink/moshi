@@ -12,7 +12,7 @@ sections:
     icon: fa fa-github
     items:
       - title: OssInsight
-        description: content="The comprehensive Open Source Software insight tool by analyzing massive events from GitHub, powered by TiDB, the best insight building database of data agility."
+        description: The comprehensive Open Source Software insight tool by analyzing massive events from GitHub, powered by TiDB, the best insight building database of data agility.
         icon: https://ossinsight.io/img/favicon-1.png
         url: https://ossinsight.io/
 
