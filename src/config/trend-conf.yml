@@ -5,8 +5,8 @@ weight: 20
 # Page meta info, like heading, footer text and nav links
 pageInfo:
   logo: /favicon-trend.ico
-  title: TrendKit
-  description: 开发者的技术趋势收集小站
+  title: nav
+  description: A lightweight self-hostable personal dashboard
   footerText: (╹ڡ╹ )
 
 # Main content - An array of sections, each containing an array of items
@@ -18,19 +18,3 @@ sections:
         description: The comprehensive Open Source Software insight tool by analyzing massive events from GitHub, powered by TiDB, the best insight building database of data agility.
         icon: https://ossinsight.io/img/favicon-1.png
         url: https://ossinsight.io/
-
-  - name: NPM 趋势
-    icon: fa fa-cube
-    items:
-      - title: npm trends
-        description: Which NPM package should you use? Compare packages download stats, bundle sizes, github stars and more. Spot trends, pick the winner.
-        icon: https://npmtrends.com/favicon.ico
-        url: https://npmtrends.com/
-      - title: bestofjs
-        description: Check out the most popular open-source projects and the latest trends about the web platform： React, Vue.js, Node.js, Deno, Bun... The best of JavaScript, TypeScript and friends!
-        icon: https://bestofjs.org/favicon.ico
-        url: https://bestofjs.org/
-      - title: Node.js Toolbox
-        description: Find actively maintained and popular libraries in the Node.js ecosystem.
-        icon: https://nodejstoolbox.com/favicon.ico
-        url: https://nodejstoolbox.com/
