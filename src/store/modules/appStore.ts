@@ -4,7 +4,7 @@ import axios from "axios";
 import yaml from "js-yaml";
 import ConfigAccumulator from "@/utils/ConfigAccumalator";
 import { componentVisibility } from "@/utils/ConfigHelpers";
-import { discoveredPages } from "@/config/discoverPages";
+import { discoveredPages } from "@/utils/discoverPages";
 import ErrorHandler, { InfoHandler, InfoKeys } from "@/utils/ErrorHandler";
 import { localStorageKeys } from "@/utils/defaults";
 import { Item, Section } from "@/types/types";

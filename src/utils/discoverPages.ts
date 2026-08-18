@@ -33,7 +33,7 @@ export interface DiscoveredPage {
 const DEFAULT_WEIGHT = 999;
 
 /* Inlined at build time: { "./doc-conf.yml": "<raw yaml>" } */
-const rawFiles = import.meta.glob("./{conf-*,*-conf}.yml", {
+const rawFiles = import.meta.glob("../config/{conf-*,*-conf}.yml", {
   query: "?raw",
   import: "default",
   eager: true,

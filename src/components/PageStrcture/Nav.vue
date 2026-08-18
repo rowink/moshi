@@ -27,7 +27,7 @@
 import { ref, computed, PropType } from "vue";
 import IconBurger from "@/assets/interface-icons/burger-menu.svg";
 import { makePageRoute } from "@/utils/ConfigHelpers";
-import { discoveredPages } from "@/config/discoverPages";
+import { discoveredPages } from "@/utils/discoverPages";
 import { useAppStore } from "@/store/modules/appStore";
 import { NavLink as NavLinkType } from "@/types/types";
 

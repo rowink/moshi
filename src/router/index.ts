@@ -22,7 +22,7 @@ import Home from "@/views/Home.vue";
 
 // Import helper functions, config data and defaults
 import { makePageRoute, makePageId } from "@/utils/ConfigHelpers";
-import { discoveredPages } from "@/config/discoverPages";
+import { discoveredPages } from "@/utils/discoverPages";
 import { metaTagData, startingView, routePaths } from "@/utils/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 
