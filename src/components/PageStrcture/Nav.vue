@@ -27,6 +27,7 @@
 import { ref, computed, PropType } from "vue";
 import IconBurger from "@/assets/interface-icons/burger-menu.svg";
 import { makePageRoute } from "@/utils/ConfigHelpers";
+import { discoveredPages } from "@/config/discoverPages";
 import { useAppStore } from "@/store/modules/appStore";
 import { NavLink as NavLinkType } from "@/types/types";
 
@@ -42,12 +43,24 @@ const appStore = useAppStore();
 const navVisible = ref(true);
 const isMobile = ref(false);
 
-/* Get links to sub-pages, and combine with nav-links */
+/* Get links to sub-pages, and combine with nav-links.
+ * Sub-pages are auto-discovered from src/config/conf-*.yml (weight-sorted),
+ * plus any manually specified pages in conf.yml; duplicates are dropped. */
 const allLinks = computed(() => {
-  const subPages = appStore.pages.map((subPage: Record<string, any>) => ({
+  const manualSubPages = appStore.pages.map((subPage: Record<string, any>) => ({
     path: makePageRoute(subPage),
     title: subPage.name,
   }));
+  const autoSubPages = discoveredPages.map((page) => ({
+    path: page.route,
+    title: page.name,
+  }));
+  const seen = new Set<string>();
+  const subPages = [...manualSubPages, ...autoSubPages].filter((link) => {
+    if (seen.has(link.path)) return false;
+    seen.add(link.path);
+    return true;
+  });
   return [...(props.links || []), ...subPages];
 });
 

@@ -22,6 +22,7 @@ import Home from "@/views/Home.vue";
 
 // Import helper functions, config data and defaults
 import { makePageRoute, makePageId } from "@/utils/ConfigHelpers";
+import { discoveredPages } from "@/config/discoverPages";
 import { metaTagData, startingView, routePaths } from "@/utils/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 
@@ -36,9 +37,30 @@ if (!conf) {
 
 // Assign top-level config fields, check not null
 const config = conf || {};
-const pages = config.pages || [];
 const pageInfo = config.pageInfo || {};
 const appConfig = config.appConfig || {};
+
+/* Sub-pages come from build-time discovery (every conf-*.yml in src/config/),
+ * plus any manually specified pages in conf.yml (e.g. remote configs).
+ * Duplicate routes are resolved in favour of the discovered entry. */
+const seenRoutes = new Set<string>();
+const pages = [
+  ...discoveredPages.map((page) => ({
+    name: page.name,
+    path: page.path,
+    route: page.route,
+  })),
+  ...((config.pages || []) as {
+    name?: string;
+    path?: string;
+    route?: string;
+  }[]),
+].filter((page) => {
+  const route = makePageRoute(page);
+  if (seenRoutes.has(route)) return false;
+  seenRoutes.add(route);
+  return true;
+});
 
 const progress = new Progress({ color: "var(--progress-bar)" });
 

@@ -23,3 +23,6 @@ yarn-error.log*
 .history
 .omo
 .sisyphus
+
+# Playwright MCP artifacts
+.playwright-mcp

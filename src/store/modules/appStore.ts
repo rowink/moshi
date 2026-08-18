@@ -4,6 +4,7 @@ import axios from "axios";
 import yaml from "js-yaml";
 import ConfigAccumulator from "@/utils/ConfigAccumalator";
 import { componentVisibility } from "@/utils/ConfigHelpers";
+import { discoveredPages } from "@/config/discoverPages";
 import ErrorHandler, { InfoHandler, InfoKeys } from "@/utils/ErrorHandler";
 import { localStorageKeys } from "@/utils/defaults";
 import { Item, Section } from "@/types/types";
@@ -17,6 +18,7 @@ export const useAppStore = defineStore("app", {
   state: () => ({
     config: {} as Record<string, any>, // The current config, rendered to the UI
     remoteConfig: {} as Record<string, any>, // The configuration stored on the server
+    subPageConfigs: {} as Record<string, any>, // Cached raw sub-page configs, keyed by normalized config path
     modalOpen: false, // KB shortcut functionality will be disabled when modal is open
     currentConfigInfo: undefined as SubPageInfo | undefined, // For multi-page support, will store info about config file
   }),
@@ -95,20 +97,54 @@ export const useAppStore = defineStore("app", {
       const config = deepCopy(new ConfigAccumulator().config());
       this.setConfig(config);
     },
-    /* Fetch config for a sub-page (sections and pageInfo only) */
+    /* Fetch config for a sub-page (sections and pageInfo only).
+     * Discovered sub-pages are bundled at build time, so switching to them
+     * is instant; anything else falls back to a cached/live runtime fetch. */
     async initializeMultiPageConfig(configPath: string) {
-      axios
-        .get(configPath)
-        .then((response) => {
-          const subConfig = yaml.load(response.data) as Record<string, any>;
-          const pageTheme = subConfig.appConfig?.theme;
-          subConfig.appConfig = this.config.appConfig; // Always use parent appConfig
-          if (pageTheme) subConfig.appConfig.theme = pageTheme; // Apply page theme override
-          this.setConfig(subConfig);
-        })
-        .catch((err: unknown) => {
-          ErrorHandler(`Unable to load config from '${configPath}'`, err);
-        });
+      const discovered = discoveredPages.find(
+        (page) => `/${page.path}` === configPath,
+      );
+      if (discovered) {
+        this.applySubPageConfig(discovered.config);
+        return;
+      }
+      const subConfig = await this.fetchSubPageConfig(configPath);
+      if (subConfig) this.applySubPageConfig(subConfig);
+    },
+    /* Fetch a sub-page config, serving from cache when available. */
+    async fetchSubPageConfig(
+      configPath: string,
+    ): Promise<Record<string, any> | null> {
+      if (this.subPageConfigs[configPath]) return this.subPageConfigs[configPath];
+      try {
+        const response = await axios.get(configPath);
+        const subConfig = yaml.load(response.data) as Record<string, any>;
+        this.subPageConfigs[configPath] = subConfig;
+        return subConfig;
+      } catch (err: unknown) {
+        ErrorHandler(`Unable to load config from '${configPath}'`, err);
+        return null;
+      }
+    },
+    /* Apply a cached sub-config to the current view without mutating the cache. */
+    applySubPageConfig(subConfig: Record<string, any>) {
+      const parentAppConfig = this.remoteConfig.appConfig;
+      const merged = { ...subConfig, appConfig: { ...parentAppConfig } };
+      const pageTheme = subConfig.appConfig?.theme;
+      if (pageTheme) merged.appConfig.theme = pageTheme; // Apply page theme override
+      this.setConfig(merged);
+    },
+    /* Prefetch all sub-page configs in the background. */
+    async prefetchSubPageConfigs() {
+      const pages = (this.remoteConfig.pages || []) as Array<{ path?: string }>;
+      const paths = pages
+        .map((page) => page.path)
+        .filter((path: string | undefined): path is string => !!path)
+        .filter((path: string) => path !== "conf.yml")
+        .map((path: string) =>
+          path.startsWith("/") || path.startsWith("http") ? path : `/${path}`,
+        );
+      await Promise.allSettled(paths.map((p) => this.fetchSubPageConfig(p)));
     },
     setConfig(config: Record<string, any>) {
       if (!config.appConfig) config.appConfig = {};

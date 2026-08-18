@@ -10,6 +10,9 @@
  * config: `node scripts/generate-config.mjs exp` writes src/config/conf-exp.yml
  * (matching the conf-<name>.yml route convention).
  *
+ * Sub-pages are auto-discovered at build time: dropping src/config/conf-<name>.yml
+ * is enough - the route and the nav entry appear after the next rebuild.
+ *
  * Usage:
  *   node scripts/generate-config.mjs                  # write missing configs only
  *   node scripts/generate-config.mjs --force          # overwrite existing files
@@ -42,6 +45,16 @@ const sanitizePageName = (rawName) =>
     .replace(/\.ya?ml$/, '')
     .replace(/[^\w\s-]/g, '')
     .replace(/[\s-]+/g, '');
+
+/* Personalise a new sub-page copy: set its nav title and a default weight so
+ * build-time discovery shows it in the menu with a sensible order. */
+const customizePageContent = (content, pageName) =>
+  content
+    .replace('title: moshi', `title: ${pageName}`)
+    .replace(
+      '# Page meta info, like heading, footer text and nav links',
+      '# 排序权重(可选):数字越小,在主页菜单中越靠前\nweight: 100\n\n# Page meta info, like heading, footer text and nav links',
+    );
 
 /* Parse simple CLI flags */
 const args = process.argv.slice(2);
@@ -104,7 +117,11 @@ for (const { name, templateFile, targetFile } of targets) {
     continue;
   }
 
-  const content = fs.readFileSync(templateFile, 'utf-8');
+  let content = fs.readFileSync(templateFile, 'utf-8');
+  const isPageTarget = name.startsWith('conf-') && name !== 'conf.yml';
+  if (isPageTarget) {
+    content = customizePageContent(content, name.slice(5, -4));
+  }
 
   if (dryRun) {
     console.log(`[generate-config] (dry-run) Would write ${targetFile}`);

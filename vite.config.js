@@ -18,7 +18,12 @@ const loadConfigRaw = () => ({
   name: 'load-config-raw',
   enforce: 'pre',
   resolveId(source) {
-    if (source.endsWith('conf.yml?raw') && !source.startsWith('\0')) {
+    // Only virtualize the main conf.yml - a bare endsWith('conf.yml?raw')
+    // would also swallow doc-conf.yml?raw / trend-conf.yml?raw imports
+    if (
+      (source === 'conf.yml?raw' || source.endsWith('/conf.yml?raw')) &&
+      !source.startsWith('\0')
+    ) {
       return '\0config-conf.yml';
     }
     return null;

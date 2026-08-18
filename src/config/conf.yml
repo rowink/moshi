@@ -11,14 +11,6 @@ pageInfo:
       path: https://github.com/Exisi
   footerText: (ﾉ´ヮ´)ﾉ*:･ﾟ✧
 
-pages:
-  - name: 〜
-    path: "conf.yml"
-  - name: 📃 DocKit
-    path: "doc-conf.yml"
-  - name: 🎈 TrendKit
-    path: "trend-conf.yml"
-
 # Optional app settings and configuration
 appConfig:
   theme: glow

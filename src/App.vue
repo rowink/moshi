@@ -118,6 +118,7 @@ const applyLanguage = () => {
 /* Basic initialization tasks on app load */
 (async () => {
   await appStore.initializeConfig(); // Initialize config before moving on
+  appStore.prefetchSubPageConfigs(); // Prefetch sub-page configs in the background
   applyLanguage(); // Apply users local language
   if (appConfig.value.customCss) {
     // Inject users custom CSS, if present
