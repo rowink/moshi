@@ -31,11 +31,6 @@
         class="section-icon"
       />
       <h3>{{ title }}</h3>
-      <OpenIcon
-        @click.prevent.stop="openContextMenu"
-        @contextmenu.prevent
-        class="open-icon"
-      />
     </label>
     <div class="collapsible-content">
       <div class="content-inner">
@@ -49,7 +44,6 @@
 import vLongPress from "@/directives/LongPress";
 import { localStorageKeys } from "@/utils/defaults";
 import Icon from "@/components/LinkItems/ItemIcon.vue";
-import OpenIcon from "@/assets/interface-icons/config-open-settings.svg";
 import { computed, onMounted, ref, watch } from "vue";
 
 const props = defineProps({
