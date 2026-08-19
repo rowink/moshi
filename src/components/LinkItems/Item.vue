@@ -182,6 +182,8 @@ function getTooltipOptions() {
 </script>
 
 <style lang="scss">
+@use "@/styles/media-queries" as *;
+
 .item-wrapper {
   flex-grow: 1;
   flex-basis: 6rem;
@@ -263,6 +265,10 @@ function getTooltipOptions() {
   -webkit-box-orient: vertical;
   word-break: break-word;
   overflow: hidden;
+  @include phone {
+    min-width: 0;
+    min-height: 0;
+  }
   span.text {
     white-space: normal;
   }
@@ -349,6 +355,10 @@ p.description {
     .tile-title {
       min-width: 100px;
       max-width: 160px;
+      @include phone {
+        min-width: 0;
+        max-width: 100%;
+      }
       &.no-icon {
         text-align: left;
         width: 100%;

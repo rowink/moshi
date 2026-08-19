@@ -171,6 +171,11 @@ itemSizeBound.value = iconSize.value;
   max-width: 90%;
   overflow: auto;
   @extend .scroll-bar;
+  @include phone {
+    max-width: 100%;
+    padding: 0 1rem;
+    overflow-x: hidden;
+  }
   @include monitor-up {
     max-width: 85%;
   }

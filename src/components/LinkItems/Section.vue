@@ -277,6 +277,7 @@ onBeforeUnmount(() => {
     @extend .scroll-bar;
     @include phone {
       --item-col-count: 1;
+      overflow-x: hidden;
     }
     @include tablet {
       --item-col-count: 2;

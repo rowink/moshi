@@ -137,13 +137,16 @@ defineExpose({ toggle });
 
 .collapsable {
   width: 100%;
-  width: stretch;
   height: fit-content;
   margin: 10px;
   padding: var(--item-group-padding);
   border-radius: var(--curve-factor);
   box-shadow: var(--item-group-shadow);
   background: var(--item-group-outer-background);
+  @include phone {
+    margin: 4px;
+    padding: 4px;
+  }
 
   /* Options allowing sections to SPAN multiple rows or columns */
   grid-row-start: span 1;

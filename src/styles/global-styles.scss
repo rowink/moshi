@@ -9,6 +9,9 @@ html {
   @extend .scroll-bar;
   @extend .highlight;
   box-sizing: border-box;
+  @include phone {
+    overflow-x: clip;
+  }
   /* Essential body styles */
   body {
     background: var(--background);
