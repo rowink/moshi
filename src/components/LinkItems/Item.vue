@@ -103,11 +103,7 @@ const {
   openContextMenu,
   closeContextMenu,
 } = useItem(
-  {
-    item: props.item,
-    isAddNew: props.isAddNew,
-    itemSize: props.itemSize,
-  },
+  props,
   emit as (_event: string, ..._args: unknown[]) => void,
 );
 
