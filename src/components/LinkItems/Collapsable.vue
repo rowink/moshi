@@ -144,8 +144,9 @@ defineExpose({ toggle });
   box-shadow: var(--item-group-shadow);
   background: var(--item-group-outer-background);
   @include phone {
-    margin: 4px;
-    padding: 4px;
+    margin: 0;
+    padding: 8px;
+    box-sizing: border-box;
   }
 
   /* Options allowing sections to SPAN multiple rows or columns */
