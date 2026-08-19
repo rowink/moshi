@@ -6,8 +6,30 @@ import ConfigAccumulator from "@/utils/ConfigAccumalator";
 import { componentVisibility } from "@/utils/ConfigHelpers";
 import { discoveredPages } from "@/utils/discoverPages";
 import ErrorHandler, { InfoHandler, InfoKeys } from "@/utils/ErrorHandler";
-import { localStorageKeys } from "@/utils/defaults";
+import {
+  localStorageKeys,
+  iconSize as defaultIconSize,
+  layout as defaultLayout,
+} from "@/utils/defaults";
 import { Item, Section } from "@/types/types";
+
+/* Merge the user's locally-saved preferences (icon size, layout) into a
+ * file-based appConfig, so they survive sub-page navigation. Mirrors the
+ * behaviour of ConfigAccumulator.appConfig(). */
+const applyLocalPreferences = (
+  appConfig: Record<string, any>,
+): Record<string, any> => {
+  const merged = { ...appConfig };
+  merged.layout =
+    localStorage[localStorageKeys.LAYOUT_ORIENTATION] ||
+    appConfig.layout ||
+    defaultLayout;
+  merged.iconSize =
+    localStorage[localStorageKeys.ICON_SIZE] ||
+    appConfig.iconSize ||
+    defaultIconSize;
+  return merged;
+};
 
 interface SubPageInfo {
   pageId?: string;
@@ -129,7 +151,10 @@ export const useAppStore = defineStore("app", {
     /* Apply a cached sub-config to the current view without mutating the cache. */
     applySubPageConfig(subConfig: Record<string, any>) {
       const parentAppConfig = this.remoteConfig.appConfig;
-      const merged = { ...subConfig, appConfig: { ...parentAppConfig } };
+      const merged = {
+        ...subConfig,
+        appConfig: applyLocalPreferences({ ...parentAppConfig }),
+      };
       const pageTheme = subConfig.appConfig?.theme;
       if (pageTheme) merged.appConfig.theme = pageTheme; // Apply page theme override
       this.setConfig(merged);
@@ -183,7 +208,10 @@ export const useAppStore = defineStore("app", {
     },
     useMainConfig() {
       if (this.remoteConfig) {
-        this.config = this.remoteConfig;
+        this.config = {
+          ...this.remoteConfig,
+          appConfig: applyLocalPreferences({ ...this.remoteConfig.appConfig }),
+        };
       } else {
         this.initializeConfig();
       }
