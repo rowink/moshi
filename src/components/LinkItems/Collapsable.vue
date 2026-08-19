@@ -18,10 +18,6 @@
       :for="sectionKey"
       class="lbl-toggle"
       tabindex="-1"
-      @mouseup.right="openContextMenu"
-      @contextmenu.prevent
-      @long-press="openContextMenu"
-      v-longPress="500"
     >
       <Icon
         v-if="icon"
