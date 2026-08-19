@@ -329,6 +329,7 @@ p.description {
       text-align: left;
       max-width: 12rem;
       overflow: hidden;
+      word-break: break-all;
       span.text {
         text-align: left;
         padding-left: 10%;
