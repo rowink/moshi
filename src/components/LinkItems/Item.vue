@@ -324,10 +324,10 @@ p.description {
       width: 2rem;
     }
     .tile-title {
+      flex: 1;
       height: fit-content;
       min-height: 1.2rem;
       text-align: left;
-      max-width: 12rem;
       overflow: hidden;
       word-break: break-all;
       span.text {
