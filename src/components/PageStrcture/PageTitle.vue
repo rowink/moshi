@@ -49,9 +49,21 @@ useAppStore();
     height: fit-content;
   }
   @include phone {
-    flex-direction: column;
-    text-align: center;
-    padding: 0.25rem 0;
+    flex-direction: row;
+    text-align: left;
+    padding: 0;
+    header & {
+      h1 {
+        font-size: 1rem;
+      }
+      img.site-logo {
+        max-width: 1.8rem;
+        margin: 0 0.35rem 0 0;
+      }
+      span.subtitle {
+        display: none;
+      }
+    }
   }
 }
 </style>

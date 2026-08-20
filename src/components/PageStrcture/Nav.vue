@@ -4,10 +4,22 @@
       :class="`burger ${!navVisible ? 'visible' : ''}`"
       @click="navVisible = !navVisible"
     />
-    <nav id="nav" v-if="navVisible">
+    <!-- Mobile sidebar overlay -->
+    <div
+      v-if="isMobile"
+      :class="`nav-overlay ${navVisible ? 'visible' : ''}`"
+      @click="navVisible = false"
+    />
+    <nav id="nav" :class="{ open: navVisible }">
+      <!-- Close button (mobile only) -->
+      <IconClose v-if="isMobile" class="nav-close" @click="navVisible = false" />
       <!-- Render either router-link or anchor, depending if internal / external link -->
       <template v-for="(link, index) in allLinks" :key="index">
-        <router-link v-if="!isUrl(link.path)" :to="link.path" class="nav-item"
+        <router-link
+          v-if="!isUrl(link.path)"
+          :to="link.path"
+          class="nav-item"
+          @click="onNavItemClick"
           >{{ link.title }}
         </router-link>
         <a
@@ -16,6 +28,7 @@
           :target="determineTarget(link)"
           class="nav-item"
           rel="noopener noreferrer"
+          @click="onNavItemClick"
           >{{ link.title }}
         </a>
       </template>
@@ -26,6 +39,7 @@
 <script setup lang="ts">
 import { ref, computed, PropType } from "vue";
 import IconBurger from "@/assets/interface-icons/burger-menu.svg";
+import IconClose from "@/assets/interface-icons/close.svg";
 import { makePageRoute } from "@/utils/ConfigHelpers";
 import { discoveredPages } from "@/utils/discoverPages";
 import { useAppStore } from "@/store/modules/appStore";
@@ -89,6 +103,12 @@ function determineTarget(link: NavLinkType) {
   }
 }
 
+function onNavItemClick() {
+  if (isMobile.value) {
+    navVisible.value = false;
+  }
+}
+
 navVisible.value = !detectMobile();
 isMobile.value = detectMobile();
 </script>
@@ -98,6 +118,19 @@ isMobile.value = detectMobile();
 @use "@/styles/media-queries" as *;
 
 .nav-outer {
+  /* Burger icon */
+  @extend .svg-button;
+  .burger {
+    display: none;
+    &.visible {
+      display: block;
+    }
+    @include phone {
+      display: block;
+    }
+  }
+
+  /* Desktop: horizontal nav bar */
   nav {
     display: flex;
     align-items: center;
@@ -124,21 +157,76 @@ isMobile.value = detectMobile();
       }
     }
   }
-  /* Mobile and Burger-Menu Styles */
-  @extend .svg-button;
+
+  /* Mobile sidebar */
   @include phone {
-    width: 100%;
+    .nav-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      &.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+
     nav {
-      flex-wrap: wrap;
-    }
-  }
-  .burger {
-    display: none;
-    &.visible {
-      display: block;
-    }
-    @include phone {
-      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 100vh;
+      height: 100dvh;
+      z-index: 1000;
+      background: var(--background-darker);
+      flex-direction: column;
+      align-items: stretch;
+      padding: 3rem 0.5rem 1rem;
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
+      &.open {
+        transform: translateX(0);
+      }
+      .nav-close {
+        position: absolute;
+        top: 0.6rem;
+        right: 0.6rem;
+        width: 1.1rem;
+        height: 1.1rem;
+        color: var(--nav-link-text-color);
+        opacity: 0.5;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0.2rem;
+        &:hover {
+          opacity: 1;
+        }
+      }
+      .nav-item {
+        margin: 0.15rem 0;
+        min-width: 0;
+        text-align: left;
+        padding: 0.55rem 0.6rem;
+        background: none;
+        border: none;
+        box-shadow: none;
+        border-radius: var(--curve-factor);
+        &:hover,
+        &:active {
+          background: var(--nav-link-background-color-hover);
+        }
+        &.router-link-active {
+          color: var(--nav-link-text-color-hover);
+          background: var(--nav-link-background-color-hover);
+        }
+      }
     }
   }
 }

@@ -46,7 +46,10 @@ header {
   align-items: center;
   align-content: flex-start;
   @include phone {
-    flex-direction: column-reverse;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0.4rem 0.75rem;
   }
 }
 </style>
