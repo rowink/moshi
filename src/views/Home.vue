@@ -145,6 +145,8 @@ itemSizeBound.value = iconSize.value;
 @use "@/styles/style-helpers" as *;
 
 .home {
+  display: flex;
+  flex-direction: column;
   padding-bottom: 1px;
   background: var(--background);
   min-height: calc(99.9vh - var(--footer-height));
@@ -159,34 +161,42 @@ itemSizeBound.value = iconSize.value;
   flex-wrap: wrap;
   gap: 0.5rem;
   padding: 0 1rem;
-  max-width: 90%;
+  width: 100%;
+  max-width: 80rem;
   margin: 0 auto;
 }
 
 /* Outside container wrapping the item groups*/
 .item-group-container {
+  flex: 1;
+  min-height: 0;
   display: grid;
-  gap: 0.5rem;
+  gap: 1.375rem;
   margin: 0 auto;
-  max-width: 90%;
+  width: 100%;
+  max-width: 80rem;
   overflow: auto;
+  scrollbar-width: 0;
+  align-content: start;
   @extend .scroll-bar;
   @include phone {
+    flex: none;
+    min-height: auto;
     max-width: 100%;
     padding: 0 1rem;
     overflow-x: hidden;
-  }
-  @include monitor-up {
-    max-width: 85%;
   }
 
   /* Options for alternate layouts, triggered by buttons */
   &.orientation-horizontal {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    :deep(.collapsable) {
+      margin: 10px 0;
+    }
   }
   &.orientation-vertical {
-    max-width: 100%;
     @include tablet-up {
       display: flex;
       flex-direction: row;
@@ -226,25 +236,7 @@ itemSizeBound.value = iconSize.value;
   }
   &.orientation-horizontal,
   &.orientation-vertical {
-    @include phone {
-      --content-max-width: 100%;
-    }
-    @include tablet {
-      --content-max-width: 98%;
-    }
-    @include laptop {
-      --content-max-width: 90%;
-    }
-    @include monitor {
-      --content-max-width: 85%;
-    }
-    @include big-screen {
-      --content-max-width: 80%;
-    }
-    @include big-screen-up {
-      --content-max-width: 60%;
-    }
-    max-width: var(--content-max-width, 90%);
+    max-width: 80rem;
   }
 
   /* Specify number of columns, based on screen size or user preference */
