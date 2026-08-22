@@ -161,6 +161,7 @@ itemSizeBound.value = iconSize.value;
   flex-wrap: wrap;
   gap: 0.5rem;
   padding: 0 1rem;
+  box-sizing: border-box;
   width: 100%;
   max-width: 80rem;
   margin: 0 auto;
@@ -169,6 +170,8 @@ itemSizeBound.value = iconSize.value;
 /* Outside container wrapping the item groups*/
 .item-group-container {
   flex: 1;
+  padding: 0 1rem;
+  box-sizing: border-box;
   min-height: 0;
   display: grid;
   gap: 1.375rem;

@@ -14,11 +14,7 @@
       v-model="checkboxState"
       tabIndex="-1"
     />
-    <label
-      :for="sectionKey"
-      class="lbl-toggle"
-      tabindex="-1"
-    >
+    <label :for="sectionKey" class="lbl-toggle" tabindex="-1">
       <Icon
         v-if="icon"
         :icon="icon"
@@ -136,7 +132,6 @@ defineExpose({ toggle });
 @use "@/styles/media-queries" as *;
 
 .collapsable {
-  width: 100%;
   height: fit-content;
   margin: 10px;
   padding: var(--item-group-padding);
