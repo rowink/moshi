@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, PropType } from "vue";
+import { ref, computed, PropType, onMounted, onBeforeUnmount } from "vue";
 import IconBurger from "@/assets/interface-icons/burger-menu.svg";
 import IconClose from "@/assets/interface-icons/close.svg";
 import { makePageRoute } from "@/utils/ConfigHelpers";
@@ -82,9 +82,24 @@ const allLinks = computed(() => {
   return [...(props.links || []), ...subPages];
 });
 
+/* Keep in sync with $tiny in src/styles/media-queries.scss */
+const MOBILE_BREAKPOINT = 600;
+
 function detectMobile() {
   const screenWidth = document.body.clientWidth;
-  return !!(screenWidth && screenWidth < 600);
+  return !!(screenWidth && screenWidth < MOBILE_BREAKPOINT);
+}
+
+/* Re-evaluate layout mode on viewport resize. Only react when crossing
+ * the breakpoint, so dragging within one layout never toggles the drawer:
+ * shrink to phone -> drawer starts closed (burger visible),
+ * grow back to desktop -> sidebar is shown again automatically. */
+function updateNavLayout() {
+  const wasMobile = isMobile.value;
+  isMobile.value = detectMobile();
+  if (wasMobile !== isMobile.value) {
+    navVisible.value = !isMobile.value;
+  }
 }
 
 function isUrl(str: string | undefined) {
@@ -113,8 +128,15 @@ function onNavItemClick() {
   }
 }
 
-navVisible.value = !detectMobile();
-isMobile.value = detectMobile();
+onMounted(() => {
+  navVisible.value = !detectMobile();
+  isMobile.value = detectMobile();
+  window.addEventListener("resize", updateNavLayout);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", updateNavLayout);
+});
 </script>
 
 <style scoped lang="scss">
