@@ -1,12 +1,8 @@
 <template>
   <main class="not-found-page">
     <h1 class="not-found-title">404</h1>
-    <h2 class="not-found-sad-face">:(</h2>
     <p class="not-found-subtitle">Page Not Found</p>
-    <p class="not-found-message">
-      Facing Issues?
-      <a href="https://git.io/JzpL5">Get Support</a>.
-    </p>
+
     <router-link to="/" class="go-home">Back Home</router-link>
   </main>
 </template>
@@ -26,74 +22,118 @@ onMounted(() => {
 <style scoped lang="scss">
 @use "@/styles/media-queries" as *;
 @use "@/styles/style-helpers" as *;
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 main.not-found-page {
   margin: 0;
-  padding: 0;
+  padding: 2rem;
   width: 100%;
-  height: 100%;
+  min-height: calc(100vh - var(--footer-height, 0px));
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   cursor: default;
-  background: #202020;
-  min-height: calc(99vh - var(--footer-height));
-  background-color: #202020;
-  h1.not-found-title,
-  h2.not-found-sad-face {
-    font-size: 20vh;
-    font-family: Tahoma, monospace;
+  background: #fafafa;
+  box-sizing: border-box;
+
+  h1.not-found-title {
+    font-size: clamp(6rem, 15vh, 10rem);
     cursor: default;
-    color: #0c0c0c;
-    text-shadow:
-      0px 4px 4px #090909,
-      0 0 0 #000,
-      0px 2px 2px #000000;
-    margin: 1rem 0 0;
+    color: #db78fc;
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    animation: fadeInUp 0.6s ease-out;
   }
+
   h2.not-found-sad-face {
-    font-size: 4rem;
-    margin: 0 0 1.5rem 0;
-  }
-  p {
-    font-family: monospace;
+    font-size: clamp(2rem, 5vh, 3.5rem);
+    font-family:
+      "Segoe UI",
+      system-ui,
+      -apple-system,
+      sans-serif;
+    font-weight: 300;
     cursor: default;
-    color: #0c0c0c;
-    margin: 0.2rem 0;
-    text-shadow:
-      0 1px 1px #090909,
-      0 0 0 #000,
-      0 1px 1px #000000;
+    color: #999;
+    margin: 0.5rem 0 1rem;
+    animation: fadeInUp 0.6s ease-out 0.1s both;
   }
+
   p.not-found-subtitle {
-    font-size: 2.8rem;
+    font-size: clamp(1.2rem, 3vh, 1.8rem);
+    font-weight: 500;
+    color: #444;
+    margin: 40px 0 2rem;
+    letter-spacing: 0.02em;
+    animation: fadeInUp 0.6s ease-out 0.2s both;
   }
-  p.not-found-message {
-    font-size: 1.4rem;
-    font-weight: normal;
-    a {
-      color: #0c0c0c;
-      font-family: monospace;
-    }
-  }
+
   a.go-home {
-    padding: 0.3rem 1rem;
-    border-radius: 3px;
-    font-size: 1.7rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
-    font-family: Tahoma, monospace;
-    color: #0c0c0c;
-    margin: 2rem 0 0;
+    color: #fff;
     text-decoration: none;
-    background: #db78fc;
-    box-shadow: 0 4px #b83ddd;
+    background: #dc7efc;
+    box-shadow: 0 4px 14px rgba(184, 61, 221, 0.3);
+    transition: all 0.2s ease;
+    animation: fadeInUp 0.6s ease-out 0.3s both;
+
     &:hover {
-      box-shadow: 0 2px #b83ddd;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(184, 61, 221, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(184, 61, 221, 0.3);
     }
   }
+
   ::selection {
     background-color: #db78fc;
-    color: #121212;
+    color: #fff;
+  }
+
+  @include phone {
+    padding: 1.5rem;
+
+    h1.not-found-title {
+      font-size: 5rem;
+    }
+
+    h2.not-found-sad-face {
+      font-size: 1.8rem;
+    }
+
+    p.not-found-subtitle {
+      font-size: 1.1rem;
+    }
+  }
+
+  @include very-tiny-phone {
+    padding: 1rem;
+
+    h1.not-found-title {
+      font-size: 4rem;
+    }
   }
 }
 </style>
