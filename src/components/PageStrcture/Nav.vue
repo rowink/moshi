@@ -12,7 +12,11 @@
     />
     <nav id="nav" :class="{ open: navVisible }">
       <!-- Close button (mobile only) -->
-      <IconClose v-if="isMobile" class="nav-close" @click="navVisible = false" />
+      <IconClose
+        v-if="isMobile"
+        class="nav-close"
+        @click="navVisible = false"
+      />
       <!-- Render either router-link or anchor, depending if internal / external link -->
       <template v-for="(link, index) in allLinks" :key="index">
         <router-link
@@ -189,7 +193,6 @@ isMobile.value = detectMobile();
       overflow-y: auto;
       transform: translateX(-100%);
       transition: transform 0.3s ease;
-      box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
       &.open {
         transform: translateX(0);
       }
