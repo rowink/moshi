@@ -62,7 +62,7 @@ const navVisible = ref(true);
 const isMobile = ref(false);
 
 /* Get links to sub-pages, and combine with nav-links.
- * Sub-pages are auto-discovered from src/config/conf-*.yml (weight-sorted),
+ * Sub-pages are auto-discovered from config/conf-*.yml (weight-sorted),
  * plus any manually specified pages in conf.yml; duplicates are dropped. */
 const allLinks = computed(() => {
   const manualSubPages = appStore.pages.map((subPage: Record<string, any>) => ({

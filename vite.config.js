@@ -12,7 +12,7 @@ const pkg = require('./package.json');
 
 const base = process.env.BASE_URL || '/';
 
-// conf.yml lives in src/config/ (the runtime server reads/writes it there).
+// conf.yml lives in config/ (the runtime server reads/writes it there).
 // Resolve `?raw` imports of it to a virtual module reading the file directly.
 const loadConfigRaw = () => ({
   name: 'load-config-raw',
@@ -30,12 +30,12 @@ const loadConfigRaw = () => ({
   },
   load(id) {
     if (id !== '\0config-conf.yml') return null;
-    const file = path.resolve(__dirname, 'src', 'config', 'conf.yml');
+    const file = path.resolve(__dirname, 'config', 'conf.yml');
     return `export default ${JSON.stringify(fs.readFileSync(file, 'utf-8'))}`;
   },
 });
 
-// The config YAML files moved out of public/ (to src/config/), so the dev
+// The config YAML files moved out of public/ (to config/), so the dev
 // server no longer serves them statically. This plugin mirrors the server.js
 // route so runtime axios.get('/xxx.yml') calls keep working in dev.
 const serveConfigYml = () => ({
@@ -45,7 +45,7 @@ const serveConfigYml = () => ({
       const match = req.url.match(/^\/([A-Za-z0-9-_]+)\.yml(\?.*)?$/);
       if (!match) return next();
       const safeName = match[1].replace(/[^a-zA-Z0-9-_]/g, '');
-      const file = path.resolve(__dirname, 'src', 'config', `${safeName}.yml`);
+      const file = path.resolve(__dirname, 'config', `${safeName}.yml`);
       if (!fs.existsSync(file)) return next();
       res.setHeader('Content-Type', 'text/yaml');
       return res.end(fs.readFileSync(file, 'utf-8'));
@@ -59,7 +59,7 @@ const emitConfigYml = () => ({
   name: 'emit-config-yml',
   enforce: 'post',
   generateBundle() {
-    const configDir = path.resolve(__dirname, 'src', 'config');
+    const configDir = path.resolve(__dirname, 'config');
     fs.readdirSync(configDir).forEach((file) => {
       if (/\.ya?ml$/.test(file)) {
         this.emitFile({

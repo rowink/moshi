@@ -27,7 +27,7 @@ import { metaTagData, startingView, routePaths } from "@/utils/defaults";
 import ErrorHandler from "@/utils/ErrorHandler";
 
 // Import data from users conf file. Note that rebuild is required for this to update.
-import confRaw from "../config/conf.yml?raw";
+import confRaw from "../../config/conf.yml?raw";
 
 const conf = yaml.load(confRaw) as Record<string, unknown> | null;
 
@@ -40,7 +40,7 @@ const config = conf || {};
 const pageInfo = config.pageInfo || {};
 const appConfig = config.appConfig || {};
 
-/* Sub-pages come from build-time discovery (every conf-*.yml in src/config/),
+/* Sub-pages come from build-time discovery (every conf-*.yml in config/),
  * plus any manually specified pages in conf.yml (e.g. remote configs).
  * Duplicate routes are resolved in favour of the discovered entry. */
 const seenRoutes = new Set<string>();

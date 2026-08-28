@@ -1,14 +1,14 @@
 /**
  * Build-time discovery of sub-page config files.
  *
- * Every conf-*.yml or *-conf.yml dropped into src/config/ becomes a sub-page
+ * Every conf-*.yml or *-conf.yml dropped into config/ becomes a sub-page
  * automatically:
  *   - route  : conf-<name>.yml -> "/<name>" and <name>-conf.yml -> "/<name>"
  *   - menu   : labelled with the file's pageInfo.title
  *   - order  : sorted by the optional top-level `weight` field (ascending,
  *              unweighted pages last), ties broken by title
  *
- * Dropping a new config file into src/config/ and rebuilding is all it takes
+ * Dropping a new config file into config/ and rebuilding is all it takes
  * to add a page - no manual `pages` entry in conf.yml required.
  */
 import yaml from "js-yaml";
@@ -33,7 +33,7 @@ export interface DiscoveredPage {
 const DEFAULT_WEIGHT = 999;
 
 /* Inlined at build time: { "./doc-conf.yml": "<raw yaml>" } */
-const rawFiles = import.meta.glob("../config/{conf-*,*-conf}.yml", {
+const rawFiles = import.meta.glob("../../config/{conf-*,*-conf}.yml", {
   query: "?raw",
   import: "default",
   eager: true,

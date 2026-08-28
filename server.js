@@ -74,10 +74,10 @@ const app = express()
   // Serves up static files
   .use(express.static(path.join(__dirname, 'dist')))
   .use(express.static(path.join(__dirname, 'public')))
-  // Serve config YAML files from src/config (they moved out of public/)
+  // Serve config YAML files from config/ (they moved out of public/)
   .get('/:configName.yml', (req, res) => {
     const safeName = req.params.configName.replace(/[^a-zA-Z0-9-_]/g, '');
-    res.sendFile(path.join(__dirname, 'src', 'config', `${safeName}.yml`), (err) => {
+    res.sendFile(path.join(__dirname, 'config', `${safeName}.yml`), (err) => {
       if (err) res.status(404).end();
     });
   })
