@@ -137,7 +137,8 @@ export const useAppStore = defineStore("app", {
     async fetchSubPageConfig(
       configPath: string,
     ): Promise<Record<string, any> | null> {
-      if (this.subPageConfigs[configPath]) return this.subPageConfigs[configPath];
+      if (this.subPageConfigs[configPath])
+        return this.subPageConfigs[configPath];
       try {
         const response = await axios.get(configPath);
         const subConfig = yaml.load(response.data) as Record<string, any>;
@@ -151,9 +152,10 @@ export const useAppStore = defineStore("app", {
     /* Apply a cached sub-config to the current view without mutating the cache. */
     applySubPageConfig(subConfig: Record<string, any>) {
       const parentAppConfig = this.remoteConfig.appConfig;
+      const baseAppConfig = subConfig.appConfig || parentAppConfig;
       const merged = {
         ...subConfig,
-        appConfig: applyLocalPreferences({ ...parentAppConfig }),
+        appConfig: applyLocalPreferences({ ...baseAppConfig }),
       };
       const pageTheme = subConfig.appConfig?.theme;
       if (pageTheme) merged.appConfig.theme = pageTheme; // Apply page theme override

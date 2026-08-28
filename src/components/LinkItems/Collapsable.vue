@@ -33,7 +33,6 @@
 </template>
 
 <script setup lang="ts">
-import vLongPress from "@/directives/LongPress";
 import { localStorageKeys } from "@/utils/defaults";
 import Icon from "@/components/LinkItems/ItemIcon.vue";
 import { computed, onMounted, ref, watch } from "vue";
@@ -49,7 +48,6 @@ const props = defineProps({
   customStyles: String, // Optional custom stylings
   cutToHeight: Boolean, // To set section height with content height
 });
-const emit = defineEmits(["openContextMenu"]);
 
 const sectionKey = computed(() => `collapsible-${props.uniqueKey}`);
 const rowColSpanClass = computed(() => {
@@ -121,10 +119,6 @@ function locallyStoredCollapseStates() {
   // Otherwise, return value of local storage
   return JSON.parse(localStorage[localStorageKeys.COLLAPSE_STATE]);
 }
-function openContextMenu(e: MouseEvent) {
-  emit("openContextMenu", e);
-}
-
 defineExpose({ toggle });
 </script>
 

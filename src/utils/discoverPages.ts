@@ -59,8 +59,7 @@ const parseDiscoveredPage = (
   if (!parsed) return null;
   const path = fileNameOf(filePath);
   const name =
-    (parsed.pageInfo && parsed.pageInfo.title) ||
-    path.replace(/\.ya?ml$/i, "");
+    (parsed.pageInfo && parsed.pageInfo.title) || path.replace(/\.ya?ml$/i, "");
   return {
     name,
     path,

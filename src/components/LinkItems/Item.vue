@@ -102,10 +102,7 @@ const {
   launchItem,
   openContextMenu,
   closeContextMenu,
-} = useItem(
-  props,
-  emit as (_event: string, ..._args: unknown[]) => void,
-);
+} = useItem(props, emit as (_event: string, ..._args: unknown[]) => void);
 
 /* Returns either item.icon, or appConfig.defaultIcon, or null */
 const itemIcon = computed(
