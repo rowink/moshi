@@ -18,26 +18,14 @@ appConfig:
 
 # Main content - An array of sections, each containing an array of items
 sections:
-  - name: 强化搜索
-    icon: fas fa-search
+  - name: 项目
+    icon: fas fa-book
     items:
-      - title: Saveweb Search
-        description: A full- search engine for blog posts
-        icon: https://search.save-web.org/neosearch.svg
-        url: https://search.saveweb.org/
-      - title: ImageDash
-        description: Reverse search with an image, URL, or text to find what you're looking for across the web's top image search engines.
-        icon: https://image-dash.itea.dev/favicon.ico
-        url: https://image-dash.itea.dev/
-
-  - name: 来源标记
-    icon: fa fa-location-arrow
-    items:
-      - title: IP.orz.tools
-        description: What's My IP?
-        icon: https://ip.orz.tools/assets/favicon.17e50649.svg
-        url: https://ip.orz.tools/
-      - title: dnscheck.tools
-        description: A tool to test for DNS leaks, DNSSEC validation, and more
-        icon: https://dnscheck.tools/favicon.svg
-        url: https://dnscheck.tools/
+      - title: Iris Analytics
+        description: A lightweight, open-source website analytics dashboard powered by Cloudflare Pages + Analytics Engine
+        icon: https://iris.exi.software/favicon.ico
+        url: Iris Analytics
+      - title: cc0-sounds
+        description: Free CC0 Sound Effects Library - Browse and download royalty-free audio files
+        icon: https://cc0-sounds.exi.software/favicon.svg
+        url: https://cc0-sounds.exi.software/
