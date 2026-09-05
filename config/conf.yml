@@ -24,7 +24,7 @@ sections:
       - title: Iris Analytics
         description: A lightweight, open-source website analytics dashboard powered by Cloudflare Pages + Analytics Engine
         icon: https://iris.exi.software/favicon.ico
-        url: Iris Analytics
+        url: https://iris.exi.software/
       - title: cc0-sounds
         description: Free CC0 Sound Effects Library - Browse and download royalty-free audio files
         icon: https://cc0-sounds.exi.software/favicon.svg
